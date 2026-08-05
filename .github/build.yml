@@ -21,10 +21,10 @@ jobs:
           java-version: '21'
 
       - name: compiling code
-          run: |
-            mkdir -p bin
-            find src -name "*.java" > sources.txt
-            javac -d bin @sources.txt
+        run: |
+          mkdir -p bin
+          find src -name "*.java" > sources.txt
+          javac -d bin @sources.txt
       - name: Main-Class Smoke-Test
        # Passt den Klassennamen ggf. an euer Package an, z.B. de.gruppe.spielname.Main
        run: |
