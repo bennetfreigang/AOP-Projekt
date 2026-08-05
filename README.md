@@ -55,3 +55,12 @@ Nur nach vorheriger Absprache mit Herrn Stolze oder Herrn Höppner möglich. Gen
 
 - **Bestnote anstreben, Zeit vorhanden:** Kingdomino, Qwirkle oder Stern-Halma
 - **Sicher durchkommen mit gutem Code:** Dame, Mühle oder Malefiz als guter Mittelweg
+
+---
+
+## Guidelines - Vorstellungen zum Projekt
+### No AI Challenge
+- es solle keine Zeile Code von KI geschrieben werden
+- KI darf als Hilfsmittel bzw. Unterstützung verwendet werden
+- bei Bugs Gruppenmitglieder nach Unterstützung / Hilfe fragen
+> Ziel dieser Challenge ist es, das Projekt so gut wie möglich selbst zu bauen und auch zu verstehen. Außerdem sollte bevor Code geschrieben wird ein Plan überlegt werden, wie das Projekt / Problem gelöst werden soll. (Macht mehr Spaß, wenn alles selber gemacht wurde)
