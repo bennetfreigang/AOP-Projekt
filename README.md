@@ -22,6 +22,6 @@ Qwirkle ist ein Strategiespiel für zwei bis vier Spieler. Die Spieler legen Spi
 - Arbeit erfolgt auf eigenen Branches
 - Vor dem Merge:
   - Mind. 1 Review durch ein Teammitglied
-  - Build-Workflow muss erfolgreich durchlaufen
+  - Build muss erfolgreich durchlaufen (lokal oder via CI, falls eingerichtet)
 - Merge-Strategie: **Squash Merge** (ein sauberer Commit pro Feature)
 - Commit-Nachrichten kurz & aussagekräftig (z. B. `feat: Spielbrett-Logik hinzugefügt`)
