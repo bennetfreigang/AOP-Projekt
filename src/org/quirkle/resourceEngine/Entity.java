@@ -14,6 +14,8 @@ public abstract class Entity {
     public double height = 0;
     public double scaleX = 1.0;
     public double scaleY = 1.0;
+    
+    public int renderOrder = 0;
 
     public String texturePath;
     public BufferedImage texture;
@@ -21,7 +23,11 @@ public abstract class Entity {
     public boolean destroyed = false;
 
     public Entity() {
-        onCreate();
+    	try {
+            onCreate();
+        } catch (Throwable t) { //temporary for dev debugging
+            System.err.println("[resourceEngine] Error in onCreate() of [" + getClass().getSimpleName() + "]: " + t.getMessage());
+        }
     }
 
     // Lifecycle hooks
@@ -87,8 +93,13 @@ public abstract class Entity {
     }
 
     public void update(double dt) {
+        try {
+            onTick(dt);
+        } catch (Throwable t) { //temporary for dev debugging
+        	System.err.println("[resourceEngine] Error in onTick() of [" + getClass().getSimpleName() + "]: " + t.getMessage());
+        }
+        
         if (destroyed) return;
-        onTick(dt);
     }
 
     public void render(Graphics2D g) {

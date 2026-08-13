@@ -9,7 +9,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class AssetManager {
+
     private static final Map<String, BufferedImage> cache = new HashMap<>();
+
     private static BufferedImage fallbackTexture = null;
 
     public static BufferedImage getTexture(String path) {

@@ -3,6 +3,7 @@ package org.quirkle;
 import org.quirkle.resourceEngine.*;
 import org.quirkle.scenes.ExampleScene;
 
+
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
@@ -11,6 +12,7 @@ public class Main {
         SwingUtilities.invokeLater(() -> {
             EngineConfig.setTitle("resourceEngine - DEMO");
             EngineConfig.setSize(1500, 1000);
+            EngineConfig.FPS = 60;
 
             JFrame frame = new JFrame(EngineConfig.TITLE);
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

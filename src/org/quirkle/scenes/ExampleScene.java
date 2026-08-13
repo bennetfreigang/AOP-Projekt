@@ -9,6 +9,7 @@ public class ExampleScene extends Scene {
     public void onCreate() {
         ExampleEntity entity = new ExampleEntity();
         add(entity);
+        
         entity.centerAt(getCenterX(), getCenterY());
     }
 }

@@ -1,6 +1,7 @@
 package org.quirkle.resourceEngine;
 
 import java.awt.Graphics2D;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -16,10 +17,13 @@ public class Scene {
     public void onRender(Graphics2D g) {}
     public void onDestroy() {}
 
+    private int entityCounter = 0;
+
     public void add(Entity entity) {
+        entity.renderOrder = entityCounter++;
         entities.add(entity);
     }
-
+    
     public void remove(Entity entity) {
         entity.destroy();
         entities.remove(entity);
@@ -38,9 +42,9 @@ public class Scene {
 
     public void render(Graphics2D g) {
         onRender(g);
-        for (Entity entity : entities) {
-            entity.render(g);
-        }
+        
+        //rendering from oldest to newest
+        entities.stream().sorted(Comparator.comparingInt(e -> e.renderOrder)).forEach(entity -> entity.render(g));
     }
 
     public void destroy() {
