@@ -4,6 +4,27 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
 public abstract class Entity {
+
+    public enum OriginPresets {
+        TOP_LEFT(0.0, 0.0),
+        TOP_MID(0.5, 0.0),
+        TOP_RIGHT(1.0, 0.0),
+        CENTER(0.5, 0.5),
+        BOTTOM_LEFT(0.0, 1.0),
+        BOTTOM_MID(0.5, 1.0),
+        BOTTOM_RIGHT(1.0, 1.0);
+
+        public final double x;
+        public final double y;
+
+        OriginPresets(double x, double y) {
+            this.x = x;
+            this.y = y;
+        }
+    }
+
+    public OriginPresets origin = OriginPresets.TOP_LEFT;
+
     public double x = 0;
     public double y = 0;
     public double targetX = 0;
@@ -14,7 +35,7 @@ public abstract class Entity {
     public double height = 0;
     public double scaleX = 1.0;
     public double scaleY = 1.0;
-    
+
     public int renderOrder = 0;
 
     public String texturePath;
@@ -23,9 +44,9 @@ public abstract class Entity {
     public boolean destroyed = false;
 
     public Entity() {
-    	try {
+        try {
             onCreate();
-        } catch (Throwable t) { //temporary for dev debugging (will not be needed if project is always compiled right) /later swapout for exeption
+        } catch (Throwable t) {
             System.err.println("[ERROR] resourceEngine / Entity: Throwable Error in onCreate() of [" + getClass().getSimpleName() + "]: " + t.getMessage());
         }
     }
@@ -53,18 +74,19 @@ public abstract class Entity {
         return height * scaleY;
     }
 
-    public void centerAt(double cx, double cy) {
-        this.x = cx - (getScaledWidth() / 2.0);
-        this.y = cy - (getScaledHeight() / 2.0);
-        this.targetX = this.x;
-        this.targetY = this.y;
-    }
-
     public boolean isHovered() {
         double mx = InputManager.getMouseX();
         double my = InputManager.getMouseY();
-        return mx >= x && mx <= x + getScaledWidth() &&
-               my >= y && my <= y + getScaledHeight();
+
+        double scaledWidth = getScaledWidth();
+        double scaledHeight = getScaledHeight();
+
+        //origin implied adjustion calculations
+        double drawX = x - origin.x * scaledWidth;
+        double drawY = y - origin.y * scaledHeight;
+
+        return mx >= drawX && mx <= drawX + scaledWidth &&
+               my >= drawY && my <= drawY + scaledHeight;
     }
 
     public boolean isClicked() {
@@ -95,17 +117,24 @@ public abstract class Entity {
     public void update(double dt) {
         try {
             onTick(dt);
-        } catch (Throwable t) { //temporary for dev debugging (will not be needed if project is always compiled right) /later swapout for exeption
-        	System.err.println("[ERROR] resourceEngine / Entity: Throwable Error in onTick() of [" + getClass().getSimpleName() + "]: " + t.getMessage());
+        } catch (Throwable t) {
+            System.err.println("[ERROR] resourceEngine / Entity: Throwable Error in onTick() of [" + getClass().getSimpleName() + "]: " + t.getMessage());
         }
-        
+
         if (destroyed) return;
     }
 
     public void render(Graphics2D g) {
         if (!visible || destroyed) return;
         if (texture != null) {
-            g.drawImage(texture, (int) x, (int) y, (int) getScaledWidth(), (int) getScaledHeight(), null);
+            double scaledWidth = getScaledWidth();
+            double scaledHeight = getScaledHeight();
+
+            //origin implied conversion calculations
+            int drawX = (int) (x - origin.x * scaledWidth);
+            int drawY = (int) (y - origin.y * scaledHeight);
+
+            g.drawImage(texture, drawX, drawY, (int) scaledWidth, (int) scaledHeight, null);
         }
         onRender(g);
     }

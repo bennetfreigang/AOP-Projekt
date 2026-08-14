@@ -9,14 +9,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class AssetManager {
-
-    private static final Map<String, BufferedImage> cache = new HashMap<>();
-
+    private static final Map<String, BufferedImage> textureCache = new HashMap<>();
     private static BufferedImage fallbackTexture = null;
 
+    //temporary solution (dynamic texture load request)
+    // -> should be swapped out later by a precaching approach [wouldnt change anything for frontend / only performance]
     public static BufferedImage getTexture(String path) {
         if (path == null || path.isEmpty()) return getFallbackTexture();
-        if (cache.containsKey(path)) return cache.get(path);
+        if (textureCache.containsKey(path)) return textureCache.get(path);
 
         try (InputStream in = AssetManager.class.getResourceAsStream(path)) {
             if (in == null) {
@@ -24,13 +24,16 @@ public class AssetManager {
                 return getFallbackTexture();
             }
             BufferedImage img = ImageIO.read(in);
-            cache.put(path, img);
+            textureCache.put(path, img);
             return img;
         } catch (Exception e) {
             System.err.println("[ERROR] resourceEngine / AssetManager: Failed to load texture: " + path);
             return getFallbackTexture();
         }
     }
+
+    //future lang loading implementation
+    //public static String getMessage(String identifier) { ... } ! also utilizing precaching
 
     private static BufferedImage getFallbackTexture() {
         if (fallbackTexture == null) {

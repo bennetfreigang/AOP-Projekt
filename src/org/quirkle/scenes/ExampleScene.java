@@ -9,7 +9,9 @@ public class ExampleScene extends Scene {
     public void onCreate() {
         ExampleEntity entity = new ExampleEntity();
         add(entity);
-        
-        entity.centerAt(getCenterX(), getCenterY());
+
+        //temporarily move to scene creation because "Scene creation cant handle coordinate change at creation (for now)"
+        entity.x = getWidth()/2;
+        entity.y = getHeight()/2;
     }
 }

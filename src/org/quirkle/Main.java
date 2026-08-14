@@ -11,8 +11,8 @@ public class Main {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             EngineConfig.setTitle("resourceEngine - DEMO");
-            EngineConfig.setSize(1500, 1000);
-            EngineConfig.FPS = 60;
+            EngineConfig.setSize(1500, 800);
+            EngineConfig.FPS = 120;
 
             JFrame frame = new JFrame(EngineConfig.TITLE);
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -27,7 +27,7 @@ public class Main {
             frame.setVisible(true);
 
             panel.requestFocusInWindow();
-
+            
             GameLoop loop = new GameLoop(panel);
             loop.start();
         });
