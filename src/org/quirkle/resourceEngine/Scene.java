@@ -32,12 +32,11 @@ public class Scene {
     public void update(double dt) {
         onTick(dt);
         for (Entity entity : entities) {
-            if (entity.destroyed) {
-                entities.remove(entity);
-            } else {
+            if (!entity.destroyed) {
                 entity.update(dt);
             }
         }
+        entities.removeIf(entity -> entity.destroyed);
     }
 
     public void render(Graphics2D g) {

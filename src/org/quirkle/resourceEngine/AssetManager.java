@@ -20,28 +20,31 @@ public class AssetManager {
 
         try (InputStream in = AssetManager.class.getResourceAsStream(path)) {
             if (in == null) {
-                System.err.println("[Warning] AssetManager: Could not find texture: " + path);
+                System.err.println("[WARNING] resourceEngine / AssetManager: Could not find texture: " + path);
                 return getFallbackTexture();
             }
             BufferedImage img = ImageIO.read(in);
             cache.put(path, img);
             return img;
         } catch (Exception e) {
-            System.err.println("[Error] AssetManager: Failed to load texture: " + path);
+            System.err.println("[ERROR] resourceEngine / AssetManager: Failed to load texture: " + path);
             return getFallbackTexture();
         }
     }
 
     private static BufferedImage getFallbackTexture() {
         if (fallbackTexture == null) {
-            fallbackTexture = new BufferedImage(32, 32, BufferedImage.TYPE_INT_RGB);
+            int size = 128;
+            int halfSize = size / 2;
+            
+            fallbackTexture = new BufferedImage(size, size, BufferedImage.TYPE_INT_RGB);
             Graphics2D g = fallbackTexture.createGraphics();
             g.setColor(Color.MAGENTA);
-            g.fillRect(0, 0, 16, 16);
-            g.fillRect(16, 16, 16, 16);
+            g.fillRect(0, 0, halfSize, halfSize);
+            g.fillRect(halfSize, halfSize, halfSize, halfSize);
             g.setColor(Color.BLACK);
-            g.fillRect(16, 0, 16, 16);
-            g.fillRect(0, 16, 16, 16);
+            g.fillRect(halfSize, 0, halfSize, halfSize);
+            g.fillRect(0, halfSize, halfSize, halfSize);
             g.dispose();
         }
         return fallbackTexture;

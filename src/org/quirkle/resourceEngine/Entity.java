@@ -25,8 +25,8 @@ public abstract class Entity {
     public Entity() {
     	try {
             onCreate();
-        } catch (Throwable t) { //temporary for dev debugging
-            System.err.println("[resourceEngine] Error in onCreate() of [" + getClass().getSimpleName() + "]: " + t.getMessage());
+        } catch (Throwable t) { //temporary for dev debugging (will not be needed if project is always compiled right) /later swapout for exeption
+            System.err.println("[ERROR] resourceEngine / Entity: Throwable Error in onCreate() of [" + getClass().getSimpleName() + "]: " + t.getMessage());
         }
     }
 
@@ -95,8 +95,8 @@ public abstract class Entity {
     public void update(double dt) {
         try {
             onTick(dt);
-        } catch (Throwable t) { //temporary for dev debugging
-        	System.err.println("[resourceEngine] Error in onTick() of [" + getClass().getSimpleName() + "]: " + t.getMessage());
+        } catch (Throwable t) { //temporary for dev debugging (will not be needed if project is always compiled right) /later swapout for exeption
+        	System.err.println("[ERROR] resourceEngine / Entity: Throwable Error in onTick() of [" + getClass().getSimpleName() + "]: " + t.getMessage());
         }
         
         if (destroyed) return;
