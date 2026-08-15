@@ -1,7 +1,6 @@
 package org.quirkle.resourceEngine;
 
 import javax.swing.JPanel;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -10,7 +9,7 @@ public class RenderPanel extends JPanel {
 
     public RenderPanel() {
         setPreferredSize(new Dimension(EngineConfig.WINDOW_WIDTH, EngineConfig.WINDOW_HEIGHT));
-        setBackground(Color.WHITE);
+        setBackground(EngineConfig.BACKGROUND_COLOR);
         setFocusable(true);
 
         InputManager input = InputManager.getInstance();

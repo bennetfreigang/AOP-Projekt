@@ -3,7 +3,8 @@ package org.quirkle.resourceEngine;
 import java.awt.Graphics2D;
 
 public class SceneManager {
-    private static Scene currentScene;
+    //allows basic scene request at Entity initilisation by initialising currentScene as a Dummy Scene
+    private static Scene currentScene = new Scene();
 
     public static void setScene(Scene newScene) {
         if (currentScene != null) {

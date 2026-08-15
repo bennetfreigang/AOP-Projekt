@@ -32,8 +32,22 @@ public class AssetManager {
         }
     }
 
-    //future lang loading implementation
-    //public static String getMessage(String identifier) { ... } ! also utilizing precaching
+    /**
+     * future lang loading implementation
+     * DUMMY function (for now)
+     */
+    public static String getMessage(String identifier) {
+        System.err.println("[INFO] resourceEngine / AssetManager: Would return message: " + identifier + " but this isnt implemented yet");
+        return new String("LANGMESSAGELOADING ISNT IMPLEMENTED YET");
+    } //! also utilizing precaching
+
+    /**
+     * future audio loading implementation
+     * DUMMY function (for now)
+     */
+    public static void playSound(String identifier, double volume) {
+        System.err.println("[INFO] resourceEngine / AssetManager: Would play sound: " + identifier + " at " + EngineConfig.VOLUME_MAIN*volume + " but this isnt implemented yet");
+    } //! also utilizing precaching
 
     private static BufferedImage getFallbackTexture() {
         if (fallbackTexture == null) {
