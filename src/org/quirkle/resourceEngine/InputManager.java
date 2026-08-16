@@ -57,7 +57,6 @@ public class InputManager extends MouseAdapter {
 
     public static double getMouseX() { return mouseX; }
     public static double getMouseY() { return mouseY; }
-    public static Vector2 getMousePosition() { return new Vector2(mouseX, mouseY); }
     public static boolean isMousePressed() { return mousePressed; }
     public static boolean isMouseClicked() { return mouseClicked; }
 
