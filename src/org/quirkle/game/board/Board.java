@@ -85,6 +85,20 @@ public class Board {
     }
 
     /**
+     * Stages {@code tile} at {@code position} as a pending tile for the current turn.
+     *
+     * @throws IllegalStateException if {@code position} is already occupied by a placed or pending tile,
+     *         or if placing {@code tile} there would make the pending tiles illegal.
+     */
+    public void placeTile(Position position, Tile tile) {
+        if (!PlacementValidator.isTilePlacementPossible(placedTiles, pendingTiles, position, tile)) {
+            throw new IllegalStateException("Cannot place tile; placement is not possible.");
+        }
+
+        pendingTiles.put(position, tile);
+    }
+
+    /**
      * Commits all pending tiles and returns the points scored.
      *
      * @throws IllegalStateException if a pending tile's position is already occupied.
@@ -101,17 +115,8 @@ public class Board {
         return points;
     }
 
-    /**
-     * @return {@code true} if every pending tile's position is free on {@link #placedTiles}.
-     * @apiNote Behavior when {@link #pendingTiles} is empty is not yet decided.
-     */
+    /** @return {@code true} if {@link #pendingTiles} can be legally committed onto {@link #placedTiles}. */
     private boolean isPendingTilesPlacementPossible() {
-        for (Position position : pendingTiles.keySet()) {
-            if (!PlacementValidator.isTilePlacementPossible(placedTiles, position)) {
-                return false;
-            }
-        }
-
-        return true;
+        return PlacementValidator.isPendingTilePlacementPossible(placedTiles, pendingTiles);
     }
 }
