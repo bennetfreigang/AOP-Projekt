@@ -18,6 +18,19 @@ public class Board {
         this.pendingTiles = new HashMap<>();
     }
 
+    public Board(Map<Position, Tile> placedTiles, Map<Position, Tile> pendingTiles) {
+        this.placedTiles = placedTiles;
+        this.pendingTiles = pendingTiles;
+    }
+
+    public Map<Position, Tile> getPlacedTiles() {
+        return placedTiles;
+    }
+
+    public Map<Position, Tile> getPendingTiles() {
+        return pendingTiles;
+    }
+
     /**
      * @return smallest occupied x-coordinate.
      * @apiNote Returns {@code 0} if the board is empty or if every placed tile has x &gt;= 0.
@@ -82,7 +95,7 @@ public class Board {
             throw new IllegalStateException("Cannot commit pending tiles; placement is not possible.");
         }
 
-        int points = ScoreCalculator.calculatePendingTilesScore(this);
+        int points = ScoreCalculator.calculatePendingTilesScore(placedTiles, pendingTiles);
         placedTiles.putAll(pendingTiles);
         pendingTiles.clear();
         return points;
