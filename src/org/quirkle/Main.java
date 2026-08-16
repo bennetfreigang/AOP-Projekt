@@ -29,7 +29,7 @@ public class Main {
             frame.setVisible(true);
 
             panel.requestFocusInWindow();
-            
+
             GameLoop loop = new GameLoop(panel);
             loop.start();
         });
