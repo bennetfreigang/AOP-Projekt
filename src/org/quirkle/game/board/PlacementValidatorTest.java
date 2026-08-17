@@ -3,54 +3,19 @@ package org.quirkle.game.board;
 import org.quirkle.game.tiles.Tile;
 import org.quirkle.game.tiles.TileColor;
 import org.quirkle.game.tiles.TileSymbol;
+import org.quirkle.testing.Test;
 
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Standalone tests for {@link PlacementValidator}, written against the Qwirkle placement rules
- * (not against the validator's current implementation). No test framework required.
- *
- * <p>Run with: {@code javac -d bin @sources.txt && java -cp bin org.quirkle.game.board.PlacementValidatorTest}
- */
+import static org.quirkle.testing.Assertions.assertEquals;
+
 public class PlacementValidatorTest {
-    private static int failureCount = 0;
-
-    public static void main(String[] args) {
-        // Alle neuen Steine muessen in einer gemeinsamen Zeile oder Spalte liegen.
-        testPendingTilesFormCommonRow();
-        testPendingTilesFormCommonColumn();
-        testPendingTilesNotAligned();
-
-        // Alle neuen Steine muessen unmittelbar an bereits vorhandene Steine angrenzen.
-        testFirstMoveNeedsNoNeighbors();
-        testPendingTileAdjacentToExistingTile();
-        testPendingTilesNotAdjacentToAnyExistingTile();
-
-        // Eine Reihe ist nur gueltig, wenn sie durchgehend gleiche Farbe/versch. Symbole
-        // oder gleiches Symbol/versch. Farben hat, ohne doppelte Symbole oder Farben.
-        testRowWithConstantColorAndDistinctSymbols();
-        testRowWithConstantSymbolAndDistinctColors();
-        testRowWithDuplicateSymbol();
-        testRowWithDuplicateSymbolAtADistance();
-        testRowWithDuplicateColor();
-        testRowMixingColorAndSymbolInconsistently();
-
-        // Eine Reihe darf hoechstens sechs Spielsteine enthalten.
-        testRowOfExactlySixTilesIsValid();
-        testRowOfSevenTilesIsInvalid();
-
-        if (failureCount == 0) {
-            System.out.println("All tests passed.");
-        } else {
-            System.out.println(failureCount + " test(s) failed.");
-            System.exit(1);
-        }
-    }
 
     // --- Gemeinsame Zeile oder Spalte ---------------------------------------
 
-    private static void testPendingTilesFormCommonRow() {
+    @Test
+    void testPendingTilesFormCommonRow() {
         Map<Position, Tile> placed = tilesOf(at(0, 0, TileColor.GREEN, TileSymbol.CIRCLE));
         Map<Position, Tile> pending = tilesOf(
                 at(1, 0, TileColor.GREEN, TileSymbol.STAR),
@@ -59,7 +24,8 @@ public class PlacementValidatorTest {
         assertPlacementPossible("Neue Steine bilden eine gemeinsame Zeile", true, placed, pending);
     }
 
-    private static void testPendingTilesFormCommonColumn() {
+    @Test
+    void testPendingTilesFormCommonColumn() {
         Map<Position, Tile> placed = tilesOf(at(3, 3, TileColor.BLUE, TileSymbol.STAR));
         Map<Position, Tile> pending = tilesOf(
                 at(3, 4, TileColor.BLUE, TileSymbol.CROSS),
@@ -68,7 +34,8 @@ public class PlacementValidatorTest {
         assertPlacementPossible("Neue Steine bilden eine gemeinsame Spalte", true, placed, pending);
     }
 
-    private static void testPendingTilesNotAligned() {
+    @Test
+    void testPendingTilesNotAligned() {
         Map<Position, Tile> placed = tilesOf();
         Map<Position, Tile> pending = tilesOf(
                 at(0, 0, TileColor.RED, TileSymbol.CIRCLE),
@@ -79,7 +46,8 @@ public class PlacementValidatorTest {
 
     // --- Angrenzen an bereits vorhandene Steine -----------------------------
 
-    private static void testFirstMoveNeedsNoNeighbors() {
+    @Test
+    void testFirstMoveNeedsNoNeighbors() {
         Map<Position, Tile> placed = tilesOf();
         Map<Position, Tile> pending = tilesOf(
                 at(0, 0, TileColor.RED, TileSymbol.CIRCLE),
@@ -88,14 +56,16 @@ public class PlacementValidatorTest {
         assertPlacementPossible("Der erste Zug auf einem leeren Brett braucht keine Nachbarn", true, placed, pending);
     }
 
-    private static void testPendingTileAdjacentToExistingTile() {
+    @Test
+    void testPendingTileAdjacentToExistingTile() {
         Map<Position, Tile> placed = tilesOf(at(0, 0, TileColor.RED, TileSymbol.CIRCLE));
         Map<Position, Tile> pending = tilesOf(at(1, 0, TileColor.RED, TileSymbol.SQUARE));
 
         assertPlacementPossible("Ein neuer Stein, der an einen vorhandenen Stein angrenzt, ist gueltig", true, placed, pending);
     }
 
-    private static void testPendingTilesNotAdjacentToAnyExistingTile() {
+    @Test
+    void testPendingTilesNotAdjacentToAnyExistingTile() {
         Map<Position, Tile> placed = tilesOf(at(0, 0, TileColor.RED, TileSymbol.CIRCLE));
         Map<Position, Tile> pending = tilesOf(
                 at(5, 5, TileColor.RED, TileSymbol.SQUARE),
@@ -106,7 +76,8 @@ public class PlacementValidatorTest {
 
     // --- Gueltige Reihe: Farbe/Symbol-Muster --------------------------------
 
-    private static void testRowWithConstantColorAndDistinctSymbols() {
+    @Test
+    void testRowWithConstantColorAndDistinctSymbols() {
         Map<Position, Tile> placed = tilesOf(at(0, 0, TileColor.RED, TileSymbol.CIRCLE));
         Map<Position, Tile> pending = tilesOf(
                 at(1, 0, TileColor.RED, TileSymbol.SQUARE),
@@ -115,7 +86,8 @@ public class PlacementValidatorTest {
         assertPlacementPossible("Gleiche Farbe mit unterschiedlichen Symbolen ist eine gueltige Reihe", true, placed, pending);
     }
 
-    private static void testRowWithConstantSymbolAndDistinctColors() {
+    @Test
+    void testRowWithConstantSymbolAndDistinctColors() {
         Map<Position, Tile> placed = tilesOf(at(0, 0, TileColor.RED, TileSymbol.CIRCLE));
         Map<Position, Tile> pending = tilesOf(
                 at(1, 0, TileColor.BLUE, TileSymbol.CIRCLE),
@@ -124,7 +96,8 @@ public class PlacementValidatorTest {
         assertPlacementPossible("Gleiches Symbol mit unterschiedlichen Farben ist eine gueltige Reihe", true, placed, pending);
     }
 
-    private static void testRowWithDuplicateSymbol() {
+    @Test
+    void testRowWithDuplicateSymbol() {
         Map<Position, Tile> placed = tilesOf(at(0, 0, TileColor.RED, TileSymbol.CIRCLE));
         Map<Position, Tile> pending = tilesOf(at(1, 0, TileColor.RED, TileSymbol.CIRCLE));
 
@@ -132,7 +105,8 @@ public class PlacementValidatorTest {
     }
 
     /** Symbol CIRCLE kommt an Position 0 und 2 doppelt vor, obwohl beide Nachbarpaare fuer sich passen. */
-    private static void testRowWithDuplicateSymbolAtADistance() {
+    @Test
+    void testRowWithDuplicateSymbolAtADistance() {
         Map<Position, Tile> placed = tilesOf(at(0, 0, TileColor.RED, TileSymbol.CIRCLE));
         Map<Position, Tile> pending = tilesOf(
                 at(1, 0, TileColor.RED, TileSymbol.SQUARE),
@@ -142,7 +116,8 @@ public class PlacementValidatorTest {
     }
 
     /** Farbe RED kommt an Position 0 und 2 doppelt vor, obwohl beide Nachbarpaare fuer sich passen. */
-    private static void testRowWithDuplicateColor() {
+    @Test
+    void testRowWithDuplicateColor() {
         Map<Position, Tile> placed = tilesOf(at(0, 0, TileColor.RED, TileSymbol.CIRCLE));
         Map<Position, Tile> pending = tilesOf(
                 at(1, 0, TileColor.BLUE, TileSymbol.CIRCLE),
@@ -152,7 +127,8 @@ public class PlacementValidatorTest {
     }
 
     /** Weder Farbe (RED,RED,BLUE) noch Symbol (CIRCLE,SQUARE,SQUARE) sind ueber die ganze Reihe konstant. */
-    private static void testRowMixingColorAndSymbolInconsistently() {
+    @Test
+    void testRowMixingColorAndSymbolInconsistently() {
         Map<Position, Tile> placed = tilesOf(at(0, 0, TileColor.RED, TileSymbol.CIRCLE));
         Map<Position, Tile> pending = tilesOf(
                 at(1, 0, TileColor.RED, TileSymbol.SQUARE),
@@ -163,7 +139,8 @@ public class PlacementValidatorTest {
 
     // --- Gueltige Reihe: maximal sechs Steine -------------------------------
 
-    private static void testRowOfExactlySixTilesIsValid() {
+    @Test
+    void testRowOfExactlySixTilesIsValid() {
         Map<Position, Tile> placed = tilesOf(
                 at(0, 0, TileColor.RED, TileSymbol.CIRCLE),
                 at(1, 0, TileColor.RED, TileSymbol.SQUARE),
@@ -175,7 +152,8 @@ public class PlacementValidatorTest {
         assertPlacementPossible("Eine vollstaendige Reihe aus genau sechs Steinen ist gueltig", true, placed, pending);
     }
 
-    private static void testRowOfSevenTilesIsInvalid() {
+    @Test
+    void testRowOfSevenTilesIsInvalid() {
         Map<Position, Tile> placed = tilesOf(
                 at(0, 0, TileColor.RED, TileSymbol.CIRCLE),
                 at(1, 0, TileColor.RED, TileSymbol.SQUARE),
@@ -193,11 +171,7 @@ public class PlacementValidatorTest {
 
     private static void assertPlacementPossible(String testName, boolean expected, Map<Position, Tile> placedTiles, Map<Position, Tile> pendingTiles) {
         boolean actual = PlacementValidator.isPendingTilePlacementPossible(placedTiles, pendingTiles);
-        if (actual == expected) {
-            pass(testName);
-        } else {
-            fail(testName + " -> expected " + expected + ", got " + actual);
-        }
+        assertEquals(expected, actual, testName);
     }
 
     private record Placement(Position position, Tile tile) {}
@@ -213,14 +187,5 @@ public class PlacementValidatorTest {
             tiles.put(placement.position(), placement.tile());
         }
         return tiles;
-    }
-
-    private static void pass(String testName) {
-        System.out.println("[OK]   " + testName);
-    }
-
-    private static void fail(String message) {
-        failureCount++;
-        System.out.println("[FAIL] " + message);
     }
 }

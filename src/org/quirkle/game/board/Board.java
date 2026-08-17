@@ -102,7 +102,6 @@ public class Board {
      * Commits all pending tiles and returns the points scored.
      *
      * @throws IllegalStateException if a pending tile's position is already occupied.
-     * @apiNote Behavior when {@link #pendingTiles} is empty is not yet decided.
      */
     public int commitPendingTiles() {
         if (!isPendingTilesPlacementPossible()) {
