@@ -1,7 +1,13 @@
 package org.quirkle.resourceEngine;
 
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.List;
 
 /*********************************************************************************************
  * An Entity is a transformable object managed withing a Scene,
@@ -32,6 +38,27 @@ public abstract class Entity {
         }
     }
 
+    public class EmbeddedText {
+        public String msg;
+        public Color color;
+        public int fontSize;
+        public String fontIdentifier;
+        public int dX, dY;
+        public OriginPresets anchor;
+
+        public EmbeddedText(String msg, Color color, int fontSize, String fontIdentifier, int dX, int dY, OriginPresets anchor) {
+            this.msg = msg;
+            this.color = color;
+            this.fontSize = fontSize;
+            this.fontIdentifier = fontIdentifier;
+            this.dX = dX;
+            this.dY = dY;
+            this.anchor = anchor;
+        }
+    }
+
+    public List<EmbeddedText> embedTexts = new ArrayList<>();
+
     /**
      * The Origin of an entity is the anchor point
      * used as the absolute reference for its position,
@@ -56,13 +83,12 @@ public abstract class Entity {
 
     public double width = 0;
     public double height = 0;
-    public double scaleX = 1.0;
-    public double scaleY = 1.0;
+    public double scale = 1.0;
 
     public int renderOrder = 0;
 
-    public String texturePath;
-    public BufferedImage texture;
+    public String spritePath;
+    public BufferedImage sprite;
     public boolean visible = true;
     public boolean destroyed = false;
 
@@ -93,7 +119,7 @@ public abstract class Entity {
     /**
      * Performs custom entity layer drawing operations
      * @param g The active Graphics2D rendering context
-     * @note Executed immediately after the base sprite texture gets drawn
+     * @note Executed immediately after the base sprite sprite gets drawn
      */
     public void onRender(Graphics2D g) {}
 
@@ -103,21 +129,21 @@ public abstract class Entity {
      */
     public void onDestroy() {}
 
-    public void setTexture(String path) {
-        this.texturePath = path;
-        this.texture = AssetManager.getTexture(path);
-        if (this.texture != null) {
-            this.width = this.texture.getWidth();
-            this.height = this.texture.getHeight();
+    public void setSprite(String path) {
+        this.spritePath = path;
+        this.sprite = AssetManager.getTexture(path);
+        if (this.sprite != null) {
+            this.width = this.sprite.getWidth();
+            this.height = this.sprite.getHeight();
         }
     }
 
     public double getScaledWidth() {
-        return width * scaleX;
+        return width * scale;
     }
 
     public double getScaledHeight() {
-        return height * scaleY;
+        return height * scale;
     }
 
     public boolean isHovered() {
@@ -194,18 +220,42 @@ public abstract class Entity {
     }
 
     public void render(Graphics2D g) {
+    g.setRenderingHint(
+            RenderingHints.KEY_TEXT_ANTIALIASING,
+            RenderingHints.VALUE_TEXT_ANTIALIAS_ON
+        );
+
         if (!visible || destroyed) return;
-        if (texture != null) {
-            double scaledWidth = getScaledWidth();
-            double scaledHeight = getScaledHeight();
 
-            //origin implied conversion calculations
-            int drawX = (int) (x - origin.x * scaledWidth);
-            int drawY = (int) (y - origin.y * scaledHeight);
+        double scaledWidth = getScaledWidth();
+        double scaledHeight = getScaledHeight();
 
+        int drawX = (int) (x - origin.x * scaledWidth);
+        int drawY = (int) (y - origin.y * scaledHeight);
+
+        if (sprite != null) {
             g.rotate(Math.toRadians(rotation), x, y);
-            g.drawImage(texture, drawX, drawY, (int) scaledWidth, (int) scaledHeight, null);
+            g.drawImage(sprite, drawX, drawY, (int) scaledWidth, (int) scaledHeight, null);
         }
+
+        for (EmbeddedText eT : embedTexts) {
+            Font baseFont = AssetManager.getFont(eT.fontIdentifier);
+            Font font = baseFont.deriveFont((float) (eT.fontSize * scale));
+            g.setFont(font);
+
+            FontMetrics fm = g.getFontMetrics(font);
+            int textWidth = fm.stringWidth(eT.msg);
+            int textHeight = fm.getHeight();
+            int textAscent = fm.getAscent();
+
+            OriginPresets textOrigin = eT.anchor != null ? eT.anchor : OriginPresets.TOP_LEFT;
+
+            int textX = (int) (x + eT.dX - (textOrigin.x * textWidth));
+            int textY = (int) (y + eT.dY - (textOrigin.y * textHeight) + textAscent);
+            g.setColor(eT.color);
+            g.drawString(eT.msg, textX, textY);
+        }
+
         onRender(g);
     }
 
