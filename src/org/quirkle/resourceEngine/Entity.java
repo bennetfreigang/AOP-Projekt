@@ -1,5 +1,8 @@
 package org.quirkle.resourceEngine;
 
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
@@ -40,10 +43,10 @@ public abstract class Entity {
      * */
     public OriginPresets origin = OriginPresets.TOP_LEFT;
 
-    public double x = 0;
-    public double y = 0;
-    public double targetX = 0;
-    public double targetY = 0;
+    public int x = 0;
+    public int y = 0;
+    public int targetX = 0;
+    public int targetY = 0;
     public double rotation = 0;
 
     /**
@@ -56,13 +59,12 @@ public abstract class Entity {
 
     public double width = 0;
     public double height = 0;
-    public double scaleX = 1.0;
-    public double scaleY = 1.0;
+    public double scale = 1.0;
 
     public int renderOrder = 0;
 
-    public String texturePath;
-    public BufferedImage texture;
+    public String spritePath;
+    public BufferedImage sprite;
     public boolean visible = true;
     public boolean destroyed = false;
 
@@ -93,7 +95,7 @@ public abstract class Entity {
     /**
      * Performs custom entity layer drawing operations
      * @param g The active Graphics2D rendering context
-     * @note Executed immediately after the base sprite texture gets drawn
+     * @note Executed immediately after the base sprite sprite gets drawn
      */
     public void onRender(Graphics2D g) {}
 
@@ -103,21 +105,19 @@ public abstract class Entity {
      */
     public void onDestroy() {}
 
-    public void setTexture(String path) {
-        this.texturePath = path;
-        this.texture = AssetManager.getTexture(path);
-        if (this.texture != null) {
-            this.width = this.texture.getWidth();
-            this.height = this.texture.getHeight();
-        }
+    public void setSprite(String path) {
+        this.spritePath = path;
+        this.sprite = AssetManager.getTexture(path);
+        this.width = this.sprite.getWidth();
+        this.height = this.sprite.getHeight();
     }
 
     public double getScaledWidth() {
-        return width * scaleX;
+        return width * scale;
     }
 
     public double getScaledHeight() {
-        return height * scaleY;
+        return height * scale;
     }
 
     public boolean isHovered() {
@@ -183,6 +183,46 @@ public abstract class Entity {
         }
     }
 
+
+    public void drawText(String msg, float fontSize, Color color, String fontIdentifier, int x, int y, double rotation, OriginPresets origin, Graphics2D g) {
+        Font font = AssetManager.getFont(fontIdentifier).deriveFont(fontSize);
+        g.setFont(font);
+
+        FontMetrics fm = g.getFontMetrics(font);
+        int textWidth = fm.stringWidth(msg);
+        int textHeight = fm.getHeight();
+        int textAscent = fm.getAscent();
+
+        int drawX = (int) (x - (origin.x * textWidth));
+        int drawY = (int) (y - (origin.y * textHeight) + textAscent);
+
+        Graphics2D isoTextGraphic = (Graphics2D) g.create();
+        isoTextGraphic.setFont(font);
+        isoTextGraphic.setColor(color);
+
+        if (rotation % 360 != 0) {
+            isoTextGraphic.rotate(Math.toRadians(rotation), x, y);
+        }
+
+        isoTextGraphic.drawString(msg, drawX, drawY);
+        isoTextGraphic.dispose();
+    }
+
+    public void drawSprite(String spriteIdentifier, double scale, int x, int y, double rotation, OriginPresets origin, Graphics2D g) {
+        BufferedImage sprite = AssetManager.getTexture(spriteIdentifier);
+        Graphics2D isoSpriteGraphic = (Graphics2D) g.create();
+        double scaledWidth = sprite.getWidth() * scale;
+        double scaledHeight = sprite.getHeight() * scale;
+
+        int drawX = (int) (x - origin.x * scaledWidth);
+        int drawY = (int) (y - origin.y * scaledHeight);
+
+        isoSpriteGraphic.rotate(Math.toRadians(rotation), x, y);
+        isoSpriteGraphic.drawImage(sprite, drawX, drawY, (int) scaledWidth, (int) scaledHeight, null);
+
+        isoSpriteGraphic.dispose();
+    }
+
     public void update(double dt) {
         try {
             onTick(dt);
@@ -195,17 +235,21 @@ public abstract class Entity {
 
     public void render(Graphics2D g) {
         if (!visible || destroyed) return;
-        if (texture != null) {
-            double scaledWidth = getScaledWidth();
-            double scaledHeight = getScaledHeight();
 
-            //origin implied conversion calculations
-            int drawX = (int) (x - origin.x * scaledWidth);
-            int drawY = (int) (y - origin.y * scaledHeight);
+        double scaledWidth = getScaledWidth();
+        double scaledHeight = getScaledHeight();
 
-            g.rotate(Math.toRadians(rotation), x, y);
-            g.drawImage(texture, drawX, drawY, (int) scaledWidth, (int) scaledHeight, null);
+        int drawX = (int) (x - origin.x * scaledWidth);
+        int drawY = (int) (y - origin.y * scaledHeight);
+
+        //isolation for gSprite transformations
+        if (sprite != null) {
+            Graphics2D gSprite = (Graphics2D) g.create();
+            gSprite.rotate(Math.toRadians(rotation), x, y);
+            gSprite.drawImage(sprite, drawX, drawY, (int) scaledWidth, (int) scaledHeight, null);
+            gSprite.dispose();
         }
+
         onRender(g);
     }
 

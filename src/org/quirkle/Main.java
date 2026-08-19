@@ -7,6 +7,8 @@ import java.awt.Color;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
+import org.quirkle.scenes.*;
+
 public class Main {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
@@ -19,7 +21,7 @@ public class Main {
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setResizable(false);
 
-            SceneManager.setScene(new Scene()); //uses dummy scene to compile for now -> put in actual start scene if available
+            SceneManager.setScene(new DebugScene()); //uses dummy scene to compile for now -> put in actual start scene if available
             //EXAMPLE: SceneManager.setScene(new ImplementedScene());
 
             RenderPanel panel = new RenderPanel();
