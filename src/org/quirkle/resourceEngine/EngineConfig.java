@@ -6,7 +6,7 @@ import java.awt.Color;
  * Basic Default-Setup Class for resourceEngine presets
  ***********************************************************************/
 public class EngineConfig {
-    public final String VERSION_INFO = "[BETA] v0.1.2";
+    public final String VERSION_INFO = "[BETA] v0.1.3";
 
     public final String ASSET_ORIGIN = "/assets";
 

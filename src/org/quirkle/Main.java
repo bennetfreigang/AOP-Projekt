@@ -21,7 +21,7 @@ public class Main {
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setResizable(false);
 
-            SceneManager.setScene(new debugScene()); //uses dummy scene to compile for now -> put in actual start scene if available
+            SceneManager.setScene(new DebugScene()); //uses dummy scene to compile for now -> put in actual start scene if available
             //EXAMPLE: SceneManager.setScene(new ImplementedScene());
 
             RenderPanel panel = new RenderPanel();

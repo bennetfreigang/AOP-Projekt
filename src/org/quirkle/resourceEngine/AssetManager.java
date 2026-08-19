@@ -108,10 +108,6 @@ public class AssetManager {
         }
     }
 
-    /**
-     * future audio loading implementation
-     * DUMMY function (for now)
-     */
     public static void playSound(String identifier, double volume) {
         if (identifier == null || identifier.isEmpty()) { fallbackSound(identifier); return; }
 

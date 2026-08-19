@@ -95,7 +95,9 @@ public class TextEntity extends Entity {
 
     @Override
     public void onRender(Graphics2D g) {
+
         drawText(ranS, (float) (textScale * scale), Color.BLACK, "DEBUG_Poly-Regular", x, y, rotation * 0.5, OriginPresets.CENTER, g);
+
         drawSprite("ResourceEngine", 0.4, x, y - 220, 0.0, OriginPresets.BOTTOM_MID, g);
     }
 }

@@ -3,9 +3,7 @@ package org.quirkle.resourceEngine;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 
 /*********************************************************************************************
@@ -236,11 +234,6 @@ public abstract class Entity {
     }
 
     public void render(Graphics2D g) {
-        g.setRenderingHint(
-            RenderingHints.KEY_TEXT_ANTIALIASING,
-            RenderingHints.VALUE_TEXT_ANTIALIAS_ON
-        );
-
         if (!visible || destroyed) return;
 
         double scaledWidth = getScaledWidth();
@@ -250,10 +243,12 @@ public abstract class Entity {
         int drawY = (int) (y - origin.y * scaledHeight);
 
         //isolation for gSprite transformations
-        Graphics2D gSprite = (Graphics2D) g.create();
-        gSprite.rotate(Math.toRadians(rotation), x, y);
-        gSprite.drawImage(sprite, drawX, drawY, (int) scaledWidth, (int) scaledHeight, null);
-        gSprite.dispose();
+        if (sprite != null) {
+            Graphics2D gSprite = (Graphics2D) g.create();
+            gSprite.rotate(Math.toRadians(rotation), x, y);
+            gSprite.drawImage(sprite, drawX, drawY, (int) scaledWidth, (int) scaledHeight, null);
+            gSprite.dispose();
+        }
 
         onRender(g);
     }
