@@ -1,18 +1,15 @@
 package quirkle;
 
-import org.quirkle.resourceEngine.*;
-
 import java.awt.Color;
 
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
-import org.quirkle.scenes.*;
+import quirkle.game.startMenu.StartMenuScene;
 import quirkle.resourceEngine.EngineConfig;
 import quirkle.resourceEngine.GameLoop;
 import quirkle.resourceEngine.RenderPanel;
 import quirkle.resourceEngine.SceneManager;
-import quirkle.scenes.DebugScene;
 
 public class Main {
     public static void main(String[] args) {
@@ -26,7 +23,7 @@ public class Main {
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setResizable(false);
 
-            SceneManager.setScene(new DebugScene()); //uses dummy scene to compile for now -> put in actual start scene if available
+            SceneManager.setScene(new StartMenuScene()); //uses dummy scene to compile for now -> put in actual start scene if available
             //EXAMPLE: SceneManager.setScene(new ImplementedScene());
 
             RenderPanel panel = new RenderPanel();

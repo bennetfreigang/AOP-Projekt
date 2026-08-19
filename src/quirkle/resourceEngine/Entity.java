@@ -17,6 +17,8 @@ import java.awt.image.BufferedImage;
  ********************************************************************************************/
 public abstract class Entity {
 
+    public abstract void onRender();
+
     public enum OriginPresets {
         TOP_LEFT(0.0, 0.0),
         TOP_MID(0.5, 0.0),
