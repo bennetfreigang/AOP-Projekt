@@ -8,10 +8,10 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class Scene {
     protected final List<Entity> sceneEntities = new CopyOnWriteArrayList<>();
 
-    public double getWidth() { return EngineConfig.WINDOW_WIDTH; }
-    public double getHeight() { return EngineConfig.WINDOW_HEIGHT; }
-    public double getCenterX() { return getWidth() / 2.0; }
-    public double getCenterY() { return getHeight() / 2.0; }
+    public int getWidth() { return EngineConfig.WINDOW_WIDTH; }
+    public int getHeight() { return EngineConfig.WINDOW_HEIGHT; }
+    public int getCenterX() { return (int) (getWidth() / 2.0); }
+    public int getCenterY() { return (int) (getHeight() / 2.0); }
 
     public Scene() {
         onCreate();

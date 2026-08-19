@@ -1,14 +1,13 @@
 package org.quirkle.entities;
 
 import java.awt.Color;
+import java.awt.Graphics2D;
 
 import org.quirkle.resourceEngine.*;
 
 public class TextEntity extends Entity {
     private double speedX = 200.0;
     private double speedY = 150.0;
-
-    EmbeddedText textLabel; 
 
     @Override
     public void onCreate() {
@@ -19,10 +18,6 @@ public class TextEntity extends Entity {
 
         x = SceneManager.getCurrentScene().getCenterX();
         y = SceneManager.getCurrentScene().getCenterY();
-
-        EmbeddedText textLabel = new EmbeddedText("DEMO", Color.BLACK, 40, "DEBUG_Poly-Regular", 0, 0, Entity.OriginPresets.CENTER);
-        embedTexts.add(textLabel);
-        this.textLabel = textLabel;
     }
 
     double vol = 1.0;
@@ -39,22 +34,23 @@ public class TextEntity extends Entity {
 
     }
 
+    String ranS = "";
+    float textScale = 40;
+
     @Override
     public void onTick(double dt) {
         if (vol <= 0.0) {
             x = SceneManager.getCurrentScene().getCenterX();
             y = SceneManager.getCurrentScene().getCenterY();
-            textLabel.msg = "DEMO FINISHED";
-            textLabel.fontSize = 10;
             scale = 16.0;
             rotation = 0.0;
+            ranS = "DEMO FINISHED";
+            textScale = 10;
             return;
         }
 
         if (countTick >= 8) {
-            String randomS = rndChar();
-            System.out.print(randomS + " >> ");
-            textLabel.msg = randomS;
+            ranS = rndChar();
             countTick = 0;
         }   else    {
             countTick += 1;
@@ -65,11 +61,11 @@ public class TextEntity extends Entity {
         x += speedX * dt;
         y += speedY * dt;
 
-        double halfWidth = getScaledWidth() / 2.0;
-        double halfHeight = getScaledHeight() / 2.0;
+        int halfWidth = (int) (getScaledWidth() / 2);
+        int halfHeight = (int) (getScaledHeight() / 2);
 
-        double sceneWidth = SceneManager.getCurrentScene().getCenterX() * 2.0;
-        double sceneHeight = SceneManager.getCurrentScene().getCenterY() * 2.0;
+        int sceneWidth = SceneManager.getCurrentScene().getCenterX() * 2;
+        int sceneHeight = SceneManager.getCurrentScene().getCenterY() * 2;
 
 
         if (x - halfWidth <= 0) {
@@ -95,5 +91,11 @@ public class TextEntity extends Entity {
             y = sceneHeight - halfHeight;
             speedY = -Math.abs(speedY);
         }
+    }
+
+    @Override
+    public void onRender(Graphics2D g) {
+        drawText(ranS, (float) (textScale * scale), Color.BLACK, "DEBUG_Poly-Regular", x, y, rotation * 0.5, OriginPresets.CENTER, g);
+        drawSprite("ResourceEngine", 0.4, x, y - 220, 0.0, OriginPresets.BOTTOM_MID, g);
     }
 }
