@@ -1,2 +1,2 @@
 English
-debugText /// Some debug Message;
+debugText == Some debug Message;

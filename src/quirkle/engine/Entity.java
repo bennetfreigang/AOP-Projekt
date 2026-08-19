@@ -1,4 +1,4 @@
-package org.quirkle.resourceEngine;
+package quirkle.engine;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -11,12 +11,11 @@ import java.awt.image.BufferedImage;
  * providing basic lifecycle hooks for
  * initilisation ticking, rendering  and destruction,
  * alongside built in support for positioning, rotation, interpolation and mouse detection
- * 
+ *
  * @note must be registered to a {@link Scene} using {@link Scene#add(Entity)}
  *       to activly receive update and render steps
  ********************************************************************************************/
 public abstract class Entity {
-
     public enum OriginPresets {
         TOP_LEFT(0.0, 0.0),
         TOP_MID(0.5, 0.0),

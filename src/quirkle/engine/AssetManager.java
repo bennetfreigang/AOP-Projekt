@@ -1,4 +1,4 @@
-package org.quirkle.resourceEngine;
+package quirkle.engine;
 
 import javax.imageio.ImageIO;
 import javax.sound.sampled.AudioInputStream;
@@ -18,6 +18,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Scanner;
+
+import quirkle.engine.extensions.LangPackage;
 
 //temporary dynamic loading solutions will be swapped out later for a full precaching solution
 public class AssetManager {
@@ -26,7 +29,7 @@ public class AssetManager {
     private static BufferedImage fallbackTexture = null;
 
     public static BufferedImage getTexture(String identifier) {
-        identifier = "/assets/textures/" + identifier + ".png"; //direct translation in prep for future precaching (frontend-shift)
+        identifier = EngineConfig.ASSET_ORIGIN + EngineConfig.TEXTURE_SUBDIR + "/" + identifier + ".png"; //direct translation in prep for future precaching (frontend-shift)
 
         if (identifier == null || identifier.isEmpty()) return getFallbackTexture();
         if (textureCache.containsKey(identifier)) return textureCache.get(identifier);
@@ -49,9 +52,10 @@ public class AssetManager {
     private static final Font fallbackFont = new Font("Arial", Font.PLAIN, 24);
 
     public static Font getFont(String identifier) {
-        identifier = "/assets/fonts/" + identifier + ".ttf"; //direct translation in prep for future precaching (frontend-shift)
-
         if (identifier == null || identifier.isEmpty()) return fallbackFont;
+
+        identifier = EngineConfig.ASSET_ORIGIN + EngineConfig.FONT_SUBDIR + "/" + identifier + ".ttf"; //direct translation in prep for future precaching (frontend-shift)
+
         if (fontCache.containsKey(identifier)) return fontCache.get(identifier);
 
         try (InputStream in = AssetManager.class.getResourceAsStream(identifier)) {
@@ -68,14 +72,37 @@ public class AssetManager {
         }
     }
 
-    /**
-     * future lang loading implementation
-     * DUMMY function (for now)
-     */
+    private static LangPackage lang = null;
+
+    public static void setLang(String identifier) {
+        if (identifier == null || identifier.isEmpty()) {
+            String errorMessage = "[ERROR] resourceEngine / AssetManager: setLang was called with an empty identifier";
+            if (lang == null) errorMessage += " -> THIS IS AN UNREPLACABLE UNCATCHED PROBLEM SINCE THE STANDART LANG COULD NOT BE LOADED!!!";
+            System.err.println(errorMessage);
+            return;
+        }
+
+        String path = EngineConfig.ASSET_ORIGIN + EngineConfig.LANG_SUBDIR + "/" + identifier + ".lang";
+
+        try (InputStream in = AssetManager.class.getResourceAsStream(path)) {
+            if (in == null) {
+                System.out.println("[ERROR] resourceEngine / AssetManager: could not load lang file at " + path);
+                return;
+            }
+
+            try (Scanner langReader = new Scanner(in)) {
+                lang = new LangPackage(langReader);
+            }
+        } catch (IOException e) {
+            System.out.println("[ERROR] resourceEngine / AssetManager: Failed to process lang file at " + path);
+            e.printStackTrace();
+        }
+    }
+
     public static String getMessage(String identifier) {
-        System.err.println("[INFO] resourceEngine / AssetManager: Would return message: " + identifier + " but this isnt implemented yet");
-        return new String("LANGMESSAGELOADING ISNT IMPLEMENTED YET");
-    } //! also utilizing precaching
+        if (lang.elements.containsKey(identifier)) return lang.elements.get(identifier);
+        else return "CURRENT LANG DOESNT CONTAIN KEY: " + identifier;
+    }
 
     private static final Map<String, byte[]> soundCache = new HashMap<>();
     private static void fallbackSound(String identifier) {
@@ -89,7 +116,7 @@ public class AssetManager {
             AudioInputStream audioStream = AudioSystem.getAudioInputStream(bais);
             Clip clip = AudioSystem.getClip();
             clip.open(audioStream);
-            
+
             FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
 
             //transform dB
@@ -111,7 +138,7 @@ public class AssetManager {
     public static void playSound(String identifier, double volume) {
         if (identifier == null || identifier.isEmpty()) { fallbackSound(identifier); return; }
 
-        identifier = "/assets/sounds/" + identifier + ".wav";
+        identifier = EngineConfig.ASSET_ORIGIN + EngineConfig.SOUND_SUBDIR + identifier + ".wav";
 
         if (soundCache.containsKey(identifier)) { playRawBytes(soundCache.get(identifier), volume); return; }
 
@@ -130,7 +157,7 @@ public class AssetManager {
         if (fallbackTexture == null) {
             int size = 128;
             int halfSize = size / 2;
-            
+
             fallbackTexture = new BufferedImage(size, size, BufferedImage.TYPE_INT_RGB);
             Graphics2D g = fallbackTexture.createGraphics();
             g.setColor(Color.MAGENTA);

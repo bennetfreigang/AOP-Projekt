@@ -1,4 +1,4 @@
-package org.quirkle.resourceEngine;
+package quirkle.engine;
 
 import java.awt.Color;
 
@@ -6,13 +6,16 @@ import java.awt.Color;
  * Basic Default-Setup Class for resourceEngine presets
  ***********************************************************************/
 public class EngineConfig {
-    public final String VERSION_INFO = "[BETA] v0.1.3";
+    public final static String VERSION_INFO = "[BETA] v0.1.4";
 
-    public final String ASSET_ORIGIN = "/assets";
+    public final static String ASSET_ORIGIN = "/assets";
 
     public static String TEXTURE_SUBDIR = "/textures";
+    public static String FONT_SUBDIR = "/fonts";
     public static String SOUND_SUBDIR = "/sounds";
     public static String LANG_SUBDIR = "/lang";
+
+    public static String DEFAULT_LANG_IDENTIFIER = "en";
 
     public static int WINDOW_WIDTH = 1920;
     public static int WINDOW_HEIGHT = 1080;

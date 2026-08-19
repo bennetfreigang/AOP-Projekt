@@ -1,4 +1,4 @@
-package org.quirkle.resourceEngine;
+package quirkle.engine;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -10,8 +10,8 @@ public class InputManager extends MouseAdapter {
     private static final InputManager instance = new InputManager();
     private static final KeyHandler keyHandler = new KeyHandler();
 
-    private static double mouseX;
-    private static double mouseY;
+    private static int mouseX;
+    private static int mouseY;
     private static boolean mousePressed;
     private static boolean mouseClicked;
 
@@ -55,8 +55,8 @@ public class InputManager extends MouseAdapter {
         }
     }
 
-    public static double getMouseX() { return mouseX; }
-    public static double getMouseY() { return mouseY; }
+    public static int getMouseX() { return mouseX; }
+    public static int getMouseY() { return mouseY; }
     public static boolean isMousePressed() { return mousePressed; }
     public static boolean isMouseClicked() { return mouseClicked; }
 

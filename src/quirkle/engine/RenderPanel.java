@@ -1,4 +1,4 @@
-package org.quirkle.resourceEngine;
+package quirkle.engine;
 
 import javax.swing.JPanel;
 import java.awt.Dimension;

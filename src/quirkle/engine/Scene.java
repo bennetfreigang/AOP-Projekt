@@ -1,4 +1,4 @@
-package org.quirkle.resourceEngine;
+package quirkle.engine;
 
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;

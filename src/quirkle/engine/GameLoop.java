@@ -1,4 +1,4 @@
-package org.quirkle.resourceEngine;
+package quirkle.engine;
 
 import javax.swing.Timer;
 import java.awt.event.ActionEvent;
