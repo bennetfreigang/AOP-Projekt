@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.quirkle.testing.Assertions.assertEquals;
-import static org.quirkle.testing.Assertions.assertThrows;
 
 public class ScoreCalculatorTest {
 
@@ -48,17 +47,6 @@ public class ScoreCalculatorTest {
                 tilesAt(at(2, 5)));
 
         assertScore("A gap breaks the contiguous streak", 2, board);
-    }
-
-    @Test
-    void testUnalignedPendingTilesThrow() {
-        Board board = new Board(tilesAt(), tilesAt(at(1, 1), at(2, 2)));
-
-        assertThrows(
-                IllegalStateException.class,
-                () -> ScoreCalculator.calculatePendingTilesScore(board.getPlacedTiles(), board.getPendingTiles()),
-                "Diagonal tiles without a shared row/column throw IllegalStateException"
-        );
     }
 
     @Test

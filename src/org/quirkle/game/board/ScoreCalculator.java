@@ -12,7 +12,7 @@ import java.util.Set;
 import java.util.function.ToIntFunction;
 
 /** Scores tile placements on a {@link Board}. */
-public class ScoreCalculator {
+class ScoreCalculator {
 
     private static final int QWIRKLE_LINE_LENGTH = 6;
     private static final int QWIRKLE_BONUS = 6;
@@ -24,14 +24,10 @@ public class ScoreCalculator {
      * and its column.
      *
      * @return points earned for the board's pending tiles
-     * @throws IllegalStateException if more than one pending tile is placed and they are not
-     *         aligned in a single row or column
+     * @apiNote Assumes {@code pendingTiles} are aligned in a single row or column, as validated by
+     *          {@link PlacementValidator}.
      */
-    public static int calculatePendingTilesScore(Map<Position, Tile> placedTiles, Map<Position, Tile> pendingTiles) {
-        if (pendingTiles.size() > 1) {
-            requireSingleLineAlignment(pendingTiles.keySet());
-        }
-
+    static int calculatePendingTilesScore(Map<Position, Tile> placedTiles, Map<Position, Tile> pendingTiles) {
         Map<Position, Tile> allTiles = mergeTiles(placedTiles, pendingTiles);
         List<Integer> formedLineLengths = findFormedLineLengths(allTiles, pendingTiles);
 
@@ -42,53 +38,25 @@ public class ScoreCalculator {
         return sumWithQwirkleBonus(formedLineLengths);
     }
 
-    /** @throws IllegalStateException unless every position shares one x or one y coordinate. */
-    private static void requireSingleLineAlignment(Set<Position> pendingPositions) {
-        boolean sameX = pendingPositions.stream().map(Position::x).distinct().count() == 1;
-        boolean sameY = pendingPositions.stream().map(Position::y).distinct().count() == 1;
-        if (!sameX && !sameY) {
-            throw new IllegalStateException("Pending tiles are not aligned in a single row or column.");
-        }
-    }
-
     /** @return the length of every row/column that the pending tiles form or extend, one entry per line. */
     private static List<Integer> findFormedLineLengths(Map<Position, Tile> allTiles, Map<Position, Tile> pendingTiles) {
         List<Integer> lineLengths = new ArrayList<>();
         for (LineOrientation orientation : LineOrientation.values()) {
-            addLineLengthsForOrientation(allTiles, pendingTiles, orientation, lineLengths);
+            lineLengths.addAll(lineLengthsForOrientation(allTiles, pendingTiles, orientation));
         }
         return lineLengths;
     }
 
-    /** Appends the length of each line, in {@code orientation}, that the pending tiles form or extend. */
-    private static void addLineLengthsForOrientation(Map<Position, Tile> allTiles, Map<Position, Tile> pendingTiles, LineOrientation orientation, List<Integer> lineLengths) {
+    /** @return the length of each line, in {@code orientation}, that the pending tiles form or extend. */
+    private static List<Integer> lineLengthsForOrientation(Map<Position, Tile> allTiles, Map<Position, Tile> pendingTiles, LineOrientation orientation) {
+        List<Integer> lineLengths = new ArrayList<>();
         for (int lineKey : distinctLineKeys(pendingTiles.keySet(), orientation)) {
             int lineLength = calculateLineLength(allTiles, pendingTiles, orientation, lineKey);
             if (lineLength >= 2) {
                 lineLengths.add(lineLength);
             }
         }
-    }
-
-    /** @return the sum of {@code lineLengths}, with a {@value QWIRKLE_BONUS}-point bonus added per completed six-tile line. */
-    private static int sumWithQwirkleBonus(List<Integer> lineLengths) {
-        int score = 0;
-        for (int lineLength : lineLengths) {
-            score += lineLength;
-            if (lineLength == QWIRKLE_LINE_LENGTH) {
-                score += QWIRKLE_BONUS;
-            }
-        }
-        return score;
-    }
-
-    /** @return the distinct line-identifying coordinates (e.g. the y-values shared by tiles on a {@link LineOrientation#HORIZONTAL} line) touched by {@code positions}. */
-    private static Set<Integer> distinctLineKeys(Set<Position> positions, LineOrientation orientation) {
-        Set<Integer> lineKeys = new HashSet<>();
-        for (Position position : positions) {
-            lineKeys.add(orientation.fixedCoordinate.applyAsInt(position));
-        }
-        return lineKeys;
+        return lineLengths;
     }
 
     /** @return length of the contiguous streak, along {@code orientation}, formed by the pending tiles on {@code lineKey} together with their in-line neighbors. */
@@ -104,6 +72,15 @@ public class ScoreCalculator {
         return orientation.extentCoordinate.applyAsInt(lineEnd) - orientation.extentCoordinate.applyAsInt(lineStart) + 1;
     }
 
+    /** @return the distinct line-identifying coordinates (e.g. the y-values shared by tiles on a {@link LineOrientation#HORIZONTAL} line) touched by {@code positions}. */
+    private static Set<Integer> distinctLineKeys(Set<Position> positions, LineOrientation orientation) {
+        Set<Integer> lineKeys = new HashSet<>();
+        for (Position position : positions) {
+            lineKeys.add(orientation.fixedCoordinate.applyAsInt(position));
+        }
+        return lineKeys;
+    }
+
     /** @return the pending positions that lie on the line identified by {@code lineKey} in {@code orientation}. */
     private static List<Position> pendingTilesOnLine(Set<Position> pendingPositions, LineOrientation orientation, int lineKey) {
         List<Position> pendingOnLine = new ArrayList<>();
@@ -113,6 +90,18 @@ public class ScoreCalculator {
             }
         }
         return pendingOnLine;
+    }
+
+    /** @return the sum of {@code lineLengths}, with a {@value QWIRKLE_BONUS}-point bonus added per completed six-tile line. */
+    private static int sumWithQwirkleBonus(List<Integer> lineLengths) {
+        int score = 0;
+        for (int lineLength : lineLengths) {
+            score += lineLength;
+            if (lineLength == QWIRKLE_LINE_LENGTH) {
+                score += QWIRKLE_BONUS;
+            }
+        }
+        return score;
     }
 
     /** @return the pending position closest to the line's backward end. */

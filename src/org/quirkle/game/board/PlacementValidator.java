@@ -12,14 +12,14 @@ import org.quirkle.game.tiles.TileColor;
 import org.quirkle.game.tiles.TileSymbol;
 
 /** Validates whether tiles may legally be placed onto a Qwirkle board, per the game's placement rules. */
-public class PlacementValidator {
+class PlacementValidator {
 
     /**
      * @return {@code true} if every tile in {@code pendingTiles} could legally be committed onto {@code placedTiles}:
      *         all pending positions lie in one common row or column, are unoccupied, connect to the existing board
      *         (unless it is still empty), and every line they touch is a valid Qwirkle line.
      */
-    public static boolean isPendingTilePlacementPossible(Map<Position, Tile> placedTiles, Map<Position, Tile> pendingTiles) {
+    static boolean isPendingTilePlacementPossible(Map<Position, Tile> placedTiles, Map<Position, Tile> pendingTiles) {
         if (!isPendingTilesInLine(pendingTiles.keySet())) {
             return false;
         }
@@ -45,7 +45,7 @@ public class PlacementValidator {
      * @return {@code true} if {@code tile} could be added to {@code pendingTiles} at {@code position} — i.e.
      *         {@code position} is not already occupied and the resulting pending tiles would still be a legal placement.
      */
-    public static boolean isTilePlacementPossible(Map<Position, Tile> placedTiles, Map<Position, Tile> pendingTiles, Position position, Tile tile) {
+    static boolean isTilePlacementPossible(Map<Position, Tile> placedTiles, Map<Position, Tile> pendingTiles, Position position, Tile tile) {
         if (placedTiles.containsKey(position) || pendingTiles.containsKey(position)) {
             return false;
         }
