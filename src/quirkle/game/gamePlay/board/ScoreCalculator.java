@@ -66,8 +66,8 @@ class ScoreCalculator {
         Position innermostStart = earliestPendingPosition(pendingOnLine, orientation);
         Position innermostEnd = latestPendingPosition(pendingOnLine, orientation);
 
-        Position lineStart = walkToStreakEnd(allTiles, innermostStart, orientation.backwardDirection);
-        Position lineEnd = walkToStreakEnd(allTiles, innermostEnd, orientation.forwardDirection);
+        Position lineStart = StreakWalker.walkToStreakEnd(allTiles, innermostStart, orientation.backwardDirection);
+        Position lineEnd = StreakWalker.walkToStreakEnd(allTiles, innermostEnd, orientation.forwardDirection);
 
         return orientation.extentCoordinate.applyAsInt(lineEnd) - orientation.extentCoordinate.applyAsInt(lineStart) + 1;
     }
@@ -119,40 +119,5 @@ class ScoreCalculator {
         Map<Position, Tile> merged = new HashMap<>(first);
         merged.putAll(second);
         return merged;
-    }
-
-    /** @return the outermost position reachable from {@code start} by repeatedly stepping {@code direction} through {@code lineTiles}. */
-    private static Position walkToStreakEnd(Map<Position, Tile> lineTiles, Position start, Direction direction) {
-        Position current = start;
-        while (lineTiles.containsKey(current.neighbor(direction))) {
-            current = current.neighbor(direction);
-        }
-        return current;
-    }
-
-    /**
-     * Orientation a line can run in, with the data needed to find tiles on that line and measure
-     * its length.
-     * <p>
-     * {@code fixedCoordinate} is the coordinate shared by every tile on the line (used to group
-     * pending tiles by the line they belong to); {@code extentCoordinate} is the coordinate that
-     * varies along the line (used to walk it and measure its length).
-     */
-    private enum LineOrientation {
-        HORIZONTAL(Position::y, Position::x, Direction.WEST, Direction.EAST),
-        VERTICAL(Position::x, Position::y, Direction.NORTH, Direction.SOUTH);
-
-        private final ToIntFunction<Position> fixedCoordinate;
-        private final ToIntFunction<Position> extentCoordinate;
-        private final Direction backwardDirection;
-        private final Direction forwardDirection;
-
-        LineOrientation(ToIntFunction<Position> fixedCoordinate, ToIntFunction<Position> extentCoordinate,
-                         Direction backwardDirection, Direction forwardDirection) {
-            this.fixedCoordinate = fixedCoordinate;
-            this.extentCoordinate = extentCoordinate;
-            this.backwardDirection = backwardDirection;
-            this.forwardDirection = forwardDirection;
-        }
     }
 }

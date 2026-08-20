@@ -100,28 +100,27 @@ class PlacementValidator {
 
     /** @return {@code true} if both the horizontal and the vertical line through {@code position} are valid Qwirkle lines. */
     private static boolean formsValidLines(Map<Position, Tile> tiles, Position position) {
-        return isValidLine(collectLine(tiles, position, Direction.WEST, Direction.EAST))
-                && isValidLine(collectLine(tiles, position, Direction.NORTH, Direction.SOUTH));
-    }
-
-    /** @return every tile contiguously connected to {@code position} along the axis given by {@code negative}/{@code positive}, {@code position}'s own tile included. */
-    private static List<Tile> collectLine(Map<Position, Tile> tiles, Position position, Direction negative, Direction positive) {
-        List<Tile> line = new ArrayList<>();
-        collectInDirection(tiles, position, negative, line);
-        line.add(tiles.get(position));
-        collectInDirection(tiles, position, positive, line);
-        return line;
-    }
-
-    /** Recursively appends every tile found by walking {@code direction} from {@code position} onto {@code line}; never doubles back. */
-    private static void collectInDirection(Map<Position, Tile> tiles, Position position, Direction direction, List<Tile> line) {
-        Position neighborPosition = position.neighbor(direction);
-        Tile neighbor = tiles.get(neighborPosition);
-        if (neighbor == null) {
-            return;
+        for (LineOrientation orientation : LineOrientation.values()) {
+            if (!isValidLine(collectLine(tiles, position, orientation))) return false;
         }
-        line.add(neighbor);
-        collectInDirection(tiles, neighborPosition, direction, line);
+        return true;
+    }
+
+    /** @return every tile contiguously connected to {@code position} along {@code orientation}, {@code position}'s own tile included. */
+    private static List<Tile> collectLine(Map<Position, Tile> tiles, Position position, LineOrientation orientation) {
+        Position lineStart = StreakWalker.walkToStreakEnd(tiles, position, orientation.backwardDirection);
+        Position lineEnd = StreakWalker.walkToStreakEnd(tiles, position, orientation.forwardDirection);
+        int length = orientation.extentCoordinate.applyAsInt(lineEnd) - orientation.extentCoordinate.applyAsInt(lineStart) + 1;
+
+        List<Tile> line = new ArrayList<>(length);
+        Position current = lineStart;
+
+        for (int i = 0; i < length; i++) {
+            line.add(tiles.get(current));
+            current = current.neighbor(orientation.forwardDirection);
+        }
+
+        return line;
     }
 
     /**
@@ -129,9 +128,7 @@ class PlacementValidator {
      *         distinct symbols, or all share one symbol with pairwise distinct colors.
      */
     private static boolean isValidLine(List<Tile> line) {
-        if (line.size() <= 1) {
-            return true;
-        }
+        if (line.size() <= 1) return true;
 
         Set<TileColor> colors = new HashSet<>();
         Set<TileSymbol> symbols = new HashSet<>();
@@ -140,8 +137,11 @@ class PlacementValidator {
             symbols.add(tile.getSymbol());
         }
 
-        boolean sameColorDistinctSymbols = colors.size() == 1 && symbols.size() == line.size();
-        boolean sameSymbolDistinctColors = symbols.size() == 1 && colors.size() == line.size();
-        return sameColorDistinctSymbols || sameSymbolDistinctColors;
+        boolean allSameColor = colors.size() == 1;
+        boolean allSameSymbol = symbols.size() == 1;
+        boolean allColorsDifferent = colors.size() == line.size();
+        boolean allSymbolsDifferent = symbols.size() == line.size();
+
+        return (allSameColor && allSymbolsDifferent) || (allSameSymbol && allColorsDifferent);
     }
 }

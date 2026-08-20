@@ -12,12 +12,16 @@ import static quirkle.testing.Assertions.assertEquals;
 
 public class ScoreCalculatorTest {
 
+    // --- Rule: one point per newly placed tile (no line formed) -----------------
+
     @Test
     void testSinglePendingTileWithoutNeighbors() {
         Board board = new Board(tilesAt(), tilesAt(at(0, 0)));
 
         assertScore("Single tile without neighbors (first move)", 1, board);
     }
+
+    // --- Rule: the new length of every row/column formed or extended ------------
 
     @Test
     void testPendingTilesFormVerticalLine() {
@@ -78,6 +82,18 @@ public class ScoreCalculatorTest {
     }
 
     @Test
+    void testMultiplePendingTilesExtendExistingRowAndColumn() {
+        Board board = new Board(
+                tilesAt(at(0, 5) /* existing row, left of the new tiles */, at(2, 3) /* existing column, above (2,5) */, at(2, 4)),
+                tilesAt(at(1, 5), at(2, 5), at(3, 5)));
+
+        // Row (0,5)-(3,5): 4 points. Column (2,3)-(2,5): 3 points. Total: 7.
+        assertScore("Multiple new tiles simultaneously extend a row and a column", 7, board);
+    }
+
+    // --- Rule: a completed six-tile line earns the Qwirkle bonus ----------------
+
+    @Test
     void testCompletingSixTileLineScoresQwirkleBonus() {
         Board board = new Board(
                 tilesAt(at(2, 1), at(2, 2), at(2, 3), at(2, 4), at(2, 5)),
@@ -95,16 +111,6 @@ public class ScoreCalculatorTest {
 
         // Horizontal row (0,5)-(2,5): 3 points. Vertical column (2,0)-(2,5): 6 tiles -> 6 + 6 bonus = 12. Total: 15.
         assertScore("A crossing tile simultaneously completes a Qwirkle on one axis", 15, board);
-    }
-
-    @Test
-    void testMultiplePendingTilesExtendExistingRowAndColumn() {
-        Board board = new Board(
-                tilesAt(at(0, 5) /* existing row, left of the new tiles */, at(2, 3) /* existing column, above (2,5) */, at(2, 4)),
-                tilesAt(at(1, 5), at(2, 5), at(3, 5)));
-
-        // Row (0,5)-(3,5): 4 points. Column (2,3)-(2,5): 3 points. Total: 7.
-        assertScore("Multiple new tiles simultaneously extend a row and a column", 7, board);
     }
 
     private static void assertScore(String testName, int expectedScore, Board board) {
