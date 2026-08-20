@@ -4,6 +4,6 @@
 /**
  * 
  */
-module MeinSpiel {
+module Qwirkle {
 	requires java.desktop;
 }
