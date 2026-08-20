@@ -1,6 +1,7 @@
 package quirkle;
 
 import quirkle.engine.*;
+import quirkle.game.startMenu.StartMenuScene;
 
 import java.awt.Color;
 
@@ -12,7 +13,7 @@ public class Main {
         SwingUtilities.invokeLater(() -> {
             EngineConfig.setTitle("DEMO");
             EngineConfig.setSize(1920, 1080);
-            EngineConfig.BACKGROUND_COLOR = Color.BLACK;
+            EngineConfig.BACKGROUND_COLOR = Color.WHITE;
             EngineConfig.FPS = 120;
             EngineConfig.DEFAULT_LANG_IDENTIFIER = "de";
 
@@ -22,7 +23,7 @@ public class Main {
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setResizable(false);
 
-            SceneManager.setScene(new Scene()); //uses dummy scene to compile for now -> put in actual start scene if available
+            SceneManager.setScene(new StartMenuScene()); //uses dummy scene to compile for now -> put in actual start scene if available
             //EXAMPLE: SceneManager.setScene(new ImplementedScene());
 
             RenderPanel panel = new RenderPanel();

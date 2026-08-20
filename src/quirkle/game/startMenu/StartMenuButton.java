@@ -1,6 +1,6 @@
 package quirkle.game.startMenu;
 
-import quirkle.resourceEngine.Entity;
+import quirkle.engine.Entity;
 
 import java.awt.*;
 
@@ -17,9 +17,6 @@ public class StartMenuButton extends Entity {
         origin = OriginPresets.CENTER;
         setSprite("button");
     }
-
-    @Override
-    public void onRender() { }
 
     @Override
     public void onRender(Graphics2D g) {

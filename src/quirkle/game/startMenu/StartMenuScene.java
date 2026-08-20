@@ -1,6 +1,6 @@
 package quirkle.game.startMenu;
 
-import quirkle.resourceEngine.Scene;
+import quirkle.engine.Scene;
 
 public class StartMenuScene extends Scene {
 
