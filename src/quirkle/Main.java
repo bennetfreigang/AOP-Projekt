@@ -12,7 +12,7 @@ public class Main {
         SwingUtilities.invokeLater(() -> {
             EngineConfig.setTitle("DEMO");
             EngineConfig.setSize(1920, 1080);
-            EngineConfig.BACKGROUND_COLOR = Color.WHITE;
+            EngineConfig.BACKGROUND_COLOR = Color.BLACK;
             EngineConfig.FPS = 120;
             EngineConfig.DEFAULT_LANG_IDENTIFIER = "de";
 

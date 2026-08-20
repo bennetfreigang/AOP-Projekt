@@ -1,5 +1,6 @@
 package quirkle.engine;
 
+import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
 
 public class SceneManager {
@@ -14,8 +15,17 @@ public class SceneManager {
         currentScene = newScene;
     }
 
-    public static void setTempScene(Scene tempScene) {
+    private static boolean renderStoredScene;
+    private static boolean pauseStoredScene;
+
+    public static float currentSceneAlpha = 1.0f;
+    public static float storedSceneAlpha = 1.0f;
+
+    public static void setTempScene(Scene tempScene, boolean _renderStoredScene, boolean _pauseStoredScene) {
         if (storedScene == null) {
+            renderStoredScene = _renderStoredScene;
+            pauseStoredScene = _pauseStoredScene;
+
             storedScene = currentScene;
             currentScene = tempScene;
         }   else    {
@@ -38,15 +48,21 @@ public class SceneManager {
     }
 
     public static void update(double dt) {
-        if (currentScene != null) {
-            currentScene.update(dt);
-        }
+        if (currentScene != null) currentScene.update(dt);
+        if (!pauseStoredScene && storedScene != null) storedScene.update(dt);
+
         InputManager.endFrame();
     }
 
     public static void render(Graphics2D g) {
         if (currentScene != null) {
+            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, currentSceneAlpha));
             currentScene.render(g);
+        }
+
+        if (renderStoredScene && storedScene != null) {
+            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, storedSceneAlpha));
+            storedScene.render(g);
         }
     }
 }

@@ -1,2 +1,10 @@
 Deutsch
-debugText == Irgendeine Debug Nachricht;
+
+--- STARTMENU --------------------------------------------
+
+title == KWIRKEL
+play == Starten
+settings == Einstellungen
+credits == Abspann
+quit == Beenden
+return == Zurück
