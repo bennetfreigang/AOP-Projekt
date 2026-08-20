@@ -1,2 +1,10 @@
 English
-debugText /// Some debug Message;
+
+--- STARTMENU --------------------------------------------
+
+title == QWIRKLE
+play == Play
+settings == Settings
+credits == Credits
+quit == Quit
+return = Return
