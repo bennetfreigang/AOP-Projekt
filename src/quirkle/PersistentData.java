@@ -1,4 +1,4 @@
-package org.quirkle;
+package quirkle;
 
 public class PersistentData {
     public static int playerCount;

@@ -1,6 +1,7 @@
-package org.quirkle.resourceEngine;
+package quirkle.resourceEngine;
 
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -8,10 +9,10 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class Scene {
     protected final List<Entity> sceneEntities = new CopyOnWriteArrayList<>();
 
-    public double getWidth() { return EngineConfig.WINDOW_WIDTH; }
-    public double getHeight() { return EngineConfig.WINDOW_HEIGHT; }
-    public double getCenterX() { return getWidth() / 2.0; }
-    public double getCenterY() { return getHeight() / 2.0; }
+    public int getWidth() { return EngineConfig.WINDOW_WIDTH; }
+    public int getHeight() { return EngineConfig.WINDOW_HEIGHT; }
+    public int getCenterX() { return (int) (getWidth() / 2.0); }
+    public int getCenterY() { return (int) (getHeight() / 2.0); }
 
     public Scene() {
         onCreate();
@@ -91,6 +92,10 @@ public class Scene {
     public boolean bgTextureEnabled = false;
 
     public void render(Graphics2D g) {
+        g.setRenderingHint(
+            RenderingHints.KEY_TEXT_ANTIALIASING,
+            RenderingHints.VALUE_TEXT_ANTIALIAS_ON
+        );
 
         if (bgTextureEnabled && bgTexture != null) { //maybe unecessary but for now nice to have [would like to use parralax background using sceneEntities]
             g.drawImage(bgTexture, 0, 0, (int) getWidth(), (int)  getHeight(), null);
