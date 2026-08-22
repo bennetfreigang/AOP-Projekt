@@ -1,4 +1,4 @@
-package org.quirkle.testing;
+package quirkle.testing;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -25,8 +25,8 @@ public final class TestEngine {
      */
     public static void main(String[] args) {
         boolean allPassed = run(
-                org.quirkle.game.board.ScoreCalculatorTest.class,
-                org.quirkle.game.board.PlacementValidatorTest.class);
+                quirkle.game.gamePlay.board.ScoreCalculatorTest.class,
+                quirkle.game.gamePlay.board.PlacementValidatorTest.class);
         if (!allPassed) {
             System.exit(1);
         }
