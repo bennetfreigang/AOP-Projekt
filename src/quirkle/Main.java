@@ -1,8 +1,7 @@
 package quirkle;
 
 import quirkle.engine.*;
-import quirkle.game.startMenu.StartMenuScene;
-
+import quirkle.game.credits.CreditsScene;
 import java.awt.Color;
 
 import javax.swing.JFrame;
@@ -11,9 +10,10 @@ import javax.swing.SwingUtilities;
 public class Main {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            EngineConfig.setTitle("DEMO");
-            EngineConfig.setSize(1920, 1080);
-            EngineConfig.BACKGROUND_COLOR = Color.WHITE;
+            EngineConfig.setTitle("Credits");
+            EngineConfig.setSize(1512, 920); // MacBook Pro Display (Bennet)
+//            EngineConfig.setSize(1920, 1080);
+            EngineConfig.BACKGROUND_COLOR = Color.BLACK;
             EngineConfig.FPS = 120;
             EngineConfig.DEFAULT_LANG_IDENTIFIER = "de";
 
@@ -25,8 +25,8 @@ public class Main {
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setResizable(false);
 
-            SceneManager.setScene(new StartMenuScene()); //uses dummy scene to compile for now -> put in actual start scene if available
-            //EXAMPLE: SceneManager.setScene(new ImplementedScene());
+            // start scene
+            SceneManager.setScene(new CreditsScene());
 
             RenderPanel panel = new RenderPanel();
             frame.add(panel);
