@@ -16,6 +16,8 @@ public class Main {
             EngineConfig.FPS = 120;
             EngineConfig.DEFAULT_LANG_IDENTIFIER = "de";
 
+            EngineConfig.SUPPRES_WARNINGS = false;
+
             AssetManager.setLang(EngineConfig.DEFAULT_LANG_IDENTIFIER);
 
             JFrame frame = new JFrame(EngineConfig.TITLE);
