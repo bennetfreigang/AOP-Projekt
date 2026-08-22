@@ -1,4 +1,4 @@
-package org.quirkle.testing;
+package quirkle.testing;
 
 import java.util.Objects;
 

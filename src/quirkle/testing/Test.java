@@ -1,4 +1,4 @@
-package org.quirkle.testing;
+package quirkle.testing;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
