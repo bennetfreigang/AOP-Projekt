@@ -33,11 +33,11 @@ public class GameLoop implements ActionListener {
         double behindByMilliSec = realMilliSec - expectedIntervalMillis;
 
         if (behindByMilliSec > WARNING_THRESHOLD_MILLIS) {
-            System.err.println("[WARNING] resourceEngine / GameLoop: tick behind by " + behindByMilliSec + " milliseconds");
+            if (!EngineConfig.SUPPRES_WARNINGS) System.err.println("[WARNING] resourceEngine / GameLoop: tick behind by " + behindByMilliSec + " milliseconds");
         }
 
         if (dt > MAX_DT_SECONDS) {
-            System.err.println("[WARNING] resourceEngine / GameLoop: deltaTime clamped from " + realMilliSec + "ms to  " + MAX_DT_SECONDS*1000.0 + "ms");
+            if (!EngineConfig.SUPPRES_WARNINGS) System.err.println("[WARNING] resourceEngine / GameLoop: deltaTime clamped from " + realMilliSec + "ms to  " + MAX_DT_SECONDS*1000.0 + "ms");
             dt = MAX_DT_SECONDS;
         }
 

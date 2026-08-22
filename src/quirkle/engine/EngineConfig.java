@@ -8,6 +8,8 @@ import java.awt.Color;
 public class EngineConfig {
     public final static String VERSION_INFO = "[BETA] v0.2.0";
 
+    public static boolean SUPPRES_WARNINGS = false;
+
     public final static String ASSET_ORIGIN = "/assets";
 
     public static String TEXTURE_SUBDIR = "/textures";

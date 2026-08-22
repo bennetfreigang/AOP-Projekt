@@ -29,7 +29,7 @@ public class SceneManager {
             storedScene = currentScene;
             currentScene = tempScene;
         }   else    {
-            System.err.println("[ERROR] resourceEngine / SceneManager: cant load temporary Scene! There is already a stored Scene");
+            if (!EngineConfig.SUPPRES_WARNINGS) System.err.println("[ERROR] resourceEngine / SceneManager: cant load temporary Scene! There is already a stored Scene");
         }
     }
 
@@ -39,7 +39,7 @@ public class SceneManager {
             currentScene = storedScene;
             storedScene = null;
         }   else    {
-            System.err.println("[ERROR] resourceEngine / SceneManager: cant return to stored Scene! There is no stored Scene");
+            if (!EngineConfig.SUPPRES_WARNINGS) System.err.println("[ERROR] resourceEngine / SceneManager: cant return to stored Scene! There is no stored Scene");
         }
     }
 

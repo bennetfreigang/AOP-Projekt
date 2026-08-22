@@ -36,14 +36,14 @@ public class AssetManager {
 
         try (InputStream in = AssetManager.class.getResourceAsStream(identifier)) {
             if (in == null) {
-                System.err.println("[WARNING] resourceEngine / AssetManager: Could not find texture: " + identifier);
+                if (!EngineConfig.SUPPRES_WARNINGS) System.err.println("[WARNING] resourceEngine / AssetManager: Could not find texture: " + identifier);
                 return getFallbackTexture();
             }
             BufferedImage img = ImageIO.read(in);
             textureCache.put(identifier, img);
             return img;
         } catch (Exception e) {
-            System.err.println("[ERROR] resourceEngine / AssetManager: Failed to load texture: " + identifier);
+            if (!EngineConfig.SUPPRES_WARNINGS) System.err.println("[ERROR] resourceEngine / AssetManager: Failed to load texture: " + identifier);
             return getFallbackTexture();
         }
     }
@@ -60,14 +60,14 @@ public class AssetManager {
 
         try (InputStream in = AssetManager.class.getResourceAsStream(identifier)) {
             if (in == null) {
-                System.err.println("[WARNING] resourceEngine / AssetManager: Could not find font: " + identifier);
+                if (!EngineConfig.SUPPRES_WARNINGS) System.err.println("[WARNING] resourceEngine / AssetManager: Could not find font: " + identifier);
                 return fallbackFont;
             }
             Font font = Font.createFont(Font.TRUETYPE_FONT, in);
             fontCache.put(identifier, font);
             return font;
         } catch (Exception e) {
-            System.err.println("[ERROR] resourceEngine / AssetManager: Failed to load font: " + identifier);
+            if (!EngineConfig.SUPPRES_WARNINGS) System.err.println("[ERROR] resourceEngine / AssetManager: Failed to load font: " + identifier);
             return fallbackFont;
         }
     }
@@ -78,7 +78,7 @@ public class AssetManager {
         if (identifier == null || identifier.isEmpty()) {
             String errorMessage = "[ERROR] resourceEngine / AssetManager: setLang was called with an empty identifier";
             if (lang == null) errorMessage += " -> THIS IS AN UNREPLACABLE UNCATCHED PROBLEM SINCE THE STANDART LANG COULD NOT BE LOADED!!!";
-            System.err.println(errorMessage);
+            if (!EngineConfig.SUPPRES_WARNINGS) System.err.println(errorMessage);
             return;
         }
 
@@ -86,7 +86,7 @@ public class AssetManager {
 
         try (InputStream in = AssetManager.class.getResourceAsStream(path)) {
             if (in == null) {
-                System.out.println("[ERROR] resourceEngine / AssetManager: could not load lang file at " + path);
+                if (!EngineConfig.SUPPRES_WARNINGS) System.out.println("[ERROR] resourceEngine / AssetManager: could not load lang file at " + path);
                 return;
             }
 
@@ -94,7 +94,7 @@ public class AssetManager {
                 lang = new LangPackage(langReader);
             }
         } catch (IOException e) {
-            System.out.println("[ERROR] resourceEngine / AssetManager: Failed to process lang file at " + path);
+            if (!EngineConfig.SUPPRES_WARNINGS) System.out.println("[ERROR] resourceEngine / AssetManager: Failed to process lang file at " + path);
             e.printStackTrace();
         }
     }
@@ -106,7 +106,7 @@ public class AssetManager {
 
     private static final Map<String, byte[]> soundCache = new HashMap<>();
     private static void fallbackSound(String identifier) {
-        System.err.println("[ERROR] resourceEngine / AssetManager: Failed to play sound: " + identifier);
+        if (!EngineConfig.SUPPRES_WARNINGS) System.err.println("[ERROR] resourceEngine / AssetManager: Failed to play sound: " + identifier);
     }
 
     private static void playRawBytes(byte[] soundData, double volume) {
