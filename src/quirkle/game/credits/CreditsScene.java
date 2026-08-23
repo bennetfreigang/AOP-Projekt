@@ -1,8 +1,8 @@
 package quirkle.game.credits;
 
-import quirkle.engine.AssetManager;
-import quirkle.engine.Entity;
 import quirkle.engine.Scene;
+
+import java.awt.*;
 
 public class CreditsScene extends Scene {
 
@@ -12,16 +12,15 @@ public class CreditsScene extends Scene {
     private int nextIndex = 0;
     private double timeSinceLastSpawn = SPAWN_INTERVAL;
 
-    public CreditsScene() {
-        Entity background = new Background();
-        addEntities(background);
+    private final Background background;
 
-        background.x = getCenterX();
-        background.y = getCenterY();
+    public CreditsScene() {
+        background = new Background();
     }
 
     @Override
     public void onTick(double dt) {
+        background.onTick(dt);
         timeSinceLastSpawn += dt;
 
         // spawn every 4.0 seconds (SPAWN_INTERVALL) a new CreditsElement
@@ -30,5 +29,10 @@ public class CreditsScene extends Scene {
             nextIndex++;
             timeSinceLastSpawn = 0;
         }
+    }
+
+    @Override
+    public void onRender(Graphics2D g) {
+        background.render(g);
     }
 }
