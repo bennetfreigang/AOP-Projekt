@@ -10,9 +10,9 @@ public class BoardCamera {
     double offsetY;
 
     double baseTileSize;
-    private double zoom = 1.0;
+    private double zoom = 2.0;
 
-    private static final double MIN_ZOOM = 0.25;
+    private static final double MIN_ZOOM = 1.0;
     private static final double MAX_ZOOM = 4.0;
 
     public BoardCamera(double centerX, double centerY, double baseTileSize) {
@@ -25,7 +25,20 @@ public class BoardCamera {
         return zoom;
     }
 
-    public void zoomBy(double delta) {
+    /** Zooms by {@code delta}, keeping the board point currently under ({@code screenX}, {@code screenY}) fixed on screen. */
+    public void zoomAt(double delta, double screenX, double screenY) {
+        double oldTileSize = getTileSize();
+        double worldX = (screenX - centerX - offsetX) / oldTileSize;
+        double worldY = (screenY - centerY - offsetY) / oldTileSize;
+
+        zoomBy(delta);
+
+        double newTileSize = getTileSize();
+        offsetX = screenX - centerX - worldX * newTileSize;
+        offsetY = screenY - centerY - worldY * newTileSize;
+    }
+
+    private void zoomBy(double delta) {
         zoom = Math.clamp(zoom + delta, MIN_ZOOM, MAX_ZOOM);
     }
 
