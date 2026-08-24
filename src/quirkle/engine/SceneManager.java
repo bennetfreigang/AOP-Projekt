@@ -22,15 +22,17 @@ public class SceneManager {
     public static float storedSceneAlpha = 1.0f;
 
     public static void setTempScene(Scene tempScene, boolean _renderStoredScene, boolean _pauseStoredScene) {
-        if (storedScene == null) {
-            renderStoredScene = _renderStoredScene;
-            pauseStoredScene = _pauseStoredScene;
-
-            storedScene = currentScene;
+        if (!(storedScene == null)) {
+            System.out.println("[INFO] resourceEngine / SceneManager: overwriting already stored temporary Scene");
+            currentScene.destroy();
             currentScene = tempScene;
         }   else    {
-            if (!EngineConfig.SUPPRES_WARNINGS) System.err.println("[ERROR] resourceEngine / SceneManager: cant load temporary Scene! There is already a stored Scene");
+            currentScene = tempScene;
+            storedScene = currentScene;
         }
+
+        renderStoredScene = _renderStoredScene;
+        pauseStoredScene = _pauseStoredScene;
     }
 
     public static void stopTempScene() {
