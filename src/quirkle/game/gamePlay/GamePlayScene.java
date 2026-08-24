@@ -11,7 +11,6 @@ import quirkle.game.gamePlay.tiles.TileEntity;
 import quirkle.game.gamePlay.tiles.TileSymbol;
 
 import java.awt.*;
-import java.awt.event.KeyEvent;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,6 +20,8 @@ public class GamePlayScene extends Scene {
     private final Board board;
     private final BoardCamera camera;
     private final Map<Position, TileEntity> tileEntities = new HashMap<>();
+
+    private Tile nextTile;
 
     // Zoom
     private static final double ZOOM_FACTOR = 1.0;
@@ -33,16 +34,14 @@ public class GamePlayScene extends Scene {
     public GamePlayScene() {
         this.board = new Board();
         this.camera = new BoardCamera(getCenterX(), getCenterY(), 32);
-
-        board.placeTile(new Position(0, 0), new Tile(TileColor.RED, TileSymbol.CIRCLE));
-        board.placeTile(new Position(1, 0), new Tile(TileColor.RED, TileSymbol.SQUARE));
-        board.placeTile(new Position(2, 0), new Tile(TileColor.RED, TileSymbol.DIAMOND));
+        this.nextTile = new Tile(TileColor.RED, TileSymbol.CIRCLE); // Platzhalter bis Hand/TileBag angebunden ist
     }
 
     @Override
     public void onTick(double dt) {
-        handleZoomInput(dt);
+        handleZoomInput();
         handleDragInput();
+        handleClickInput();
         syncTiles();
 
         double tileSize = camera.getTileSize();
@@ -70,13 +69,25 @@ public class GamePlayScene extends Scene {
         }
     }
 
-    private void  handleZoomInput(double dt) {
-        if (InputManager.isKeyPressed(KeyEvent.VK_UP)) {
-            camera.zoomBy(ZOOM_FACTOR);
+    private void handleClickInput() {
+        if (nextTile == null || !InputManager.isMouseClicked()) return;
+
+        Position position = camera.screenToBoard(InputManager.getMouseX(), InputManager.getMouseY());
+
+        try {
+            board.placeTile(position, nextTile);
+            board.commitPendingTiles();
+        } catch (IllegalStateException e) {
+            // Feld belegt oder Platzierung verstößt gegen die Qwirkle-Regeln -> Klick wird ignoriert
+            System.out.println(e.getMessage());
         }
-        if (InputManager.isKeyPressed(KeyEvent.VK_DOWN)) {
-            camera.zoomBy(-ZOOM_FACTOR);
-        }
+    }
+
+    private void handleZoomInput() {
+        double scroll = InputManager.getScrollDelta();
+        if (scroll == 0) return;
+
+        camera.zoomAt(-scroll * ZOOM_FACTOR, InputManager.getMouseX(), InputManager.getMouseY());
     }
 
     private void handleDragInput() {
