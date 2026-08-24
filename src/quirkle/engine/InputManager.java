@@ -14,6 +14,7 @@ public class InputManager extends MouseAdapter {
     private static int mouseY;
     private static boolean mousePressed;
     private static boolean mouseClicked;
+    private static boolean rightMousePressed;
 
     private static final boolean[] keys = new boolean[256];
     private static final boolean[] keysJustPressed = new boolean[256];
@@ -45,6 +46,8 @@ public class InputManager extends MouseAdapter {
         if (e.getButton() == MouseEvent.BUTTON1) {
             mousePressed = true;
             mouseClicked = true;
+        } else if (e.getButton() == MouseEvent.BUTTON3) {
+            rightMousePressed = true;
         }
     }
 
@@ -52,6 +55,8 @@ public class InputManager extends MouseAdapter {
     public void mouseReleased(MouseEvent e) {
         if (e.getButton() == MouseEvent.BUTTON1) {
             mousePressed = false;
+        } else if (e.getButton() == MouseEvent.BUTTON3) {
+            rightMousePressed = false;
         }
     }
 
@@ -59,6 +64,7 @@ public class InputManager extends MouseAdapter {
     public static int getMouseY() { return mouseY; }
     public static boolean isMousePressed() { return mousePressed; }
     public static boolean isMouseClicked() { return mouseClicked; }
+    public static boolean isRightMousePressed() { return rightMousePressed; }
 
     public static boolean isKeyDown(int keyCode) {
         return keyCode >= 0 && keyCode < keys.length && keys[keyCode];

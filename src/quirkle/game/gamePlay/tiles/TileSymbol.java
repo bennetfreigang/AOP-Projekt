@@ -4,7 +4,7 @@ public enum TileSymbol {
     CIRCLE,
     SQUARE,
     DIAMOND,
-    STAR,
-    CLOVERLEAF,
+    HEXAGON,
+    TRIANGLE,
     CROSS
 }

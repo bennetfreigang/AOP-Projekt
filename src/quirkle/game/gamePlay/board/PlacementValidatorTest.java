@@ -18,7 +18,7 @@ public class PlacementValidatorTest {
     void testPendingTilesFormCommonRow() {
         Map<Position, Tile> placed = tilesOf(at(0, 0, TileColor.GREEN, TileSymbol.CIRCLE));
         Map<Position, Tile> pending = tilesOf(
-                at(1, 0, TileColor.GREEN, TileSymbol.STAR),
+                at(1, 0, TileColor.GREEN, TileSymbol.HEXAGON),
                 at(2, 0, TileColor.GREEN, TileSymbol.CROSS));
 
         assertPlacementPossible("Neue Steine bilden eine gemeinsame Zeile", true, placed, pending);
@@ -26,10 +26,10 @@ public class PlacementValidatorTest {
 
     @Test
     void testPendingTilesFormCommonColumn() {
-        Map<Position, Tile> placed = tilesOf(at(3, 3, TileColor.BLUE, TileSymbol.STAR));
+        Map<Position, Tile> placed = tilesOf(at(3, 3, TileColor.BLUE, TileSymbol.HEXAGON));
         Map<Position, Tile> pending = tilesOf(
                 at(3, 4, TileColor.BLUE, TileSymbol.CROSS),
-                at(3, 5, TileColor.BLUE, TileSymbol.CLOVERLEAF));
+                at(3, 5, TileColor.BLUE, TileSymbol.TRIANGLE));
 
         assertPlacementPossible("Neue Steine bilden eine gemeinsame Spalte", true, placed, pending);
     }
@@ -145,8 +145,8 @@ public class PlacementValidatorTest {
                 at(0, 0, TileColor.RED, TileSymbol.CIRCLE),
                 at(1, 0, TileColor.RED, TileSymbol.SQUARE),
                 at(2, 0, TileColor.RED, TileSymbol.DIAMOND),
-                at(3, 0, TileColor.RED, TileSymbol.STAR),
-                at(4, 0, TileColor.RED, TileSymbol.CLOVERLEAF));
+                at(3, 0, TileColor.RED, TileSymbol.HEXAGON),
+                at(4, 0, TileColor.RED, TileSymbol.TRIANGLE));
         Map<Position, Tile> pending = tilesOf(at(5, 0, TileColor.RED, TileSymbol.CROSS));
 
         assertPlacementPossible("Eine vollstaendige Reihe aus genau sechs Steinen ist gueltig", true, placed, pending);
@@ -158,8 +158,8 @@ public class PlacementValidatorTest {
                 at(0, 0, TileColor.RED, TileSymbol.CIRCLE),
                 at(1, 0, TileColor.RED, TileSymbol.SQUARE),
                 at(2, 0, TileColor.RED, TileSymbol.DIAMOND),
-                at(3, 0, TileColor.RED, TileSymbol.STAR),
-                at(4, 0, TileColor.RED, TileSymbol.CLOVERLEAF));
+                at(3, 0, TileColor.RED, TileSymbol.HEXAGON),
+                at(4, 0, TileColor.RED, TileSymbol.TRIANGLE));
         Map<Position, Tile> pending = tilesOf(
                 at(5, 0, TileColor.RED, TileSymbol.CROSS),
                 at(6, 0, TileColor.RED, TileSymbol.CIRCLE));
