@@ -6,7 +6,7 @@ import java.awt.Color;
  * Basic Default-Setup Class for resourceEngine presets
  ***********************************************************************/
 public class EngineConfig {
-    public final static String VERSION_INFO = "[BETA] v0.2.2";
+    public final static String VERSION_INFO = "[BETA] v0.2.3";
 
     public static boolean SUPPRES_INFO = false;
     public static boolean SUPPRES_WARNINGS = false;
@@ -50,7 +50,11 @@ public class EngineConfig {
 
     public static void message(String message, String author, messageType messageType) {
         String messageResult = String.format(messageConstruct, messageType, author, message);
-        if (messageType == messageType.INFO) if (!SUPPRES_INFO) System.out.println(messageResult);
-        else if (!SUPPRES_WARNINGS) System.err.println(messageResult);
+        if (messageType == messageType.INFO){
+            if (!SUPPRES_INFO) System.out.println(messageResult);
+        }
+        else {
+            if (!SUPPRES_WARNINGS) System.err.println(messageResult);
+        }
     }
 }
