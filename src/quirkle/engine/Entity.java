@@ -67,14 +67,6 @@ public abstract class Entity {
     public boolean visible = true;
     public boolean destroyed = false;
 
-    public Entity() { //should be shifted to Scene initialisation rather than object instation in the future
-        try {
-            onCreate();
-        } catch (Throwable t) {
-            System.err.println("[ERROR] resourceEngine / Entity: Throwable Error in onCreate() of [" + getClass().getSimpleName() + "]: " + t.getMessage());
-        }
-    }
-
     // Lifecycle hooks
 
     /**
@@ -111,14 +103,19 @@ public abstract class Entity {
         this.height = this.sprite.getHeight();
     }
 
-    public double getScaledWidth() {
-        return width * scale;
+    public int getScaledWidth() {
+        return (int) (width * scale);
     }
 
-    public double getScaledHeight() {
-        return height * scale;
+    public int getScaledHeight() {
+        return (int) (height * scale);
     }
 
+    /**
+     * Helper function to check if the Entity is hovered by the mouse.
+     * only works if the Entity has a main Sprite, set by {@link #setSprite()}
+     * @return
+     */
     public boolean isHovered() {
         //full credit: https://web.archive.org/web/20100430183237/https://ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
         //inverse mouse rotation and then square checkk
@@ -182,7 +179,18 @@ public abstract class Entity {
         }
     }
 
-
+    /**
+     * Helper function to draw Text. Should be used inside the {@link #onRender()} hook.
+     * @param msg String to render
+     * @param fontSize
+     * @param color
+     * @param fontIdentifier fontname inside {@link quirkle.engine.EngineConfig#FONT_SUBDIR} without filetype suffix
+     * @param x coordinate
+     * @param y coordinate
+     * @param rotation rotation in degrees
+     * @param origin origin of the text element of type {@link quirkle.engine.Entity.OriginPresets}
+     * @param g Graphics2D (isolated child is created inside the function itself)
+     */
     public void drawText(String msg, float fontSize, Color color, String fontIdentifier, int x, int y, double rotation, OriginPresets origin, Graphics2D g) {
         Font font = AssetManager.getFont(fontIdentifier).deriveFont(fontSize);
         g.setFont(font);
@@ -207,6 +215,16 @@ public abstract class Entity {
         isoTextGraphic.dispose();
     }
 
+    /**
+     * Helper function to draw Sprites. Should be used inside the {@link #onRender()} hook.
+     * @param spriteIdentifier sprite name including possible subdir inside {@link quirkle.engine.EngineConfig#TEXTURE_SUBDIR} without filetype suffix
+     * @param scale scale multiplier (scale = 1.0: rendering the texture at its original scale)
+     * @param x coordinate
+     * @param y coordinate
+     * @param rotation rotation in degrees
+     * @param origin origin of the texture element of type {@link quirkle.engine.Entity.OriginPresets}
+     * @param g Graphics2D (isolated child is created inside the function itself)
+     */
     public void drawSprite(String spriteIdentifier, double scale, int x, int y, double rotation, OriginPresets origin, Graphics2D g) {
         BufferedImage sprite = AssetManager.getTexture(spriteIdentifier);
         Graphics2D isoSpriteGraphic = (Graphics2D) g.create();
@@ -222,16 +240,37 @@ public abstract class Entity {
         isoSpriteGraphic.dispose();
     }
 
+    /**
+     * handles entity initialisation by calling the {@link #onCreate()} hook, catching errors if necessary.
+     * Is called after the related Scene called {@link quirkle.engine.Scene#addEntities()}
+     */
+    public void create() {
+        try {
+            onCreate();
+        } catch (Throwable t) {
+            EngineConfig.message("Throwable Error in onCreate() of " + getClass().getSimpleName(), getClass().getSimpleName(), EngineConfig.messageType.ERROR);
+        }
+    }
+
+    /**
+     * updates the Entity by calling the {@link #onTick()} hook, catching errors if necessary.
+     * Is skipped if the Entity is {@link #destroyed}
+     * @param dt
+     */
     public void update(double dt) {
+        if (destroyed) return;
+
         try {
             onTick(dt);
         } catch (Throwable t) {
-            System.err.println("[ERROR] resourceEngine / Entity: Throwable Error in onTick() of [" + getClass().getSimpleName() + "]: " + t.getMessage());
+            EngineConfig.message("Throwable Error in onTick() of " + getClass().getSimpleName() + ": " + t.getMessage(), getClass().getSimpleName(), EngineConfig.messageType.ERROR);
         }
-
-        if (destroyed) return;
     }
 
+    /**
+     * renders if {@link #visible} is true and the entity isnt {@link #destroyed}.
+     * Also calls the {@link #onRender()} hook
+     */
     public void render(Graphics2D g) {
         if (!visible || destroyed) return;
 

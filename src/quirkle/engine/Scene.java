@@ -1,7 +1,6 @@
 package quirkle.engine;
 
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -16,17 +15,6 @@ public class Scene {
 
     public Scene() {
         onCreate();
-    }
-
-    /**
-     * easy Background function that sets the {@link #bgTexture} utilizing {@link AssetManager#getTexture()}
-     * @deprecated WILL PROBABLY BE REMOVE IN FAVOR OF MANUAL BACKGROUND DRAWING
-     *             USING sceneEntities OR THE {@link #onRender(Graphics2D)} HOOK!
-     * @param path path to background Texture asset
-     */
-    public void setBgTexture(String path) {
-        this.bgTexture = AssetManager.getTexture(path);
-        this.bgTextureEnabled = true;
     }
 
     /**
@@ -62,7 +50,9 @@ public class Scene {
      */
     public void addEntities(Entity... entities) { //really nice solution i found here https://www.geeksforgeeks.org/java/variable-arguments-varargs-in-java/
         for (Entity e : entities) {
+            e.create();
             this.sceneEntities.add(e); // Note: Make sure the list name matches (entities vs sceneEntities)
+            EngineConfig.message(getClass().getSimpleName() + ": added: " + e.getClass().getSimpleName(), getClass().getSimpleName(), EngineConfig.messageType.INFO);
         }
     }
     
@@ -88,19 +78,7 @@ public class Scene {
         sceneEntities.removeIf(entity -> entity.destroyed);
     }
 
-    public BufferedImage bgTexture;
-    public boolean bgTextureEnabled = false;
-
     public void render(Graphics2D g) {
-        g.setRenderingHint(
-            RenderingHints.KEY_TEXT_ANTIALIASING,
-            RenderingHints.VALUE_TEXT_ANTIALIAS_ON
-        );
-
-        if (bgTextureEnabled && bgTexture != null) { //maybe unecessary but for now nice to have [would like to use parralax background using sceneEntities]
-            g.drawImage(bgTexture, 0, 0, (int) getWidth(), (int)  getHeight(), null);
-        }
-
         onRender(g);
         for (Entity entity : sceneEntities) {
             entity.render(g);
