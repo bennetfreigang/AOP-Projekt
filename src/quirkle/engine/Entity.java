@@ -42,8 +42,8 @@ public abstract class Entity {
      * */
     public OriginPresets origin = OriginPresets.TOP_LEFT;
 
-    public int x = 0;
-    public int y = 0;
+    public double x = 0;
+    public double y = 0;
     public int targetX = 0;
     public int targetY = 0;
     public double rotation = 0;
