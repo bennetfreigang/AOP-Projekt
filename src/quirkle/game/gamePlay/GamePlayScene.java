@@ -58,11 +58,13 @@ public class GamePlayScene extends Scene {
         syncTiles();
 
         double tileSize = camera.getTileSize();
+        Map<Position, Tile> pendingTiles = game.getBoard().getPendingTiles();
         for (BoardTileEntity tileEntity : tileEntities.values()) {
             Point screenPos = camera.boardToScreen(tileEntity.getPosition());
             tileEntity.x = screenPos.x;
             tileEntity.y = screenPos.y;
             tileEntity.scale = tileSize / tileEntity.width;
+            tileEntity.setPending(pendingTiles.containsKey(tileEntity.getPosition()));
         }
     }
 
