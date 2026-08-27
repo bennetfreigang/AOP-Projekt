@@ -1,21 +1,23 @@
 package quirkle.game.gamePlay.tiles;
 
 import quirkle.engine.Entity;
-import quirkle.game.gamePlay.board.Position;
 
-public class TileEntity extends Entity {
+/**
+ * Base entity for anything that draws a single {@link Tile}.
+ *
+ * @note Holds no position of its own; where a tile lives is up to the subclass
+ *       ({@link BoardTileEntity} on the board, {@code HandTileEntity} on the rack).
+ */
+public abstract class TileEntity extends Entity {
     private final Tile tile;
-    private final Position position;
 
-    public TileEntity(Tile tile, Position position) {
+    protected TileEntity(Tile tile) {
         this.tile = tile;
-        this.position = position;
         this.origin = OriginPresets.CENTER;
         setSprite(buildSpritePath(tile));
     }
 
     public Tile getTile() { return tile; }
-    public Position getPosition() { return position; }
 
     private String buildSpritePath(Tile tile) {
         String symbol = tile.getSymbol().name();               // "HEXAGON"

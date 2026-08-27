@@ -26,7 +26,8 @@ public final class TestEngine {
     public static void main(String[] args) {
         boolean allPassed = run(
                 quirkle.game.gamePlay.board.ScoreCalculatorTest.class,
-                quirkle.game.gamePlay.board.PlacementValidatorTest.class);
+                quirkle.game.gamePlay.board.PlacementValidatorTest.class,
+                quirkle.game.gamePlay.GameTest.class);
         if (!allPassed) {
             System.exit(1);
         }

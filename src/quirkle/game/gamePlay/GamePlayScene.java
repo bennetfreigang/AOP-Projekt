@@ -5,26 +5,29 @@ import quirkle.engine.Scene;
 import quirkle.game.gamePlay.board.Board;
 import quirkle.game.gamePlay.board.BoardCamera;
 import quirkle.game.gamePlay.board.Position;
-import quirkle.game.gamePlay.tiles.Tile;
-import quirkle.game.gamePlay.tiles.TileColor;
-import quirkle.game.gamePlay.tiles.TileEntity;
-import quirkle.game.gamePlay.tiles.TileSymbol;
+import quirkle.game.gamePlay.hand.TileRack;
+import quirkle.game.gamePlay.player.Player;
+import quirkle.game.gamePlay.tiles.*;
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class GamePlayScene extends Scene {
 
     // Data
-    private final Board board;
+    private final Game game;
     private final BoardCamera camera;
-    private final Map<Position, TileEntity> tileEntities = new HashMap<>();
-
-    private Tile nextTile;
+    private final TileRack tileRack;
+    private final Map<Position, BoardTileEntity> tileEntities = new HashMap<>();
 
     // Zoom
     private static final double ZOOM_FACTOR = 1.0;
+
+    // Rack
+    private static final int RACK_MARGIN_BOTTOM = 32;
 
     // Drag
     private int lastMouseX;
@@ -32,9 +35,11 @@ public class GamePlayScene extends Scene {
     private boolean isDragging =  false;
 
     public GamePlayScene() {
-        this.board = new Board();
+        this.game = new Game(new Board(), new TileBag(), List.of(new Player("Player 1"), new Player("Player 2")));
         this.camera = new BoardCamera(getCenterX(), getCenterY(), 32);
-        this.nextTile = new Tile(TileColor.RED, TileSymbol.CIRCLE); // Platzhalter bis Hand/TileBag angebunden ist
+        this.tileRack = new TileRack(getCenterX(), getHeight() - RACK_MARGIN_BOTTOM);
+
+        addEntities(tileRack);
     }
 
     @Override
@@ -42,10 +47,13 @@ public class GamePlayScene extends Scene {
         handleZoomInput();
         handleDragInput();
         handleClickInput();
+        handleEndTurnInput();
+
+        tileRack.showPlayer(game.getCurrentPlayer());
         syncTiles();
 
         double tileSize = camera.getTileSize();
-        for (TileEntity tileEntity : tileEntities.values()) {
+        for (BoardTileEntity tileEntity : tileEntities.values()) {
             Point screenPos = camera.boardToScreen(tileEntity.getPosition());
             tileEntity.x = screenPos.x;
             tileEntity.y = screenPos.y;
@@ -54,8 +62,8 @@ public class GamePlayScene extends Scene {
     }
 
     private void syncTiles() {
-        addMissingEntities(board.getPlacedTiles());
-        addMissingEntities(board.getPendingTiles());
+        addMissingEntities(game.getBoard().getPlacedTiles());
+        addMissingEntities(game.getBoard().getPendingTiles());
     }
 
     private void addMissingEntities(Map<Position, Tile> tiles) {
@@ -63,20 +71,23 @@ public class GamePlayScene extends Scene {
             Position position = entry.getKey();
             if (tileEntities.containsKey(position)) continue;
 
-            TileEntity tileEntity = new TileEntity(entry.getValue(), position);
+            BoardTileEntity tileEntity = new BoardTileEntity(entry.getValue(), position);
             tileEntities.put(position, tileEntity);
             addEntities(tileEntity);
         }
     }
 
     private void handleClickInput() {
-        if (nextTile == null || !InputManager.isMouseClicked()) return;
+        if (tileRack.handleInput()) return; // the rack got the click, don't also place a tile
+
+        Tile selectedTile = tileRack.getSelectedTile();
+        if (selectedTile == null || !InputManager.isMouseClicked()) return;
 
         Position position = camera.screenToBoard(InputManager.getMouseX(), InputManager.getMouseY());
 
         try {
-            board.placeTile(position, nextTile);
-            board.commitPendingTiles();
+            game.placeTile(position, selectedTile);
+            tileRack.clearSelection();
         } catch (IllegalStateException e) {
             // Feld belegt oder Platzierung verstößt gegen die Qwirkle-Regeln -> Klick wird ignoriert
             System.out.println(e.getMessage());
@@ -100,6 +111,20 @@ public class GamePlayScene extends Scene {
             isDragging = true;
         } else {
             isDragging = false;
+        }
+    }
+
+    private void handleEndTurnInput() {
+        if (!InputManager.isKeyPressed(KeyEvent.VK_ENTER)) return;
+
+        try {
+            Player player = game.getCurrentPlayer();
+            int points = game.endTurn();
+            tileRack.clearSelection();
+            System.out.println(player.getName() + " erhält " + points + " Punkte.");
+        } catch (IllegalStateException e) {
+            // Zug ist noch nicht abschließbar (z.B. kein Stein gelegt) -> Eingabe wird ignoriert
+            System.out.println(e.getMessage());
         }
     }
 }
