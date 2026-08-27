@@ -8,6 +8,7 @@ import quirkle.game.gamePlay.tiles.Tile;
 import javax.print.attribute.standard.OrientationRequested;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -27,13 +28,15 @@ public class TileRack extends Entity {
     private static final int LABEL_GAP = 10;
     private static final float LABEL_FONT_SIZE = 26f;
     private static final int CORNER_RADIUS = 18;
+    private static final int SLOT_CORNER_RADIUS = 6;
 
     private static final Color PANEL_COLOR = new Color(38, 42, 52, 225);
     private static final Color BORDER_COLOR = new Color(255, 255, 255, 60);
+    private static final Color EMPTY_SLOT_COLOR = new Color(0, 0, 0, 70);
     private static final Color LABEL_COLOR = new Color(38, 42, 52);
     private static final String LABEL_FONT = "DEBUG_Poly-Regular";
 
-    private final List<HandTileEntity> tileEntities = new ArrayList<>();
+    private final HandTileEntity[] slots = new HandTileEntity[Player.HAND_SIZE];
 
     private Player player;
     private Tile selectedTile;
@@ -56,10 +59,18 @@ public class TileRack extends Entity {
      * @note Cheap enough to call every tick; it only rebuilds when the tiles actually differ.
      */
     public void showPlayer(Player currentPlayer) {
-        if (this.player == currentPlayer && matchesHand(currentPlayer.getHand())) return;
+        boolean playerChanged = this.player != currentPlayer;
+        if (playerChanged && matchesHand(currentPlayer.getHand())) return;
 
-        this.player = currentPlayer;
-        rebuildTiles(currentPlayer.getHand());
+        if (playerChanged) {
+            this.player = currentPlayer;
+            Arrays.fill(slots, null);
+        }
+
+        syncSlots(currentPlayer.getHand());
+
+        if (!currentPlayer.getHand().contains(selectedTile)) selectedTile = null;
+        applySelection();
     }
 
     /** @return the tile the player picked, or {@code null} if nothing is selected. */
@@ -69,6 +80,11 @@ public class TileRack extends Entity {
 
     public void clearSelection() {
         select(null);
+    }
+
+    public void rejectSelection() {
+        HandTileEntity tileEntity = findEntity(selectedTile);
+        if (tileEntity != null) tileEntity.reject();
     }
 
     /**
@@ -81,8 +97,8 @@ public class TileRack extends Entity {
     public boolean handleInput() {
         if (!InputManager.isMouseClicked()) return false;
 
-        for (HandTileEntity tileEntity : tileEntities) {
-            if (!tileEntity.isHovered()) continue;
+        for (HandTileEntity tileEntity : slots) {
+            if (tileEntity == null || !tileEntity.isHovered()) continue;
 
             // clicking the selected tile again deselects it
             select(tileEntity.isSelected() ? null : tileEntity.getTile());
@@ -93,12 +109,20 @@ public class TileRack extends Entity {
     }
 
     @Override
+    public void onTick(double dt) {
+        for (HandTileEntity tileEntity : slots) {
+            if (tileEntity != null) tileEntity.update(dt);
+        }
+    }
+
+    @Override
     public void onRender(Graphics2D g) {
         drawPanel(g);
         drawLabel(g);
 
-        for  (HandTileEntity tileEntity : tileEntities) {
-            tileEntity.render(g);
+        for (int i = 0; i < slots.length; i++) {
+            if (slots[i] == null) drawEmptySlot(g, i);
+            else slots[i].render(g);
         }
     }
 
@@ -115,6 +139,15 @@ public class TileRack extends Entity {
         gPanel.dispose();
     }
 
+    private void drawEmptySlot(Graphics2D g, int index) {
+        Graphics2D gSlot = (Graphics2D) g.create();
+
+        gSlot.setColor(EMPTY_SLOT_COLOR);
+        gSlot.fillRoundRect(getSlotX(index) - TILE_SIZE / 2, getRestingY() - TILE_SIZE / 2, TILE_SIZE, TILE_SIZE, SLOT_CORNER_RADIUS, SLOT_CORNER_RADIUS);
+
+        gSlot.dispose();
+    }
+
     private void drawLabel(Graphics2D g) {
         if (player == null) return;
 
@@ -122,26 +155,28 @@ public class TileRack extends Entity {
         drawText(label, LABEL_FONT_SIZE, LABEL_COLOR, LABEL_FONT, x, getTop() - LABEL_GAP, 0.0, OriginPresets.BOTTOM_MID, g);
     }
 
-    private void rebuildTiles(List<Tile> hand) {
-        tileEntities.clear();
-        for (Tile tile : hand) {
-            tileEntities.add(new HandTileEntity(tile));
+    private void syncSlots(List<Tile> hand) {
+        for (int i = 0; i < slots.length; i++) {
+            if (slots[i] != null && !hand.contains(slots[i].getTile())) slots[i] = null;
         }
 
-        if (!hand.contains(selectedTile)) selectedTile = null;
+        for (Tile tile : hand) {
+            if (findEntity(tile) != null) continue;
 
-        layoutTiles();
-        applySelection();
+            int freeSlot = firstFreeSlot();
+            if (freeSlot < 0) break;
+
+            slots[freeSlot] = new HandTileEntity(tile);
+            layoutSlot(freeSlot);
+        }
     }
 
-    private void layoutTiles() {
-        for (int i = 0; i < tileEntities.size(); i++) {
-            HandTileEntity tileEntity = tileEntities.get(i);
+    private void layoutSlot(int index) {
+        HandTileEntity tileEntity = slots[index];
 
-            tileEntity.scale = TILE_SIZE / tileEntity.width;
-            tileEntity.x = getLeft() + PADDING + i * (TILE_SIZE + TILE_GAP) + TILE_SIZE / 2;
-            tileEntity.y = getTop() + PADDING + TILE_SIZE / 2;
-        }
+        tileEntity.scale = TILE_SIZE / tileEntity.width;
+        tileEntity.x = getSlotX(index);
+        tileEntity.y = getRestingY();
     }
 
     private void select(Tile tile) {
@@ -150,24 +185,52 @@ public class TileRack extends Entity {
     }
 
     private void applySelection() {
-        int restingY = getTop() + PADDING + TILE_SIZE / 2;
+        for  (HandTileEntity tileEntity : slots) {
+            if (tileEntity == null) continue;
 
-        for (HandTileEntity tileEntity : tileEntities) {
             boolean isSelected = tileEntity.getTile() == selectedTile;
 
             tileEntity.setSelected(isSelected);
-            tileEntity.y = isSelected ? restingY - SELECTION_LIFT : restingY;
+            tileEntity.y = isSelected ? getRestingY() - SELECTION_LIFT : getRestingY();
         }
     }
 
     /** @return {@code true} if the rack already shows exactly {@code hand}, compared by identity. */
     private boolean matchesHand(List<Tile> hand) {
-        if (hand.size() != tileEntities.size()) return false;
+        int occupiedSlots = 0;
 
-        for (int i = 0; i < hand.size(); i++) {
-            if (hand.get(i) != tileEntities.get(i).getTile()) return false;
+        for (HandTileEntity tileEntity : slots) {
+            if (tileEntity == null) continue;
+
+            occupiedSlots++;
+            if (!hand.contains(tileEntity.getTile())) return false;
         }
-        return true;
+
+        return occupiedSlots == hand.size();
+    }
+
+    private HandTileEntity findEntity(Tile tile) {
+        if (tile == null) return null;
+
+        for (HandTileEntity tileEntity : slots) {
+            if (tileEntity != null && tileEntity.getTile() == tile) return tileEntity;
+        }
+        return null;
+    }
+
+    private int firstFreeSlot() {
+        for (int i = 0; i < slots.length; i++) {
+            if (slots[i] == null) return i;
+        }
+        return -1;
+    }
+
+    private int getSlotX(int index) {
+        return getLeft() + PADDING + index * (TILE_SIZE + TILE_GAP) + TILE_SIZE / 2;
+    }
+
+    private int getRestingY() {
+        return getTop() + PADDING + TILE_SIZE / 2;
     }
 
     private int getLeft() {

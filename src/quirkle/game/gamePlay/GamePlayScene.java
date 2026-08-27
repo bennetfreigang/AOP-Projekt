@@ -8,9 +8,9 @@ import quirkle.game.gamePlay.board.Position;
 import quirkle.game.gamePlay.hand.TileRack;
 import quirkle.game.gamePlay.player.Player;
 import quirkle.game.gamePlay.tiles.*;
+import quirkle.game.gamePlay.ui.EndTurnButton;
 
 import java.awt.*;
-import java.awt.event.KeyEvent;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,20 +26,25 @@ public class GamePlayScene extends Scene {
     // Zoom
     private static final double ZOOM_FACTOR = 1.0;
 
-    // Rack
-    private static final int RACK_MARGIN_BOTTOM = 32;
-
     // Drag
     private int lastMouseX;
     private int lastMouseY;
     private boolean isDragging =  false;
 
+    // HUD
+    private static final int RACK_MARGIN_BOTTOM = 32;
+    private static final int BUTTON_MARGIN = 32;
+
+    // UI
+    private final EndTurnButton endTurnButton;
+
     public GamePlayScene() {
         this.game = new Game(new Board(), new TileBag(), List.of(new Player("Player 1"), new Player("Player 2")));
         this.camera = new BoardCamera(getCenterX(), getCenterY(), 32);
         this.tileRack = new TileRack(getCenterX(), getHeight() - RACK_MARGIN_BOTTOM);
+        this.endTurnButton = new EndTurnButton(getWidth() - BUTTON_MARGIN, getHeight() - BUTTON_MARGIN);
 
-        addEntities(tileRack);
+        addEntities(tileRack, endTurnButton);
     }
 
     @Override
@@ -47,8 +52,8 @@ public class GamePlayScene extends Scene {
         handleZoomInput();
         handleDragInput();
         handleClickInput();
-        handleEndTurnInput();
 
+        endTurnButton.setEnabled(game.hasPendingTiles());
         tileRack.showPlayer(game.getCurrentPlayer());
         syncTiles();
 
@@ -80,6 +85,11 @@ public class GamePlayScene extends Scene {
     private void handleClickInput() {
         if (tileRack.handleInput()) return; // the rack got the click, don't also place a tile
 
+        if (endTurnButton.isClicked()) {
+            if (endTurnButton.isClicked()) endTurn();
+            return;
+        }
+
         Tile selectedTile = tileRack.getSelectedTile();
         if (selectedTile == null || !InputManager.isMouseClicked()) return;
 
@@ -90,6 +100,7 @@ public class GamePlayScene extends Scene {
             tileRack.clearSelection();
         } catch (IllegalStateException e) {
             // Feld belegt oder Platzierung verstößt gegen die Qwirkle-Regeln -> Klick wird ignoriert
+            tileRack.rejectSelection();
             System.out.println(e.getMessage());
         }
     }
@@ -114,9 +125,7 @@ public class GamePlayScene extends Scene {
         }
     }
 
-    private void handleEndTurnInput() {
-        if (!InputManager.isKeyPressed(KeyEvent.VK_ENTER)) return;
-
+    private void endTurn() {
         try {
             Player player = game.getCurrentPlayer();
             int points = game.endTurn();
