@@ -2,9 +2,11 @@ Deutsch
 
 --- STARTMENU --------------------------------------------
 
-title == KWIRKEL
+title == QWIRKEL
 play == Starten
 settings == Einstellungen
-credits == Abspann
+credits == Credits
 quit == Beenden
 return == Zurück
+return from Settings == Zurück von Einstellungen
+return from Credits == Zurück von Credits
