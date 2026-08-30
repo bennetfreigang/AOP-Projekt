@@ -196,7 +196,7 @@ public abstract class Entity {
      * @param origin origin of the text element of type {@link quirkle.engine.Entity.OriginPresets}
      * @param g Graphics2D (isolated child is created inside the function itself)
      */
-    public void drawText(String msg, float fontSize, Color color, String fontIdentifier, int x, int y, double rotation, OriginPresets origin, Graphics2D g) {
+        public void drawText(String msg, float fontSize, Color color, String fontIdentifier, double x, double y, double rotation, OriginPresets origin, Graphics2D g) {
         Font font = AssetManager.getFont(fontIdentifier).deriveFont(fontSize);
         g.setFont(font);
 
@@ -230,7 +230,7 @@ public abstract class Entity {
      * @param origin origin of the texture element of type {@link quirkle.engine.Entity.OriginPresets}
      * @param g Graphics2D (isolated child is created inside the function itself)
      */
-    public void drawSprite(String spriteIdentifier, double scale, int x, int y, double rotation, OriginPresets origin, Graphics2D g) {
+    public void drawSprite(String spriteIdentifier, double scale, double x, double y, double rotation, OriginPresets origin, Graphics2D g) {
         BufferedImage sprite = AssetManager.getTexture(spriteIdentifier);
         Graphics2D isoSpriteGraphic = (Graphics2D) g.create();
         double scaledWidth = sprite.getWidth() * scale;
