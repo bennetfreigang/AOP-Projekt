@@ -66,6 +66,7 @@ public abstract class Entity {
     public BufferedImage sprite;
     public boolean visible = true;
     public boolean destroyed = false;
+    public boolean created = false;
 
     // Lifecycle hooks
 
@@ -96,9 +97,13 @@ public abstract class Entity {
      */
     public void onDestroy() {}
 
-    public void setSprite(String path) {
-        this.spritePath = path;
-        this.sprite = AssetManager.getTexture(path);
+    /**
+     * Simple Method to set a Entity bound texture that also acts as the entities "hitbox"
+     * @param identifier texture Identifier (view: {@link quirkle.engine.AssetManager#getTexture(String)})
+     */
+    public void setSprite(String identifier) {
+        this.spritePath = identifier;
+        this.sprite = AssetManager.getTexture(identifier);
         this.width = this.sprite.getWidth();
         this.height = this.sprite.getHeight();
     }
@@ -245,6 +250,8 @@ public abstract class Entity {
      * Is called after the related Scene called {@link quirkle.engine.Scene#addEntities()}
      */
     public void create() {
+        if (created) return;
+        created = true;
         try {
             onCreate();
         } catch (Throwable t) {
