@@ -24,6 +24,6 @@ public abstract class TileEntity extends Entity {
         String shapeFolder = symbol.charAt(0) + symbol.substring(1).toLowerCase(); // "Hexagon"
         String color = tile.getColor().name().toLowerCase();    // "red"
         String shape = symbol.toLowerCase();                     // "hexagon"
-        return "tiles/" + shapeFolder + "/" + color + "_" + shape;
+        return "tiles/" + shapeFolder + "/" + shape + "_" + color;
     }
 }

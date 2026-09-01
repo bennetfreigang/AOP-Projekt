@@ -29,7 +29,7 @@ public class PlacementValidatorTest {
         Map<Position, Tile> placed = tilesOf(at(3, 3, TileColor.BLUE, TileSymbol.HEXAGON));
         Map<Position, Tile> pending = tilesOf(
                 at(3, 4, TileColor.BLUE, TileSymbol.CROSS),
-                at(3, 5, TileColor.BLUE, TileSymbol.TRIANGLE));
+                at(3, 5, TileColor.BLUE, TileSymbol.STAR));
 
         assertPlacementPossible("Neue Steine bilden eine gemeinsame Spalte", true, placed, pending);
     }
@@ -146,7 +146,7 @@ public class PlacementValidatorTest {
                 at(1, 0, TileColor.RED, TileSymbol.SQUARE),
                 at(2, 0, TileColor.RED, TileSymbol.DIAMOND),
                 at(3, 0, TileColor.RED, TileSymbol.HEXAGON),
-                at(4, 0, TileColor.RED, TileSymbol.TRIANGLE));
+                at(4, 0, TileColor.RED, TileSymbol.STAR));
         Map<Position, Tile> pending = tilesOf(at(5, 0, TileColor.RED, TileSymbol.CROSS));
 
         assertPlacementPossible("Eine vollständige Reihe aus genau sechs Steinen ist gültig", true, placed, pending);
@@ -159,7 +159,7 @@ public class PlacementValidatorTest {
                 at(1, 0, TileColor.RED, TileSymbol.SQUARE),
                 at(2, 0, TileColor.RED, TileSymbol.DIAMOND),
                 at(3, 0, TileColor.RED, TileSymbol.HEXAGON),
-                at(4, 0, TileColor.RED, TileSymbol.TRIANGLE));
+                at(4, 0, TileColor.RED, TileSymbol.STAR));
         Map<Position, Tile> pending = tilesOf(
                 at(5, 0, TileColor.RED, TileSymbol.CROSS),
                 at(6, 0, TileColor.RED, TileSymbol.CIRCLE));
