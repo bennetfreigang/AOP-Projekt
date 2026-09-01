@@ -22,7 +22,7 @@ public class EngineConfig {
 
     public static int WINDOW_WIDTH = 1920;
     public static int WINDOW_HEIGHT = 1080;
-    public static String TITLE = "ResourceEngine - DEMO";
+    public static String TITLE = "Qwirkle - Game";
     public static Color BACKGROUND_COLOR = Color.WHITE;
     public static int FPS = 120;
     public static double VOLUME_MAIN = 1.0; //0.0 - 1.0 multiplier
