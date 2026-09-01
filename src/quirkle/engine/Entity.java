@@ -193,7 +193,7 @@ public abstract class Entity {
         return x == targetX && y == targetY;
     }
 
-    public void drawText(String msg, float fontSize, Color color, String fontIdentifier, int x, int y, double rotation, OriginPresets origin, Graphics2D g) {
+    public void drawText(String msg, float fontSize, Color color, String fontIdentifier, double x, double y, double rotation, OriginPresets origin, Graphics2D g) {
         Font font = AssetManager.getFont(fontIdentifier).deriveFont(fontSize);
         g.setFont(font);
 
