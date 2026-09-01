@@ -185,18 +185,15 @@ public abstract class Entity {
     }
 
     /**
-     * Helper function to draw Text. Should be used inside the {@link #onRender()} hook.
-     * @param msg String to render
-     * @param fontSize
-     * @param color
-     * @param fontIdentifier fontname inside {@link quirkle.engine.EngineConfig#FONT_SUBDIR} without filetype suffix
-     * @param x coordinate
-     * @param y coordinate
-     * @param rotation rotation in degrees
-     * @param origin origin of the text element of type {@link quirkle.engine.Entity.OriginPresets}
-     * @param g Graphics2D (isolated child is created inside the function itself)
+     * Checks whether the {@link Entity} has already reached its current destination.
+     * Useful for starting a new phase after a movement phase
+     * (e.g. setting a new destination or destroying the entity).
      */
-        public void drawText(String msg, float fontSize, Color color, String fontIdentifier, double x, double y, double rotation, OriginPresets origin, Graphics2D g) {
+    public boolean hasArrivedAtTarget() {
+        return x == targetX && y == targetY;
+    }
+
+    public void drawText(String msg, float fontSize, Color color, String fontIdentifier, int x, int y, double rotation, OriginPresets origin, Graphics2D g) {
         Font font = AssetManager.getFont(fontIdentifier).deriveFont(fontSize);
         g.setFont(font);
 

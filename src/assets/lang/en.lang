@@ -8,3 +8,20 @@ settings == Settings
 credits == Credits
 quit == Quit
 return = Return
+
+--- CREDITS ----------------------------------------------
+
+creditsTitle0 == Programming
+creditsContent0 == Bennet Freigang
+
+creditsTitle1 == Game Concept & Design
+creditsContent1 == [Name/Team]
+
+creditsTitle2 == Assets & Graphics
+creditsContent2 == [Name/Team]
+
+creditsTitle3 == Testing
+creditsContent3 == [Name/Team]
+
+creditsTitle4 == Special Thanks
+creditsContent4 == Thanks for playing!

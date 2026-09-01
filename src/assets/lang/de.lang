@@ -8,5 +8,20 @@ settings == Einstellungen
 credits == Credits
 quit == Beenden
 return == Zurück
-return from Settings == Zurück von Einstellungen
-return from Credits == Zurück von Credits
+
+--- CREDITS ----------------------------------------------
+
+creditsTitle0 == Programmierung
+creditsContent0 == Bennet Freigang
+
+creditsTitle1 == Spielkonzept & Design
+creditsContent1 == [Name/Team einfügen]
+
+creditsTitle2 == Assets & Grafik
+creditsContent2 == [Name/Team einfügen]
+
+creditsTitle3 == Testing
+creditsContent3 == [Name/Team einfügen]
+
+creditsTitle4 == Besonderer Dank
+creditsContent4 == Danke fürs Spielen!
