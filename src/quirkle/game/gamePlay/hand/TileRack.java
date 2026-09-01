@@ -1,16 +1,19 @@
 package quirkle.game.gamePlay.hand;
 
-import quirkle.engine.Entity;
 import quirkle.engine.InputManager;
+import quirkle.engine.NineSlice;
 import quirkle.game.gamePlay.player.Player;
 import quirkle.game.gamePlay.tiles.Tile;
+import quirkle.game.gamePlay.ui.PanelEntity;
+import quirkle.game.gamePlay.ui.UiTheme;
 
-import java.awt.*;
+import java.awt.Graphics2D;
 import java.util.Arrays;
 import java.util.List;
 
 /**
- * The bar along the bottom of the screen showing the current player's tiles.
+ * The bar along the bottom of the screen showing the current player's tiles, their score and
+ * what they scored last turn.
  *
  * @note Lives in screen space: it deliberately ignores the board camera so it stays put while
  *       the board is panned and zoomed.
@@ -18,21 +21,11 @@ import java.util.List;
  *           glued to the panel's draw order and spares the scene from adding/removing six entities
  *           on every turn.
  */
-public class TileRack extends Entity {
-    private static final int TILE_SIZE = 72;
-    private static final int TILE_GAP = 10;
-    private static final int PADDING = 16;
-    private static final int SELECTION_LIFT = 10;
-    private static final int LABEL_GAP = 10;
-    private static final float LABEL_FONT_SIZE = 26f;
-    private static final int CORNER_RADIUS = 18;
-    private static final int SLOT_CORNER_RADIUS = 6;
+public class TileRack extends PanelEntity {
 
-    private static final Color PANEL_COLOR = new Color(38, 42, 52, 225);
-    private static final Color BORDER_COLOR = new Color(255, 255, 255, 60);
-    private static final Color EMPTY_SLOT_COLOR = new Color(0, 0, 0, 70);
-    private static final Color LABEL_COLOR = new Color(38, 42, 52);
-    private static final String LABEL_FONT = "DEBUG_Poly-Regular";
+    /** Vertical center of the tile row, measured from the panel's top edge. */
+    private static final int SLOT_CENTER_OFFSET_Y = 127;
+    private static final int LABEL_LINE_HEIGHT = 27;
 
     private final HandTileEntity[] slots = new HandTileEntity[Player.HAND_SIZE];
 
@@ -44,11 +37,8 @@ public class TileRack extends Entity {
      * @param bottomY screen y of the rack's lower edge
      */
     public TileRack(int centerX, int bottomY) {
-        this.origin = OriginPresets.BOTTOM_MID;
-        this.x = centerX;
-        this.y = bottomY;
-        this.width = Player.HAND_SIZE * TILE_SIZE + (Player.HAND_SIZE - 1) * TILE_GAP + 2 * PADDING;
-        this.height = TILE_SIZE + 2 * PADDING;
+        setFrame(UiTheme.FRAME_RACK);
+        setBounds(centerX, bottomY, UiTheme.RACK_WIDTH, UiTheme.RACK_HEIGHT, OriginPresets.BOTTOM_MID);
     }
 
     /**
@@ -115,8 +105,8 @@ public class TileRack extends Entity {
 
     @Override
     public void onRender(Graphics2D g) {
-        drawPanel(g);
-        drawLabel(g);
+        drawFrame(g);
+        drawLabels(g);
 
         for (int i = 0; i < slots.length; i++) {
             if (slots[i] == null) drawEmptySlot(g, i);
@@ -124,33 +114,43 @@ public class TileRack extends Entity {
         }
     }
 
-    private void drawPanel(Graphics2D g) {
-        Graphics2D gPanel = (Graphics2D) g.create();
-
-        gPanel.setColor(PANEL_COLOR);
-        gPanel.fillRoundRect(getLeft(), getTop(), (int) width, (int) height, CORNER_RADIUS, CORNER_RADIUS);
-
-        gPanel.setColor(BORDER_COLOR);
-        gPanel.setStroke(new BasicStroke(2f));
-        gPanel.drawRoundRect(getLeft(), getTop(), (int) width, (int) height, CORNER_RADIUS, CORNER_RADIUS);
-
-        gPanel.dispose();
-    }
-
+    /** Draws an empty slot as the same brush frame as a filled one, only without a tile. */
     private void drawEmptySlot(Graphics2D g, int index) {
+        int size = UiTheme.RACK_TILE_SIZE;
+        int left = getSlotX(index) - size / 2;
+        int top = getRestingY() - size / 2;
+
         Graphics2D gSlot = (Graphics2D) g.create();
-
-        gSlot.setColor(EMPTY_SLOT_COLOR);
-        gSlot.fillRoundRect(getSlotX(index) - TILE_SIZE / 2, getRestingY() - TILE_SIZE / 2, TILE_SIZE, TILE_SIZE, SLOT_CORNER_RADIUS, SLOT_CORNER_RADIUS);
-
+        gSlot.setColor(UiTheme.SLOT_FILL);
+        gSlot.fillRect(left, top, size, size);
         gSlot.dispose();
+
+        NineSlice.draw(g, UiTheme.FRAME_SLOT, left, top, size, size,
+                UiTheme.CONTAINER_SOURCE_INSET, UiTheme.SLOT_BORDER);
     }
 
-    private void drawLabel(Graphics2D g) {
+    /**
+     * Draws the current player's name on the left and their scores on the right.
+     *
+     * @note Both sit inside the panel, unlike the old label that floated above it.
+     */
+    private void drawLabels(Graphics2D g) {
         if (player == null) return;
 
-        String label = player.getName() + " - " + player.getScore() + " Punkte";
-        drawText(label, LABEL_FONT_SIZE, LABEL_COLOR, LABEL_FONT, x, getTop() - LABEL_GAP, 0.0, OriginPresets.BOTTOM_MID, g);
+        int textY = getTop() + UiTheme.RACK_PADDING_Y;
+
+        drawText(player.getName().toUpperCase(), UiTheme.FONT_SIZE_RACK, UiTheme.TEXT, UiTheme.FONT,
+                getLeft() + UiTheme.RACK_PADDING_X, textY, 0.0, OriginPresets.TOP_LEFT, g);
+
+        int rightX = getRight() - UiTheme.RACK_PADDING_X;
+
+        drawText(UiTheme.text("points") + ": " + player.getScore(),
+                UiTheme.FONT_SIZE_RACK, UiTheme.TEXT, UiTheme.FONT,
+                rightX, textY, 0.0, OriginPresets.TOP_RIGHT, g);
+
+        drawText(UiTheme.text("points_last_round") + ": +" + player.getLastRoundScore(),
+                UiTheme.FONT_SIZE_RACK, UiTheme.TEXT, UiTheme.FONT,
+                rightX, textY + LABEL_LINE_HEIGHT, 0.0, OriginPresets.TOP_RIGHT, g);
     }
 
     private void syncSlots(List<Tile> hand) {
@@ -172,7 +172,7 @@ public class TileRack extends Entity {
     private void layoutSlot(int index) {
         HandTileEntity tileEntity = slots[index];
 
-        tileEntity.scale = TILE_SIZE / tileEntity.width;
+        tileEntity.scale = UiTheme.RACK_TILE_SIZE / tileEntity.width;
         tileEntity.x = getSlotX(index);
         tileEntity.y = getRestingY();
     }
@@ -189,7 +189,7 @@ public class TileRack extends Entity {
             boolean isSelected = tileEntity.getTile() == selectedTile;
 
             tileEntity.setSelected(isSelected);
-            tileEntity.y = isSelected ? getRestingY() - SELECTION_LIFT : getRestingY();
+            tileEntity.y = isSelected ? getRestingY() - UiTheme.RACK_SELECTION_LIFT : getRestingY();
         }
     }
 
@@ -223,19 +223,13 @@ public class TileRack extends Entity {
         return -1;
     }
 
+    /** @return the screen x of the center of slot {@code index}, laid out around the panel center. */
     private int getSlotX(int index) {
-        return getLeft() + PADDING + index * (TILE_SIZE + TILE_GAP) + TILE_SIZE / 2;
+        int firstSlotX = x - (Player.HAND_SIZE - 1) * UiTheme.RACK_TILE_SPACING / 2;
+        return firstSlotX + index * UiTheme.RACK_TILE_SPACING;
     }
 
     private int getRestingY() {
-        return getTop() + PADDING + TILE_SIZE / 2;
-    }
-
-    private int getLeft() {
-        return (int) (x - origin.x * width);
-    }
-
-    private int getTop() {
-        return (int) (y - origin.y * height);
+        return getTop() + SLOT_CENTER_OFFSET_Y;
     }
 }

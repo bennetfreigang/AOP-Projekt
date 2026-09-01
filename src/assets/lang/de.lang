@@ -8,3 +8,14 @@ settings == Einstellungen
 credits == Abspann
 quit == Beenden
 return == Zurück
+
+--- GAMEPLAY ---------------------------------------------
+
+points == PUNKTE
+last_round == LETZTE RUNDE
+points_last_round == PUNKTE LETZTE RUNDE
+in_bag == IM BEUTEL
+new_game == NEUES SPIEL
+end_turn == ZUG BEENDEN
+undo == ZURÜCKNEHMEN
+game_settings == EINSTELLUNGEN

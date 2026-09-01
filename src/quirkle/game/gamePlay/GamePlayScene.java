@@ -4,11 +4,16 @@ import quirkle.engine.InputManager;
 import quirkle.engine.Scene;
 import quirkle.game.gamePlay.board.Board;
 import quirkle.game.gamePlay.board.BoardCamera;
+import quirkle.game.gamePlay.board.BoardGrid;
 import quirkle.game.gamePlay.board.Position;
 import quirkle.game.gamePlay.hand.TileRack;
 import quirkle.game.gamePlay.player.Player;
 import quirkle.game.gamePlay.tiles.*;
-import quirkle.game.gamePlay.ui.EndTurnButton;
+import quirkle.game.gamePlay.ui.PlayerCardColumn;
+import quirkle.game.gamePlay.ui.SideButton;
+import quirkle.game.gamePlay.ui.SideButtonBar;
+import quirkle.game.gamePlay.ui.TileBagCounter;
+import quirkle.game.gamePlay.ui.UiTheme;
 
 import java.awt.*;
 import java.util.HashMap;
@@ -31,20 +36,35 @@ public class GamePlayScene extends Scene {
     private int lastMouseY;
     private boolean isDragging =  false;
 
-    // HUD
-    private static final int RACK_MARGIN_BOTTOM = 32;
-    private static final int BUTTON_MARGIN = 32;
-
     // UI
-    private final EndTurnButton endTurnButton;
+    private final BoardGrid boardGrid;
+    private final PlayerCardColumn playerCards;
+    private final TileBagCounter tileBagCounter;
+    private final SideButtonBar sideButtons;
+    private final SideButton endTurnButton;
 
     public GamePlayScene() {
         this.game = new Game(new Board(), new TileBag(), List.of(new Player("Player 1"), new Player("Player 2")));
-        this.camera = new BoardCamera(getCenterX(), getCenterY(), 32);
-        this.tileRack = new TileRack(getCenterX(), getHeight() - RACK_MARGIN_BOTTOM);
-        this.endTurnButton = new EndTurnButton(getWidth() - BUTTON_MARGIN, getHeight() - BUTTON_MARGIN);
+        this.camera = new BoardCamera(getCenterX(), getCenterY(), UiTheme.BOARD_BASE_CELL_SIZE);
 
-        addEntities(tileRack, endTurnButton);
+        this.boardGrid = new BoardGrid(camera, getWidth(), getHeight());
+        this.tileRack = new TileRack(getCenterX(), getHeight() - UiTheme.RACK_MARGIN_BOTTOM);
+        this.playerCards = new PlayerCardColumn(game);
+        this.tileBagCounter = new TileBagCounter(game.getTileBag());
+        this.sideButtons = new SideButtonBar(getWidth() - UiTheme.SIDE_BUTTON_MARGIN_RIGHT, this::endTurn);
+        this.endTurnButton = sideButtons.getEndTurnButton();
+
+        addEntities(boardGrid, tileRack, playerCards, tileBagCounter, sideButtons);
+    }
+
+    /**
+     * @note Paints the backdrop the HUD assets were drawn for; the brush strokes are white and
+     *       the tiles are unfilled outlines, so both only read on a dark ground.
+     */
+    @Override
+    public void onRender(Graphics2D g) {
+        g.setColor(UiTheme.BACKGROUND);
+        g.fillRect(0, 0, getWidth(), getHeight());
     }
 
     @Override
@@ -86,11 +106,7 @@ public class GamePlayScene extends Scene {
 
     private void handleClickInput() {
         if (tileRack.handleInput()) return; // the rack got the click, don't also place a tile
-
-        if (endTurnButton.isClicked()) {
-            if (endTurnButton.isClicked()) endTurn();
-            return;
-        }
+        if (sideButtons.handleInput()) return; // likewise for the button bar on the right
 
         Tile selectedTile = tileRack.getSelectedTile();
         if (selectedTile == null || !InputManager.isMouseClicked()) return;

@@ -3,6 +3,8 @@ package quirkle.engine;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -102,9 +104,22 @@ public class Scene {
         }
 
         onRender(g);
-        for (Entity entity : sceneEntities) {
+        for (Entity entity : getRenderOrderedEntities()) {
             entity.render(g);
         }
+    }
+
+    /**
+     * @return the scene's entities ordered by {@link Entity#renderOrder}, lowest first
+     * @note Sorts a copy rather than {@link #sceneEntities} itself, since reordering a
+     *       CopyOnWriteArrayList copies the whole backing array on every write.
+     * @implNote {@link List#sort} is stable, so entities sharing a renderOrder keep the
+     *           order they were added in.
+     */
+    private List<Entity> getRenderOrderedEntities() {
+        List<Entity> ordered = new ArrayList<>(sceneEntities);
+        ordered.sort(Comparator.comparingInt(entity -> entity.renderOrder));
+        return ordered;
     }
 
     public void destroy() {

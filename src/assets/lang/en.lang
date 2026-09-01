@@ -7,4 +7,15 @@ play == Play
 settings == Settings
 credits == Credits
 quit == Quit
-return = Return
+return == Return
+
+--- GAMEPLAY ---------------------------------------------
+
+points == POINTS
+last_round == LAST ROUND
+points_last_round == POINTS LAST ROUND
+in_bag == IN BAG
+new_game == NEW GAME
+end_turn == END TURN
+undo == UNDO
+game_settings == SETTINGS

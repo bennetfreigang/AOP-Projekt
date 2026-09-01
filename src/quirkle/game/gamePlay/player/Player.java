@@ -14,6 +14,9 @@ public class Player {
     private final String name;
     private int score;
 
+    /** Points scored on this player's most recent completed turn; {@code 0} before their first. */
+    private int lastRoundScore;
+
     private final List<Tile> hand = new ArrayList<>();
 
     public Player(String name) {
@@ -34,6 +37,16 @@ public class Player {
     /** Adds {@code points} to the player's score. */
     public void increaseScore(int points) {
         setScore(this.score + points);
+    }
+
+    /** @return the points this player scored on their most recent completed turn. */
+    public int getLastRoundScore() {
+        return lastRoundScore;
+    }
+
+    /** Records what this player scored on the turn they just finished. */
+    public void setLastRoundScore(int lastRoundScore) {
+        this.lastRoundScore = lastRoundScore;
     }
 
     /** Resets the player's score to zero. */

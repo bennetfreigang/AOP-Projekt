@@ -79,6 +79,7 @@ public class Game {
         int points = board.commitPendingTiles();
 
         currentPlayer.increaseScore(points);
+        currentPlayer.setLastRoundScore(points);
         currentPlayer.refillHand(tileBag);
 
         currentPlayerIndex = (currentPlayerIndex + 1) % players.size();

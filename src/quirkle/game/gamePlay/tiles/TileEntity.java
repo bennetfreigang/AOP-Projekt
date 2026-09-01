@@ -19,11 +19,14 @@ public abstract class TileEntity extends Entity {
 
     public Tile getTile() { return tile; }
 
+    /**
+     * @return the texture identifier for {@code tile}, e.g. {@code "tiles/hexagon/hexagon_red"}
+     * @note Folder and file names are lowercase throughout, so the path also resolves on
+     *       case-sensitive file systems and from inside a jar.
+     */
     private String buildSpritePath(Tile tile) {
-        String symbol = tile.getSymbol().name();               // "HEXAGON"
-        String shapeFolder = symbol.charAt(0) + symbol.substring(1).toLowerCase(); // "Hexagon"
+        String shape = tile.getSymbol().name().toLowerCase();   // "hexagon"
         String color = tile.getColor().name().toLowerCase();    // "red"
-        String shape = symbol.toLowerCase();                     // "hexagon"
-        return "tiles/" + shapeFolder + "/" + shape + "_" + color;
+        return "tiles/" + shape + "/" + shape + "_" + color;
     }
 }
