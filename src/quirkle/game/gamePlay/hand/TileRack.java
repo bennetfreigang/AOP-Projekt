@@ -5,9 +5,7 @@ import quirkle.engine.InputManager;
 import quirkle.game.gamePlay.player.Player;
 import quirkle.game.gamePlay.tiles.Tile;
 
-import javax.print.attribute.standard.OrientationRequested;
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
