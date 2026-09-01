@@ -21,25 +21,40 @@ public class SceneManager {
     public static float currentSceneAlpha = 1.0f;
     public static float storedSceneAlpha = 1.0f;
 
+    /**
+     * Allows to load a temporary Scene that can exist without unloading the {@link #currentScene} / {@link #storedScene}.
+     * When this is called but there is already a temporary scenes loaded the temporary Scene will be destroyed and overwritten by the new temporary Scene.
+     * @param tempScene Scene to load as temporary Scene
+     * @param _renderStoredScene continue to call {@link quirkle.engine.Scene#render()} Event of the stored Scene
+     * @param _pauseStoredScene pause the {@link #storedScene}s {@link quirkle.engine.Scene#update()} Event
+     */
     public static void setTempScene(Scene tempScene, boolean _renderStoredScene, boolean _pauseStoredScene) {
-        if (storedScene == null) {
-            renderStoredScene = _renderStoredScene;
-            pauseStoredScene = _pauseStoredScene;
+        if (!(storedScene == null)) {
+            EngineConfig.message("overwriting already stored temporary Scene", SceneManager.class.getSimpleName(), EngineConfig.messageType.INFO);
 
-            storedScene = currentScene;
+            currentScene.destroy();
             currentScene = tempScene;
         }   else    {
-            if (!EngineConfig.SUPPRES_WARNINGS) System.err.println("[ERROR] resourceEngine / SceneManager: cant load temporary Scene! There is already a stored Scene");
+            currentScene = tempScene;
+            storedScene = currentScene;
         }
+
+        renderStoredScene = _renderStoredScene;
+        pauseStoredScene = _pauseStoredScene;
+
+        EngineConfig.message("loaded temporary scene: " + tempScene.getClass().getSimpleName(), SceneManager.class.getSimpleName(), EngineConfig.messageType.INFO);
     }
 
+    /**
+     * Destroyes the current temporary Scene and loads the current Scene as the main Scene
+     */
     public static void stopTempScene() {
         if (storedScene != null) {
             currentScene.destroy();
             currentScene = storedScene;
             storedScene = null;
         }   else    {
-            if (!EngineConfig.SUPPRES_WARNINGS) System.err.println("[ERROR] resourceEngine / SceneManager: cant return to stored Scene! There is no stored Scene");
+            EngineConfig.message("cant return to stored Scene! There is no stored Scene", SceneManager.class.getSimpleName(), EngineConfig.messageType.CRITICAL_ERROR);
         }
     }
 
