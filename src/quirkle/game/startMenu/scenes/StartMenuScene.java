@@ -1,11 +1,13 @@
-package quirkle.game.startMenu.scenes;
+package quirkle.game.startmenu.scenes;
 
 import quirkle.engine.AssetManager;
 import quirkle.engine.Scene;
 import quirkle.engine.SceneManager;
-import quirkle.game.startMenu.entities.BackgroundHelper;
-import quirkle.game.startMenu.entities.StartMenuButton;
-import quirkle.game.startMenu.entities.Title;
+import quirkle.game.settings.scenes.SettingsScene;
+import quirkle.game.credits.scenes.CreditsScene;
+import quirkle.game.startmenu.entities.BackgroundHelper;
+import quirkle.game.startmenu.entities.StartMenuButton;
+import quirkle.game.startmenu.entities.Title;
 
 public class StartMenuScene extends Scene {
 

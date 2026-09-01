@@ -1,4 +1,4 @@
-package quirkle.game.startMenu.entities;
+package quirkle.game.startmenu.entities;
 
 import quirkle.engine.Entity;
 

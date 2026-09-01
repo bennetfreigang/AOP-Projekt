@@ -1,4 +1,4 @@
-package quirkle.game.util;
+package quirkle.game.util.entities;
 
 import quirkle.engine.*;
 

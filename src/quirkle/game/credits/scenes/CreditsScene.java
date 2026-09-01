@@ -1,18 +1,18 @@
-package quirkle.game.startMenu.scenes;
+package quirkle.game.credits.scenes;
 
-import quirkle.engine.*;
+import quirkle.engine.AssetManager;
+import quirkle.engine.Scene;
+import quirkle.engine.SceneManager;
+import quirkle.game.startmenu.entities.StartMenuButton;
 
-import quirkle.game.startMenu.entities.*;
-import quirkle.game.startMenu.scenes.*;
-
-public class TwoScene extends Scene {
+public class CreditsScene extends Scene {
 
     StartMenuButton returnButton;
 
 
     @Override
     public void onCreate() {
-        returnButton = new StartMenuButton(AssetManager.getMessage("return"));
+        returnButton = new StartMenuButton(AssetManager.getMessage("return from Credits"));
 
         addEntities(returnButton);
 
