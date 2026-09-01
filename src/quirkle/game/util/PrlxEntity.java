@@ -1,4 +1,4 @@
-package quirkle.game.util.entities;
+package quirkle.game.util;
 
 import quirkle.engine.*;
 
@@ -13,10 +13,10 @@ public class PrlxEntity extends Entity {
     int centerAtCreationX;
     int centerAtCreationY;
 
-    double tarX;
-    double tarY;
+    public double tarX;
+    public double tarY;
 
-    static class PrlxLayer {
+    static public class PrlxLayer {
         String textureIdentifier;
         double x;
         double y;

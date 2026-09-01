@@ -1,12 +1,9 @@
-package quirkle.game.startMenu.entities;
+package quirkle.game.startmenu.entities;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
 
 import quirkle.engine.*;
-
-import quirkle.game.startMenu.entities.*;
-import quirkle.game.startMenu.scenes.*;
 
 
 public class Title extends Entity {

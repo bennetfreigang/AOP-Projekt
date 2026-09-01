@@ -2,8 +2,9 @@ package quirkle;
 
 import quirkle.engine.*;
 
-import java.awt.Color;
+import quirkle.game.startmenu.scenes.StartMenuScene;
 
+import java.awt.Color;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
@@ -26,7 +27,7 @@ public class Main {
             frame.setUndecorated(false); //disabling the frame
             frame.setResizable(false);
 
-            SceneManager.setScene(new Scene()); //uses dummy scene to compile for now -> put in actual start scene if available
+            SceneManager.setScene(new StartMenuScene()); //uses dummy scene to compile for now -> put in actual start scene if available
             //EXAMPLE: SceneManager.setScene(new ImplementedScene());
 
             RenderPanel panel = new RenderPanel();

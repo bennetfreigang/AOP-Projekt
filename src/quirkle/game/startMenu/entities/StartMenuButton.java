@@ -1,6 +1,6 @@
 package quirkle.game.startmenu.entities;
 
-import quirkle.engine.Entity;
+import quirkle.engine.*;
 
 import java.awt.*;
 

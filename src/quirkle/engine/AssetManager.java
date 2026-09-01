@@ -30,11 +30,12 @@ public class AssetManager {
 
     public static BufferedImage getTexture(String identifier) {
         identifier = EngineConfig.ASSET_ORIGIN + EngineConfig.TEXTURE_SUBDIR + "/" + identifier + ".png"; //direct translation in prep for future precaching (frontend-shift)
-
+        
         if (identifier == null || identifier.isEmpty()) return getFallbackTexture();
         if (textureCache.containsKey(identifier)) return textureCache.get(identifier);
 
         try (InputStream in = AssetManager.class.getResourceAsStream(identifier)) {
+            
             if (in == null) {
                 EngineConfig.message("Could not find texture: " + identifier, AssetManager.class.getSimpleName(), EngineConfig.messageType.WARNING);
                 return getFallbackTexture();
