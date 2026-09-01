@@ -15,6 +15,7 @@ public class RenderPanel extends JPanel {
         InputManager input = InputManager.getInstance();
         addMouseListener(input);
         addMouseMotionListener(input);
+        addMouseWheelListener(input);
         addKeyListener(InputManager.getKeyHandler());
     }
 
