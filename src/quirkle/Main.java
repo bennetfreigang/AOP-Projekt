@@ -2,7 +2,6 @@ package quirkle;
 
 import quirkle.engine.*;
 import quirkle.game.gamePlay.GamePlayScene;
-import quirkle.game.startMenu.StartMenuScene;
 
 import java.awt.Color;
 
