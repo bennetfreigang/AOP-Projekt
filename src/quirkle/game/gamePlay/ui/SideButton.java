@@ -15,7 +15,7 @@ import java.awt.Graphics2D;
  *       without artwork draws a neutral placeholder body at exactly the same size and in the
  *       same place, so handing it its texture later moves nothing on screen - it is the single
  *       call {@link #setArtwork(String)}.
- * @see SideButtonBar for the four buttons the gameplay scene uses
+ * @see SideButtonBar for the buttons the gameplay scene uses
  */
 public class SideButton extends PanelEntity {
 

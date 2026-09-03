@@ -32,7 +32,11 @@ public final class UiTheme {
     public static final String FONT = "DEBUG_Poly-Regular";
 
     public static final float FONT_SIZE_CARD = 19f;
+    /** The active player's name, the rack's headline. */
+    public static final float FONT_SIZE_RACK_NAME = 26f;
     public static final float FONT_SIZE_RACK = 22f;
+    /** Secondary rack line, currently what was scored last round. */
+    public static final float FONT_SIZE_RACK_SMALL = 18f;
     public static final float FONT_SIZE_BUTTON = 30f;
     public static final float FONT_SIZE_BAG_COUNT = 72f;
     public static final float FONT_SIZE_BAG_LABEL = 20f;
@@ -49,7 +53,7 @@ public final class UiTheme {
     /** Small diamond markers sitting on the grid intersections. */
     public static final Color GRID_MARKER = new Color(255, 255, 255, 60);
 
-    /** Fill of an empty rack slot. */
+    /** Fill of a rack slot, drawn behind the tile that sits in it. */
     public static final Color SLOT_FILL = new Color(255, 255, 255, 14);
 
     /** Placeholder body for a side button whose artwork has not been delivered yet. */
@@ -88,10 +92,21 @@ public final class UiTheme {
      */
     public static final int BOARD_BASE_CELL_SIZE = 64;
 
+    // Layout: tiles, both on the board and in the rack
+
+    /**
+     * Gap between a tile's artwork and its outline, as a fraction of the tile box per side.
+     *
+     * @note Applies to the texture only. The box itself stays exactly one cell wide, so outlines
+     *       and hit areas are identical for every shape no matter what this is set to.
+     */
+    public static final double TILE_PADDING_RATIO = 0.09;
+
     // Layout: player cards, stacked down the left edge
 
-    public static final int CARD_LEFT = 89;
-    public static final int CARD_TOP = 148;
+    public static final int CARD_LEFT = 40;
+    /** Top edge of the first card; the stack starts near the window's top left corner. */
+    public static final int CARD_TOP = 60;
     public static final int CARD_WIDTH = 231;
     public static final int CARD_HEIGHT = 160;
     /** Distance between the top edges of two stacked cards. */
@@ -103,9 +118,15 @@ public final class UiTheme {
 
     // Layout: tile bag counter, bottom left
 
-    public static final int BAG_CENTER_X = 199;
-    public static final int BAG_CENTER_Y = 925;
     public static final int BAG_SIZE = 217;
+    /**
+     * Center of the diamond, tucked into the window's bottom left corner.
+     *
+     * @note Half of {@link #BAG_SIZE} plus a margin: the diamond keeps 40px to the left edge and
+     *       20px to the bottom, clear of the rack, which starts at x 436.
+     */
+    public static final int BAG_CENTER_X = 148;
+    public static final int BAG_CENTER_Y = 951;
 
     // Layout: the active player's rack along the bottom
 
@@ -119,8 +140,15 @@ public final class UiTheme {
     public static final int RACK_TILE_SIZE = 108;
     /** Distance between the centers of two rack slots. */
     public static final int RACK_TILE_SPACING = 142;
-    /** How far a selected tile lifts out of its slot. */
-    public static final int RACK_SELECTION_LIFT = 12;
+    /**
+     * Vertical center of the row of slots, measured from the rack's top edge.
+     *
+     * @note Sits below the panel's middle: the label band above the slots needs more room than
+     *       the margin below them.
+     */
+    public static final int RACK_SLOT_CENTER_Y = 135;
+    /** Baseline distance between the two stacked score lines on the right. */
+    public static final int RACK_LINE_HEIGHT = 26;
 
     // Layout: side button bar on the right
 
@@ -130,8 +158,15 @@ public final class UiTheme {
     public static final int SIDE_BUTTON_MARGIN_RIGHT = 12;
     /** Edge length of the square a {@link ButtonGlyph} is drawn inside. */
     public static final int GLYPH_SIZE = 44;
-    /** Vertical centers of the four buttons, top to bottom, as laid out in the mockup. */
-    public static final int[] SIDE_BUTTON_CENTERS_Y = { 74, 379, 539, 939 };
+    /**
+     * Vertical center of the settings button, at the top of the bar.
+     *
+     * @note The two slots between this and {@link #SIDE_BUTTON_END_TURN_Y} are the mockup's
+     *       positions for the new game and take back buttons, which the bar no longer shows.
+     */
+    public static final int SIDE_BUTTON_SETTINGS_Y = 74;
+    /** Vertical center of the end turn button, at the bottom of the bar. */
+    public static final int SIDE_BUTTON_END_TURN_Y = 939;
 
     /**
      * @return the localized string for {@code key}, taken from the active language package

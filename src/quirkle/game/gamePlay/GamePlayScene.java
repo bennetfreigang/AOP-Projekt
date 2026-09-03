@@ -75,6 +75,10 @@ public class GamePlayScene extends Scene {
 
         endTurnButton.setEnabled(game.hasPendingTiles());
         tileRack.showPlayer(game.getCurrentPlayer());
+
+        // No placement cursor while the mouse is over the HUD; a click there never reaches a cell.
+        boardGrid.setCursorVisible(!tileRack.isHovered() && !sideButtons.isHovered());
+
         syncTiles();
 
         double tileSize = camera.getTileSize();
@@ -83,7 +87,7 @@ public class GamePlayScene extends Scene {
             Point screenPos = camera.boardToScreen(tileEntity.getPosition());
             tileEntity.x = screenPos.x;
             tileEntity.y = screenPos.y;
-            tileEntity.scale = tileSize / tileEntity.width;
+            tileEntity.setTileSize(tileSize);
             tileEntity.setPending(pendingTiles.containsKey(tileEntity.getPosition()));
         }
     }
@@ -91,6 +95,21 @@ public class GamePlayScene extends Scene {
     private void syncTiles() {
         addMissingEntities(game.getBoard().getPlacedTiles());
         addMissingEntities(game.getBoard().getPendingTiles());
+        removeTakenBackEntities();
+    }
+
+    /** Drops the entities of tiles that went back to the rack, so no tile is left drawn on an empty cell. */
+    private void removeTakenBackEntities() {
+        Board board = game.getBoard();
+
+        tileEntities.entrySet().removeIf(entry -> {
+            Position position = entry.getKey();
+            if (board.getPlacedTiles().containsKey(position)) return false;
+            if (board.getPendingTiles().containsKey(position)) return false;
+
+            removeEntities(entry.getValue());
+            return true;
+        });
     }
 
     private void addMissingEntities(Map<Position, Tile> tiles) {
@@ -108,10 +127,19 @@ public class GamePlayScene extends Scene {
         if (tileRack.handleInput()) return; // the rack got the click, don't also place a tile
         if (sideButtons.handleInput()) return; // likewise for the button bar on the right
 
-        Tile selectedTile = tileRack.getSelectedTile();
-        if (selectedTile == null || !InputManager.isMouseClicked()) return;
+        if (!InputManager.isMouseClicked()) return;
 
         Position position = camera.screenToBoard(InputManager.getMouseX(), InputManager.getMouseY());
+
+        // A click on a tile staged this turn takes it back, whether or not a rack tile is selected;
+        // placing onto an occupied cell would be rejected anyway.
+        if (game.getBoard().getPendingTiles().containsKey(position)) {
+            game.takeBackTile(position);
+            return;
+        }
+
+        Tile selectedTile = tileRack.getSelectedTile();
+        if (selectedTile == null) return;
 
         try {
             game.placeTile(position, selectedTile);

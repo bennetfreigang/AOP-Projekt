@@ -23,10 +23,6 @@ import java.util.List;
  */
 public class TileRack extends PanelEntity {
 
-    /** Vertical center of the tile row, measured from the panel's top edge. */
-    private static final int SLOT_CENTER_OFFSET_Y = 127;
-    private static final int LABEL_LINE_HEIGHT = 27;
-
     private final HandTileEntity[] slots = new HandTileEntity[Player.HAND_SIZE];
 
     private Player player;
@@ -108,14 +104,18 @@ public class TileRack extends PanelEntity {
         drawFrame(g);
         drawLabels(g);
 
+        // Every slot gets its socket, so the row keeps its shape as the hand empties out.
         for (int i = 0; i < slots.length; i++) {
-            if (slots[i] == null) drawEmptySlot(g, i);
-            else slots[i].render(g);
+            drawSlot(g, i);
+        }
+
+        for (HandTileEntity tileEntity : slots) {
+            if (tileEntity != null) tileEntity.render(g);
         }
     }
 
-    /** Draws an empty slot as the same brush frame as a filled one, only without a tile. */
-    private void drawEmptySlot(Graphics2D g, int index) {
+    /** Draws the socket of slot {@code index}: the same brush frame whether or not a tile sits in it. */
+    private void drawSlot(Graphics2D g, int index) {
         int size = UiTheme.RACK_TILE_SIZE;
         int left = getSlotX(index) - size / 2;
         int top = getRestingY() - size / 2;
@@ -132,15 +132,19 @@ public class TileRack extends PanelEntity {
     /**
      * Draws the current player's name on the left and their scores on the right.
      *
-     * @note Both sit inside the panel, unlike the old label that floated above it.
+     * @note All three sit inside the panel, unlike the old label that floated above it.
+     * @implNote Three weights rather than one: the name is the headline and carries the accent
+     *           color, the score is the number being played for, and last round's points are
+     *           background information and step back into {@link UiTheme#TEXT_DIMMED}.
      */
     private void drawLabels(Graphics2D g) {
         if (player == null) return;
 
         int textY = getTop() + UiTheme.RACK_PADDING_Y;
 
-        drawText(player.getName().toUpperCase(), UiTheme.FONT_SIZE_RACK, UiTheme.TEXT, UiTheme.FONT,
-                getLeft() + UiTheme.RACK_PADDING_X, textY, 0.0, OriginPresets.TOP_LEFT, g);
+        drawText(player.getName().toUpperCase(), UiTheme.FONT_SIZE_RACK_NAME, UiTheme.GOLD,
+                UiTheme.FONT, getLeft() + UiTheme.RACK_PADDING_X, textY, 0.0,
+                OriginPresets.TOP_LEFT, g);
 
         int rightX = getRight() - UiTheme.RACK_PADDING_X;
 
@@ -149,8 +153,8 @@ public class TileRack extends PanelEntity {
                 rightX, textY, 0.0, OriginPresets.TOP_RIGHT, g);
 
         drawText(UiTheme.text("points_last_round") + ": +" + player.getLastRoundScore(),
-                UiTheme.FONT_SIZE_RACK, UiTheme.TEXT, UiTheme.FONT,
-                rightX, textY + LABEL_LINE_HEIGHT, 0.0, OriginPresets.TOP_RIGHT, g);
+                UiTheme.FONT_SIZE_RACK_SMALL, UiTheme.TEXT_DIMMED, UiTheme.FONT,
+                rightX, textY + UiTheme.RACK_LINE_HEIGHT, 0.0, OriginPresets.TOP_RIGHT, g);
     }
 
     private void syncSlots(List<Tile> hand) {
@@ -172,7 +176,7 @@ public class TileRack extends PanelEntity {
     private void layoutSlot(int index) {
         HandTileEntity tileEntity = slots[index];
 
-        tileEntity.scale = UiTheme.RACK_TILE_SIZE / tileEntity.width;
+        tileEntity.setTileSize(UiTheme.RACK_TILE_SIZE);
         tileEntity.x = getSlotX(index);
         tileEntity.y = getRestingY();
     }
@@ -182,14 +186,15 @@ public class TileRack extends PanelEntity {
         applySelection();
     }
 
+    /**
+     * @note A selected tile stays in its slot; the outline
+     *       {@link HandTileEntity#onRender(Graphics2D)} draws is the only thing that marks it.
+     */
     private void applySelection() {
         for  (HandTileEntity tileEntity : slots) {
             if (tileEntity == null) continue;
 
-            boolean isSelected = tileEntity.getTile() == selectedTile;
-
-            tileEntity.setSelected(isSelected);
-            tileEntity.y = isSelected ? getRestingY() - UiTheme.RACK_SELECTION_LIFT : getRestingY();
+            tileEntity.setSelected(tileEntity.getTile() == selectedTile);
         }
     }
 
@@ -230,6 +235,6 @@ public class TileRack extends PanelEntity {
     }
 
     private int getRestingY() {
-        return getTop() + SLOT_CENTER_OFFSET_Y;
+        return getTop() + UiTheme.RACK_SLOT_CENTER_Y;
     }
 }

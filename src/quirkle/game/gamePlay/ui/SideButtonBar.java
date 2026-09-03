@@ -6,11 +6,11 @@ import java.awt.Graphics2D;
 import java.util.List;
 
 /**
- * The four buttons stacked along the right edge: new game, take back, end turn and settings.
+ * The two buttons along the right edge: settings at the top, end turn at the bottom.
  *
- * @note Only end turn is wired up; the other three are placeholders that render and swallow
- *       their clicks but do nothing, since the actions behind them do not exist yet. Giving one
- *       a function later means handing it a {@code Runnable} through
+ * @note Only end turn is wired up; settings is a placeholder that renders and swallows its
+ *       clicks but does nothing, since the action behind it does not exist yet. Giving it a
+ *       function later means handing it a {@code Runnable} through
  *       {@link SideButton#setAction(Runnable)}, and its artwork through
  *       {@link SideButton#setArtwork(String)}.
  * @implNote Draws and ticks its buttons itself rather than registering them as scene entities,
@@ -18,10 +18,8 @@ import java.util.List;
  */
 public class SideButtonBar extends Entity {
 
-    private final SideButton newGameButton;
-    private final SideButton undoButton;
-    private final SideButton endTurnButton;
     private final SideButton settingsButton;
+    private final SideButton endTurnButton;
 
     private final List<SideButton> buttons;
 
@@ -32,16 +30,13 @@ public class SideButtonBar extends Entity {
     public SideButtonBar(int rightX, Runnable endTurnAction) {
         this.renderOrder = UiTheme.LAYER_HUD;
 
-        this.newGameButton = new SideButton(UiTheme.text("new_game"), null, null);
-        this.undoButton = new SideButton(null, ButtonGlyph.UNDO, null);
-        this.endTurnButton = new SideButton(null, ButtonGlyph.CONFIRM, endTurnAction);
         this.settingsButton = new SideButton(UiTheme.text("game_settings"), null, null);
+        this.endTurnButton = new SideButton(null, ButtonGlyph.CONFIRM, endTurnAction);
 
-        this.buttons = List.of(newGameButton, undoButton, endTurnButton, settingsButton);
+        this.buttons = List.of(settingsButton, endTurnButton);
 
-        for (int i = 0; i < buttons.size(); i++) {
-            buttons.get(i).place(rightX, UiTheme.SIDE_BUTTON_CENTERS_Y[i]);
-        }
+        settingsButton.place(rightX, UiTheme.SIDE_BUTTON_SETTINGS_Y);
+        endTurnButton.place(rightX, UiTheme.SIDE_BUTTON_END_TURN_Y);
     }
 
     /** @return the checkmark button, so the scene can enable it once a tile is staged. */
@@ -49,11 +44,20 @@ public class SideButtonBar extends Entity {
         return endTurnButton;
     }
 
-    public SideButton getNewGameButton() { return newGameButton; }
-
-    public SideButton getUndoButton() { return undoButton; }
-
     public SideButton getSettingsButton() { return settingsButton; }
+
+    /**
+     * @return whether the mouse is over one of the bar's buttons
+     * @note Asks the buttons rather than the bar itself: the bar is a container without bounds
+     *       of its own, so the inherited check would never report a hit.
+     */
+    @Override
+    public boolean isHovered() {
+        for (SideButton button : buttons) {
+            if (button.isHovered()) return true;
+        }
+        return false;
+    }
 
     /**
      * Lets the bar react to the current frame's click.

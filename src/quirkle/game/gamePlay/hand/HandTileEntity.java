@@ -9,7 +9,6 @@ public class HandTileEntity extends TileEntity {
     private static final Color SELECTION_COLOR = new Color(255, 193, 7);
     private static final Color HOVER_COLOR = new Color(255, 255, 255, 140);
     private static final Color REJECTION_COLOR = new Color(229, 57, 53);
-    private static final float OUTLINE_WIDTH = 3f;
 
     /** How long the "that move is not allowed" feedback runs, in seconds. */
     private static final double REJECTION_DURATION = 0.35;
@@ -58,17 +57,7 @@ public class HandTileEntity extends TileEntity {
         Color outlineColor = getOutlineColor();
         if (outlineColor == null) return;
 
-        Graphics2D gOutline = (Graphics2D) g.create();
-        gOutline.setColor(outlineColor);
-        gOutline.setStroke(new BasicStroke(OUTLINE_WIDTH));
-
-        int scaleWidth = (int) getScaledWidth();
-        int scaledHeight = (int) getScaledHeight();
-        int drawX = (int) (x - origin.x * scaleWidth);
-        int drawY = (int) (y - origin.y * scaleWidth);
-
-        gOutline.drawRect(drawX, drawY, scaleWidth, scaledHeight);
-        gOutline.dispose();
+        drawOutline(g, outlineColor);
     }
 
     private Color getOutlineColor() {

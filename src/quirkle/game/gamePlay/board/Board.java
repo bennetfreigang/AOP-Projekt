@@ -1,6 +1,8 @@
 package quirkle.game.gamePlay.board;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import quirkle.game.gamePlay.tiles.Tile;
@@ -96,6 +98,35 @@ public class Board {
         }
 
         pendingTiles.put(position, tile);
+    }
+
+    /**
+     * Takes the pending tile at {@code position} off the board.
+     *
+     * @return the tile that stood there, or {@code null} if the position held no pending tile
+     * @note Committed tiles are untouched; only the current turn's placements can be taken back.
+     */
+    public Tile removePendingTile(Position position) {
+        return pendingTiles.remove(position);
+    }
+
+    /**
+     * Takes every pending tile off the board.
+     *
+     * @return the tiles that were staged, in no particular order
+     */
+    public List<Tile> removeAllPendingTiles() {
+        List<Tile> removed = new ArrayList<>(pendingTiles.values());
+        pendingTiles.clear();
+        return removed;
+    }
+
+    /**
+     * @return whether the tiles staged so far could be committed as they stand
+     * @note Nothing staged counts as legal: an empty turn is not a broken one.
+     */
+    public boolean isPendingPlacementLegal() {
+        return pendingTiles.isEmpty() || isPendingTilesPlacementPossible();
     }
 
     /**

@@ -4,18 +4,15 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
-import java.awt.geom.Arc2D;
 import java.awt.geom.Path2D;
 
 /**
  * The pictograms on the icon-only side buttons, drawn as vector shapes.
  *
- * @note Not text: {@code DEBUG_Poly-Regular} carries no glyph for U+21BA or U+2713, so setting
- *       them as a string would draw two missing-glyph boxes.
+ * @note Not text: {@code DEBUG_Poly-Regular} carries no glyph for U+2713, so setting it as a
+ *       string would draw a missing-glyph box.
  */
 public enum ButtonGlyph {
-    /** Circular arrow, for taking the staged tiles back. */
-    UNDO,
     /** Checkmark, for ending the turn. */
     CONFIRM;
 
@@ -35,32 +32,10 @@ public enum ButtonGlyph {
                 BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
 
         switch (this) {
-            case UNDO -> drawUndo(gGlyph, centerX, centerY, size);
             case CONFIRM -> drawConfirm(gGlyph, centerX, centerY, size);
         }
 
         gGlyph.dispose();
-    }
-
-    /** An almost-closed ring with an arrowhead on its upper end. */
-    private void drawUndo(Graphics2D g, int centerX, int centerY, int size) {
-        double radius = size * 0.36;
-        double diameter = radius * 2;
-
-        // Left open, so the gap and the arrowhead sit next to each other at the top.
-        g.draw(new Arc2D.Double(centerX - radius, centerY - radius, diameter, diameter,
-                100, 320, Arc2D.OPEN));
-
-        double headSize = size * 0.2;
-        double headX = centerX + radius * Math.cos(Math.toRadians(100));
-        double headY = centerY - radius * Math.sin(Math.toRadians(100));
-
-        Path2D.Double head = new Path2D.Double();
-        head.moveTo(headX - headSize * 0.5, headY - headSize * 0.5);
-        head.lineTo(headX + headSize * 0.6, headY - headSize * 0.1);
-        head.lineTo(headX - headSize * 0.1, headY + headSize * 0.6);
-        head.closePath();
-        g.fill(head);
     }
 
     /** A two-segment checkmark. */

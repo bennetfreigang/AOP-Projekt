@@ -18,7 +18,7 @@ public class Main {
             EngineConfig.FPS = 120;
             EngineConfig.DEFAULT_LANG_IDENTIFIER = "de";
 
-            EngineConfig.SUPPRES_WARNINGS = false;
+            EngineConfig.SUPPRES_WARNINGS = true;
 
             AssetManager.setLang(EngineConfig.DEFAULT_LANG_IDENTIFIER);
 

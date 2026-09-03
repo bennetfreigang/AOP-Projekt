@@ -64,6 +64,30 @@ public class Game {
     }
 
     /**
+     * Takes the tile staged at {@code position} back into the current player's hand.
+     *
+     * @note If what is left behind is no longer a legal placement, the whole turn's staging goes
+     *       back with it. Pulling a tile out of the middle of a run is the common case: the rest
+     *       would sit there as two disconnected groups the player could never commit.
+     * @throws IllegalStateException if no tile was staged at {@code position} this turn
+     */
+    public void takeBackTile(Position position) {
+        Tile tile = board.removePendingTile(position);
+        if (tile == null) {
+            throw new IllegalStateException("Cannot take back tile; no tile was placed there this turn.");
+        }
+
+        Player currentPlayer = getCurrentPlayer();
+        currentPlayer.addTile(tile);
+
+        if (board.isPendingPlacementLegal()) return;
+
+        for (Tile staged : board.removeAllPendingTiles()) {
+            currentPlayer.addTile(staged);
+        }
+    }
+
+    /**
      * Ends the current turn: commits the pending tiles, credits the points, refills the hand
      * and passes the turn on.
      *

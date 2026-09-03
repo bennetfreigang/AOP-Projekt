@@ -31,11 +31,24 @@ public class BoardGrid extends Entity {
     private final int viewportWidth;
     private final int viewportHeight;
 
+    /** Whether the cell under the mouse is marked; the scene drops this while the HUD has the mouse. */
+    private boolean cursorVisible = true;
+
     public BoardGrid(BoardCamera camera, int viewportWidth, int viewportHeight) {
         this.camera = camera;
         this.viewportWidth = viewportWidth;
         this.viewportHeight = viewportHeight;
         this.renderOrder = UiTheme.LAYER_GRID;
+    }
+
+    /**
+     * Shows or hides the placement cursor.
+     *
+     * @note Hidden while the mouse sits on a HUD element, since a click there is swallowed by the
+     *       HUD and never lands on the cell the cursor would be pointing at.
+     */
+    public void setCursorVisible(boolean cursorVisible) {
+        this.cursorVisible = cursorVisible;
     }
 
     @Override
@@ -97,6 +110,8 @@ public class BoardGrid extends Entity {
 
     /** Draws the placement cursor on the cell the mouse currently points at. */
     private void drawCursor(Graphics2D g, double cellSize) {
+        if (!cursorVisible) return;
+
         Position hovered = camera.screenToBoard(InputManager.getMouseX(), InputManager.getMouseY());
         Point center = camera.boardToScreen(hovered);
 

@@ -74,6 +74,20 @@ public class Player {
     }
 
     /**
+     * Puts {@code tile} onto the player's rack.
+     *
+     * @note Used to hand a staged tile back when its placement is taken back; drawing from the
+     *       bag goes through {@link #refillHand} instead.
+     * @throws IllegalStateException if the rack already holds {@value #HAND_SIZE} tiles
+     */
+    public void addTile(Tile tile) {
+        if (hand.size() >= HAND_SIZE) {
+            throw new IllegalStateException("Cannot add tile; " + name + "'s rack is full.");
+        }
+        hand.add(tile);
+    }
+
+    /**
      * Removes {@code tile} from the player's rack.
      *
      * @throws IllegalStateException if the player does not hold that exact tile

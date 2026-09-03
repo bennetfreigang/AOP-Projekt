@@ -2,14 +2,12 @@ package quirkle.game.gamePlay.tiles;
 
 import quirkle.game.gamePlay.board.Position;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
 /** A tile sitting on a fixed board {@link Position}; its screen position follows the board camera. */
 public class BoardTileEntity extends TileEntity {
     private static final Color PENDING_COLOR = new Color(255, 193, 7);
-    private static final float OUTLINE_WIDTH = 3f;
 
     /** Pulse speed of the pending outline in radians per second. */
     private static final double PULSE_FREQUENCY = 5.0;
@@ -47,17 +45,7 @@ public class BoardTileEntity extends TileEntity {
     public void onRender(Graphics2D g) {
         if (!pending) return;
 
-        Graphics2D gOutline = (Graphics2D) g.create();
-        gOutline.setColor(getPulsedOutlineColor());
-        gOutline.setStroke(new BasicStroke(OUTLINE_WIDTH));
-
-        int scaledWidth = (int) getScaledWidth();
-        int scaledHeight = (int) getScaledHeight();
-        int drawX = (int) (x - origin.x * scaledWidth);
-        int drawY = (int) (y - origin.y * scaledHeight);
-
-        gOutline.drawRect(drawX, drawY, scaledWidth, scaledHeight);
-        gOutline.dispose();
+        drawOutline(g, getPulsedOutlineColor());
     }
 
     /** @return the outline color, its alpha pulsing between {@value #MIN_PULSE_ALPHA} and full. */
