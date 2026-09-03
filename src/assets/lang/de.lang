@@ -9,6 +9,14 @@ credits == Credits
 quit == Beenden
 return == Zurück
 
+--- GAMEPLAY ---------------------------------------------
+
+points == PUNKTE
+last_round == LETZTE RUNDE
+points_last_round == PUNKTE LETZTE RUNDE
+in_bag == IM BEUTEL
+game_settings == EINSTELLUNGEN
+
 --- CREDITS ----------------------------------------------
 
 creditsTitle0 == Programmierung

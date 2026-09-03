@@ -1,0 +1,143 @@
+package quirkle.game.gamePlay.board;
+
+import quirkle.engine.Entity;
+import quirkle.engine.InputManager;
+import quirkle.engine.NineSlice;
+import quirkle.game.gamePlay.ui.UiTheme;
+
+import java.awt.BasicStroke;
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.geom.Path2D;
+
+/**
+ * The board's backdrop: faint lines between the cells, a small diamond on every intersection
+ * and a brush-stroke cursor on the cell under the mouse.
+ *
+ * @note Driven by the {@link BoardCamera} rather than drawn at fixed coordinates, so it follows
+ *       the board while it is panned and zoomed.
+ * @implNote Draws only the cells inside the viewport, which it derives from the camera, instead
+ *           of covering an arbitrary fixed range.
+ */
+public class BoardGrid extends Entity {
+
+    private static final float LINE_WIDTH = 1f;
+    /** Diamond marker size relative to the cell size. */
+    private static final double MARKER_RATIO = 0.22;
+    /** One extra ring of cells beyond the viewport, so lines do not pop in at the edges. */
+    private static final int OVERSCAN = 1;
+
+    private final BoardCamera camera;
+    private final int viewportWidth;
+    private final int viewportHeight;
+
+    /** Whether the cell under the mouse is marked; the scene drops this while the HUD has the mouse. */
+    private boolean cursorVisible = true;
+
+    public BoardGrid(BoardCamera camera, int viewportWidth, int viewportHeight) {
+        this.camera = camera;
+        this.viewportWidth = viewportWidth;
+        this.viewportHeight = viewportHeight;
+        this.renderOrder = UiTheme.LAYER_GRID;
+    }
+
+    /**
+     * Shows or hides the placement cursor.
+     *
+     * @note Hidden while the mouse sits on a HUD element, since a click there is swallowed by the
+     *       HUD and never lands on the cell the cursor would be pointing at.
+     */
+    public void setCursorVisible(boolean cursorVisible) {
+        this.cursorVisible = cursorVisible;
+    }
+
+    @Override
+    public void onRender(Graphics2D g) {
+        double cellSize = camera.getTileSize();
+        if (cellSize <= 0) return;
+
+        Position topLeft = camera.screenToBoard(0, 0);
+        Position bottomRight = camera.screenToBoard(viewportWidth, viewportHeight);
+
+        int firstColumn = topLeft.x() - OVERSCAN;
+        int lastColumn = bottomRight.x() + OVERSCAN;
+        int firstRow = topLeft.y() - OVERSCAN;
+        int lastRow = bottomRight.y() + OVERSCAN;
+
+        drawLines(g, cellSize, firstColumn, lastColumn, firstRow, lastRow);
+        drawMarkers(g, cellSize, firstColumn, lastColumn, firstRow, lastRow);
+        drawCursor(g, cellSize);
+    }
+
+    private void drawLines(Graphics2D g, double cellSize, int firstColumn, int lastColumn, int firstRow, int lastRow) {
+        Graphics2D gLines = (Graphics2D) g.create();
+        gLines.setColor(UiTheme.GRID_LINE);
+        gLines.setStroke(new BasicStroke(LINE_WIDTH));
+
+        int top = cornerY(firstRow, cellSize);
+        int bottom = cornerY(lastRow + 1, cellSize);
+        int left = cornerX(firstColumn, cellSize);
+        int right = cornerX(lastColumn + 1, cellSize);
+
+        for (int column = firstColumn; column <= lastColumn + 1; column++) {
+            int lineX = cornerX(column, cellSize);
+            gLines.drawLine(lineX, top, lineX, bottom);
+        }
+
+        for (int row = firstRow; row <= lastRow + 1; row++) {
+            int lineY = cornerY(row, cellSize);
+            gLines.drawLine(left, lineY, right, lineY);
+        }
+
+        gLines.dispose();
+    }
+
+    private void drawMarkers(Graphics2D g, double cellSize, int firstColumn, int lastColumn, int firstRow, int lastRow) {
+        Graphics2D gMarkers = (Graphics2D) g.create();
+        gMarkers.setColor(UiTheme.GRID_MARKER);
+        gMarkers.setStroke(new BasicStroke(LINE_WIDTH * 2f));
+
+        double markerRadius = cellSize * MARKER_RATIO / 2.0;
+
+        for (int column = firstColumn; column <= lastColumn + 1; column++) {
+            for (int row = firstRow; row <= lastRow + 1; row++) {
+                gMarkers.draw(buildDiamond(cornerX(column, cellSize), cornerY(row, cellSize), markerRadius));
+            }
+        }
+
+        gMarkers.dispose();
+    }
+
+    /** Draws the placement cursor on the cell the mouse currently points at. */
+    private void drawCursor(Graphics2D g, double cellSize) {
+        if (!cursorVisible) return;
+
+        Position hovered = camera.screenToBoard(InputManager.getMouseX(), InputManager.getMouseY());
+        Point center = camera.boardToScreen(hovered);
+
+        int size = (int) cellSize;
+        NineSlice.draw(g, UiTheme.FRAME_CURSOR, center.x - size / 2, center.y - size / 2,
+                size, size, UiTheme.CONTAINER_SOURCE_INSET, UiTheme.CURSOR_BORDER);
+    }
+
+    /** @return a diamond outline centered on ({@code centerX}, {@code centerY}). */
+    private Path2D.Double buildDiamond(int centerX, int centerY, double radius) {
+        Path2D.Double diamond = new Path2D.Double();
+        diamond.moveTo(centerX, centerY - radius);
+        diamond.lineTo(centerX + radius, centerY);
+        diamond.lineTo(centerX, centerY + radius);
+        diamond.lineTo(centerX - radius, centerY);
+        diamond.closePath();
+        return diamond;
+    }
+
+    /** @return the screen x of the left edge of board column {@code column}. */
+    private int cornerX(int column, double cellSize) {
+        return (int) (camera.boardToScreen(new Position(column, 0)).x - cellSize / 2.0);
+    }
+
+    /** @return the screen y of the top edge of board row {@code row}. */
+    private int cornerY(int row, double cellSize) {
+        return (int) (camera.boardToScreen(new Position(0, row)).y - cellSize / 2.0);
+    }
+}
