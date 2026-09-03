@@ -16,11 +16,7 @@ public class PrlxEntity extends Entity {
     double tarX;
     double tarY;
 
-    static class PrlxLayer {
-        String textureIdentifier;
-        double x;
-        double y;
-        double scale;
+    public static class PrlxLayer {
         double height;
 
         public PrlxLayer(String textureIdentifier, double height) {
