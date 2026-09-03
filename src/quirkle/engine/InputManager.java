@@ -7,6 +7,9 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.util.Arrays;
 
+/*********************************************************************************************
+ * InputManger is extended from MouseAdapter
+ ********************************************************************************************/
 public class InputManager extends MouseAdapter {
     private static final InputManager instance = new InputManager();
     private static final KeyHandler keyHandler = new KeyHandler();

@@ -8,16 +8,19 @@ public class GameLoop implements ActionListener {
     private final RenderPanel gamePanel;
     private final Timer timer;
 
-    private static final double WARNING_THRESHOLD_MILLIS = 20.0;
-    private static final double MAX_DT_SECONDS = 0.5;
+    private static final double WARNING_THRESHOLD_MILLIS = 250.0; // 1/4 seconds
+    private static final double MAX_DT_SECONDS = 1.0;
 
     private final double expectedIntervalMillis;
-    private long lastTickNanoSec;
+
+    //temporary Note: fixing a problem where the Engine would return a giant tick behind warning because lastTickNanoSec wasnt really initialised
+    private long lastTickNanoSec = System.nanoTime();
 
     public GameLoop(RenderPanel gamePanel) {
         this.gamePanel = gamePanel;
         this.expectedIntervalMillis = 1000 / EngineConfig.FPS;
         this.timer = new Timer( 1000 / EngineConfig.FPS, this);
+        EngineConfig.message("started", getClass().getSimpleName(), EngineConfig.messageType.INFO);
     }
 
     public void start() { timer.start(); }
@@ -33,11 +36,11 @@ public class GameLoop implements ActionListener {
         double behindByMilliSec = realMilliSec - expectedIntervalMillis;
 
         if (behindByMilliSec > WARNING_THRESHOLD_MILLIS) {
-            if (!EngineConfig.SUPPRES_WARNINGS) System.err.println("[WARNING] resourceEngine / GameLoop: tick behind by " + behindByMilliSec + " milliseconds");
+            EngineConfig.message("tick behind by " + behindByMilliSec + "ms", getClass().getSimpleName(), EngineConfig.messageType.WARNING);
         }
 
         if (dt > MAX_DT_SECONDS) {
-            if (!EngineConfig.SUPPRES_WARNINGS) System.err.println("[WARNING] resourceEngine / GameLoop: deltaTime clamped from " + realMilliSec + "ms to  " + MAX_DT_SECONDS*1000.0 + "ms");
+            EngineConfig.message("deltaTime clamped from " + realMilliSec + "ms to  " + MAX_DT_SECONDS*1000.0 + "ms",  getClass().getSimpleName(), EngineConfig.messageType.WARNING);
             dt = MAX_DT_SECONDS;
         }
 

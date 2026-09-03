@@ -2,10 +2,10 @@ Deutsch
 
 --- STARTMENU --------------------------------------------
 
-title == KWIRKEL
+title == QWIRKEL
 play == Starten
 settings == Einstellungen
-credits == Abspann
+credits == Credits
 quit == Beenden
 return == Zurück
 
@@ -16,3 +16,20 @@ last_round == LETZTE RUNDE
 points_last_round == PUNKTE LETZTE RUNDE
 in_bag == IM BEUTEL
 game_settings == EINSTELLUNGEN
+
+--- CREDITS ----------------------------------------------
+
+creditsTitle0 == Programmierung
+creditsContent0 == Bennet Freigang
+
+creditsTitle1 == Spielkonzept & Design
+creditsContent1 == [Name/Team einfügen]
+
+creditsTitle2 == Assets & Grafik
+creditsContent2 == [Name/Team einfügen]
+
+creditsTitle3 == Testing
+creditsContent3 == [Name/Team einfügen]
+
+creditsTitle4 == Besonderer Dank
+creditsContent4 == Danke fürs Spielen!
