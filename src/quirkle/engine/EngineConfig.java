@@ -48,13 +48,11 @@ public class EngineConfig {
         private messageType(String label) { this.label = label; }
     }
 
-    public static void message(String message, String author, messageType messageType) {
-        String messageResult = String.format(messageConstruct, messageType, author, message);
-        if (messageType == messageType.INFO){
-            if (!SUPPRES_INFO) System.out.println(messageResult);
-        }
-        else {
-            if (!SUPPRES_WARNINGS) System.err.println(messageResult);
-        }
+public static void message(String message, String author, messageType type) {
+    String messageResult = String.format(messageConstruct, type.label, author, message);
+    if (type == messageType.INFO) {
+        if (!SUPPRES_INFO) System.out.println(messageResult);
+    } else {
+        if (!SUPPRES_WARNINGS) System.err.println(messageResult);
     }
 }
