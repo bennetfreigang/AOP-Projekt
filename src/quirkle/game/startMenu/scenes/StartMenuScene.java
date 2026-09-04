@@ -1,13 +1,13 @@
-package quirkle.game.startmenu.scenes;
+package quirkle.game.startMenu.scenes;
 
 import quirkle.engine.AssetManager;
 import quirkle.engine.Scene;
 import quirkle.engine.SceneManager;
+import quirkle.game.gamePlay.GamePlayScene;
 import quirkle.game.settings.scenes.SettingsScene;
 import quirkle.game.credits.scenes.CreditsScene;
-import quirkle.game.startmenu.entities.BackgroundHelper;
 import quirkle.game.startmenu.entities.StartMenuButton;
-import quirkle.game.startmenu.entities.Title;
+import quirkle.game.startMenu.entities.Title;
 
 public class StartMenuScene extends Scene {
 
@@ -19,8 +19,6 @@ public class StartMenuScene extends Scene {
 
     @Override
     public void onCreate() {
-        addEntities(new BackgroundHelper(0.1), new Title("Qwirkle"));
-
         playButton = new StartMenuButton(AssetManager.getMessage("play"));
         settingsButton = new StartMenuButton(AssetManager.getMessage("settings"));
         creditsButton = new StartMenuButton(AssetManager.getMessage("credits"));
@@ -35,7 +33,7 @@ public class StartMenuScene extends Scene {
 
     @Override
     public void onTick(double dt) {
-        if (playButton.isClicked()) SceneManager.setTempScene(new TwoScene(), true, true);
+        if (playButton.isClicked()) SceneManager.setTempScene(new GamePlayScene(), true, true);
         SceneManager.storedSceneAlpha = 0.2f;
         if (settingsButton.isClicked()) SceneManager.setTempScene(new SettingsScene(), true, true);
         SceneManager.storedSceneAlpha = 0.2f;

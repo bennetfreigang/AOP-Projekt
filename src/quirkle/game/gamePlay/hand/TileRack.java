@@ -117,7 +117,7 @@ public class TileRack extends PanelEntity {
     /** Draws the socket of slot {@code index}: the same brush frame whether or not a tile sits in it. */
     private void drawSlot(Graphics2D g, int index) {
         int size = UiTheme.RACK_TILE_SIZE;
-        int left = getSlotX(index) - size / 2;
+        int left = (int) (getSlotX(index) - size / 2);
         int top = getRestingY() - size / 2;
 
         Graphics2D gSlot = (Graphics2D) g.create();
@@ -229,8 +229,8 @@ public class TileRack extends PanelEntity {
     }
 
     /** @return the screen x of the center of slot {@code index}, laid out around the panel center. */
-    private int getSlotX(int index) {
-        int firstSlotX = x - (Player.HAND_SIZE - 1) * UiTheme.RACK_TILE_SPACING / 2;
+    private double getSlotX(int index) {
+        double firstSlotX = x - (Player.HAND_SIZE - 1) * UiTheme.RACK_TILE_SPACING / 2;
         return firstSlotX + index * UiTheme.RACK_TILE_SPACING;
     }
 

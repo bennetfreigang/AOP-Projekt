@@ -46,7 +46,7 @@ public class HandTileEntity extends TileEntity {
 
     @Override
     public void render(Graphics2D g) {
-        int restingX = x;
+        double restingX = x;
         x += getShakeOffset();
         super.render(g);
         x = restingX;
