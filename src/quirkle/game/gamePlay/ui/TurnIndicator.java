@@ -3,14 +3,17 @@ package quirkle.game.gamePlay.ui;
 import quirkle.game.gamePlay.Game;
 import quirkle.game.gamePlay.player.Player;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 
 /**
  * The banner in the band above the frame: whose turn it is, which turn it is and what the game
  * is waiting for.
  *
- * @note Deliberately does not repeat the scores. Those are on the cards for the waiting players;
- *       the banner answers only "whose move is it, and now what".
+ * @note Three lines, three weights: the name is the headline and carries the accent color, the
+ *       score is the number being played for, and the turn and prompt are background information
+ *       that steps back into {@link UiTheme#TEXT_DIMMED}. The waiting players' scores stay on
+ *       their cards; this banner only ever speaks for whoever is at the table.
  * @note Leaves upwards on a handover and the next one drops in from above. It therefore has to
  *       hold on to the name and turn number it is carrying rather than reading them live: the
  *       banner on its way out still belongs to the player who just finished.
@@ -74,13 +77,20 @@ public class TurnIndicator extends PanelEntity {
         drawFrame(g);
 
         int centerX = getLeft() + getWidth() / 2;
-        int textY = getTop() + UiTheme.TURN_PADDING_Y;
+        int panelTop = getTop();
 
-        drawText(shownPlayer.getName().toUpperCase(), UiTheme.FONT_SIZE_TURN_NAME, UiTheme.GOLD,
-                UiTheme.FONT, centerX, textY, 0.0, OriginPresets.TOP_MID, g);
+        drawLine(g, shownPlayer.getName().toUpperCase(), UiTheme.FONT_SIZE_TURN_NAME,
+                UiTheme.GOLD, centerX, panelTop + UiTheme.TURN_NAME_TOP);
 
-        drawText(buildStatusLine(), UiTheme.FONT_SIZE_TURN_STATUS, UiTheme.TEXT_DIMMED,
-                UiTheme.FONT, centerX, textY + UiTheme.TURN_LINE_HEIGHT, 0.0, OriginPresets.TOP_MID, g);
+        drawLine(g, UiTheme.text("points") + ": " + shownPlayer.getScore(), UiTheme.FONT_SIZE_TURN_SCORE,
+                UiTheme.TEXT, centerX, panelTop + UiTheme.TURN_SCORE_TOP);
+
+        drawLine(g, buildStatusLine(), UiTheme.FONT_SIZE_TURN_STATUS,
+                UiTheme.TEXT_DIMMED, centerX, panelTop + UiTheme.TURN_STATUS_TOP);
+    }
+
+    private void drawLine(Graphics2D g, String text, float fontSize, Color color, int centerX, int top) {
+        drawText(text, fontSize, color, UiTheme.FONT, centerX, top, 0.0, OriginPresets.TOP_MID, g);
     }
 
     /**

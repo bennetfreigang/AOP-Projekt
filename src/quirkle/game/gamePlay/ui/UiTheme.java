@@ -45,7 +45,9 @@ public final class UiTheme {
     public static final float FONT_SIZE_BUTTON = 24f;
     /** The active player's name in the banner above the frame. */
     public static final float FONT_SIZE_TURN_NAME = 34f;
-    /** Turn number and prompt, the banner's second line. */
+    /** The active player's score, the banner's middle line. */
+    public static final float FONT_SIZE_TURN_SCORE = 22f;
+    /** Turn number and prompt, the banner's last line. */
     public static final float FONT_SIZE_TURN_STATUS = 20f;
     public static final float FONT_SIZE_BAG_COUNT = 72f;
     public static final float FONT_SIZE_BAG_LABEL = 20f;
@@ -140,13 +142,24 @@ public final class UiTheme {
     // Layout: the turn banner, centered in the band above the frame
 
     public static final int TURN_PANEL_WIDTH = 560;
-    public static final int TURN_PANEL_HEIGHT = 112;
+    /**
+     * @note Grown from 112px to carry the score as a line of its own. Its lower edge lands 22px
+     *       clear of the frame's opening, which starts 182px down.
+     */
+    public static final int TURN_PANEL_HEIGHT = 136;
     /** Top edge of the banner; the band above the frame's opening is 182px tall. */
-    public static final int TURN_PANEL_TOP = 30;
-    /** Inset from the banner's top edge; clears {@link #PANEL_BORDER} so text is not overdrawn. */
-    public static final int TURN_PADDING_Y = 18;
-    /** Distance from the name's top edge down to the status line's. */
-    public static final int TURN_LINE_HEIGHT = 46;
+    public static final int TURN_PANEL_TOP = 24;
+
+    /**
+     * Top edges of the banner's three lines, measured from the panel's own top edge.
+     *
+     * @note Given one by one rather than as a padding plus a shared line height: the three lines
+     *       are set at three different sizes, so no single line height sits right under all of
+     *       them. The first clears {@link #PANEL_BORDER} so the brush stroke does not cut it.
+     */
+    public static final int TURN_NAME_TOP = 16;
+    public static final int TURN_SCORE_TOP = 62;
+    public static final int TURN_STATUS_TOP = 92;
 
     /**
      * @return the top edge the banner is parked at while it is off screen
