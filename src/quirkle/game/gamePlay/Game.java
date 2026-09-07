@@ -16,6 +16,13 @@ public class Game {
     private final List<Player> players;
     private int currentPlayerIndex;
 
+    /**
+     * The turn being played right now, counted from one across all players.
+     *
+     * @note Counts turns, not rounds: with two players, turn 3 is the first player's second move.
+     */
+    private int turnNumber = 1;
+
     public Game(Board board, TileBag tileBag, List<Player> players) {
         if (players.isEmpty()) {
             throw new IllegalArgumentException("Cannot start a game without players.");
@@ -47,6 +54,11 @@ public class Game {
 
     public int getCurrentPlayerIndex() {
         return currentPlayerIndex;
+    }
+
+    /** @return the number of the turn being played, starting at {@code 1}. */
+    public int getTurnNumber() {
+        return turnNumber;
     }
 
     public boolean hasPendingTiles() {
@@ -107,6 +119,7 @@ public class Game {
         currentPlayer.refillHand(tileBag);
 
         currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
+        turnNumber++;
 
         return points;
     }

@@ -1,8 +1,10 @@
 package quirkle.game.gamePlay.ui;
 
 import quirkle.engine.AssetManager;
+import quirkle.engine.EngineConfig;
 
 import java.awt.Color;
+import java.awt.Rectangle;
 
 /**
  * Single source of truth for the gameplay HUD's look: colors, fonts, asset identifiers,
@@ -23,6 +25,13 @@ public final class UiTheme {
     public static final int LAYER_GRID = -100;
     /** Board and hand tiles; matches Entity's default so untouched entities keep working. */
     public static final int LAYER_TILE = 0;
+    /**
+     * The frame the board is seen through, drawn over the board but under the HUD.
+     *
+     * @note Sitting below {@link #LAYER_HUD} is what lets a panel lie on the frame's border
+     *       rather than being covered by it, which is how the rack meets the bottom edge.
+     */
+    public static final int LAYER_FRAME = 50;
     /** HUD panels, drawn on top of everything on the board. */
     public static final int LAYER_HUD = 100;
 
@@ -32,12 +41,12 @@ public final class UiTheme {
     public static final String FONT = "DEBUG_Poly-Regular";
 
     public static final float FONT_SIZE_CARD = 19f;
-    /** The active player's name, the rack's headline. */
-    public static final float FONT_SIZE_RACK_NAME = 26f;
-    public static final float FONT_SIZE_RACK = 22f;
-    /** Secondary rack line, currently what was scored last round. */
-    public static final float FONT_SIZE_RACK_SMALL = 18f;
-    public static final float FONT_SIZE_BUTTON = 30f;
+    /** @note Sized for the narrowed side buttons; "SETTINGS" has to fit inside 270px. */
+    public static final float FONT_SIZE_BUTTON = 24f;
+    /** The active player's name in the banner above the frame. */
+    public static final float FONT_SIZE_TURN_NAME = 34f;
+    /** Turn number and prompt, the banner's second line. */
+    public static final float FONT_SIZE_TURN_STATUS = 20f;
     public static final float FONT_SIZE_BAG_COUNT = 72f;
     public static final float FONT_SIZE_BAG_LABEL = 20f;
 
@@ -78,11 +87,66 @@ public final class UiTheme {
     public static final int CURSOR_BORDER = 8;
 
     public static final String FRAME_PLAYER_CARD = "Ui/container_02";
-    public static final String FRAME_RACK = "Ui/container_05";
     public static final String FRAME_SLOT = "Ui/container_03";
     /** @note container_02 and _03 are the two frames that stay even once scaled down this far. */
     public static final String FRAME_CURSOR = "Ui/container_02";
     public static final String SPRITE_GOLDEN_FRAME = "Ui/goldenframe";
+
+    /** Full-window overlay with a transparent opening; the board is seen through it. */
+    public static final String FRAME_BOARD = "Ui/frame";
+
+    // Layout: the frame the board is seen through
+
+    /**
+     * Size of the {@link #FRAME_BOARD} asset. Needed to express its opening as a fraction of the
+     * window rather than as fixed pixels.
+     *
+     * @note The asset is 16:9, same as the window {@link EngineConfig} sets up, so scaling it to
+     *       fill the window never distorts it.
+     */
+    private static final double FRAME_SOURCE_WIDTH = 4608.0;
+    private static final double FRAME_SOURCE_HEIGHT = 2592.0;
+
+    /**
+     * The frame's transparent opening, in source pixels, measured off the asset's alpha channel.
+     *
+     * @note The opening is an exact rectangle: every pixel inside it has alpha 0, every pixel
+     *       outside it alpha 255. That is why a plain rectangular clip reproduces it exactly.
+     */
+    private static final double FRAME_OPENING_LEFT = 716.0;
+    private static final double FRAME_OPENING_TOP = 436.0;
+    private static final double FRAME_OPENING_RIGHT = 3891.0;
+    private static final double FRAME_OPENING_BOTTOM = 2157.0;
+
+    /**
+     * @return the part of the window the board is visible in, in screen pixels
+     * @note At 1920x1080 this is (298, 182) to (1621, 899), which leaves 298px of gutter on the
+     *       left, 299px on the right and roughly 181px above and below for the HUD to live in.
+     *       Derived from the asset rather than hard-coded, so changing the window size through
+     *       {@link EngineConfig#setSize(int, int)} moves the HUD with it.
+     */
+    public static Rectangle boardViewport() {
+        double scaleX = EngineConfig.WINDOW_WIDTH / FRAME_SOURCE_WIDTH;
+        double scaleY = EngineConfig.WINDOW_HEIGHT / FRAME_SOURCE_HEIGHT;
+
+        int left = (int) Math.round(FRAME_OPENING_LEFT * scaleX);
+        int top = (int) Math.round(FRAME_OPENING_TOP * scaleY);
+        int right = (int) Math.round(FRAME_OPENING_RIGHT * scaleX);
+        int bottom = (int) Math.round(FRAME_OPENING_BOTTOM * scaleY);
+
+        return new Rectangle(left, top, right - left, bottom - top);
+    }
+
+    // Layout: the turn banner, centered in the band above the frame
+
+    public static final int TURN_PANEL_WIDTH = 560;
+    public static final int TURN_PANEL_HEIGHT = 112;
+    /** Top edge of the banner; the band above the frame's opening is 182px tall. */
+    public static final int TURN_PANEL_TOP = 30;
+    /** Inset from the banner's top edge; clears {@link #PANEL_BORDER} so text is not overdrawn. */
+    public static final int TURN_PADDING_Y = 18;
+    /** Distance from the name's top edge down to the status line's. */
+    public static final int TURN_LINE_HEIGHT = 46;
 
     // Layout: the board itself
 
@@ -130,32 +194,25 @@ public final class UiTheme {
 
     // Layout: the active player's rack along the bottom
 
-    public static final int RACK_WIDTH = 1048;
-    public static final int RACK_HEIGHT = 215;
-    /** Distance from the rack's lower edge to the bottom of the window. */
-    public static final int RACK_MARGIN_BOTTOM = 55;
-    /** Inset from the rack's side edges; clears {@link #PANEL_BORDER} so text is not overdrawn. */
-    public static final int RACK_PADDING_X = 30;
-    public static final int RACK_PADDING_Y = 14;
+    /**
+     * @note The rack is the row of slots and nothing else: no panel around it, no labels. Its
+     *       bounds follow from the two metrics below rather than being given here, which is what
+     *       keeps its hit area down to the tiles the player can actually click.
+     */
     public static final int RACK_TILE_SIZE = 108;
     /** Distance between the centers of two rack slots. */
     public static final int RACK_TILE_SPACING = 142;
-    /**
-     * Vertical center of the row of slots, measured from the rack's top edge.
-     *
-     * @note Sits below the panel's middle: the label band above the slots needs more room than
-     *       the margin below them.
-     */
-    public static final int RACK_SLOT_CENTER_Y = 135;
-    /** Baseline distance between the two stacked score lines on the right. */
-    public static final int RACK_LINE_HEIGHT = 26;
 
     // Layout: side button bar on the right
 
-    public static final int SIDE_BUTTON_WIDTH = 402;
+    /**
+     * @note Narrowed from the mockup's 402px: the frame leaves a 299px gutter to the right of
+     *       its opening, and a wider button would reach across the board.
+     */
+    public static final int SIDE_BUTTON_WIDTH = 270;
     public static final int SIDE_BUTTON_HEIGHT = 90;
     /** Distance from the buttons' right edge to the right of the window. */
-    public static final int SIDE_BUTTON_MARGIN_RIGHT = 12;
+    public static final int SIDE_BUTTON_MARGIN_RIGHT = 14;
     /** Edge length of the square a {@link ButtonGlyph} is drawn inside. */
     public static final int GLYPH_SIZE = 44;
     /**

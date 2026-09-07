@@ -8,6 +8,7 @@ import quirkle.game.gamePlay.ui.UiTheme;
 import java.awt.BasicStroke;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.geom.Path2D;
 
 /**
@@ -17,7 +18,8 @@ import java.awt.geom.Path2D;
  * @note Driven by the {@link BoardCamera} rather than drawn at fixed coordinates, so it follows
  *       the board while it is panned and zoomed.
  * @implNote Draws only the cells inside the viewport, which it derives from the camera, instead
- *           of covering an arbitrary fixed range.
+ *           of covering an arbitrary fixed range. The viewport is the frame's opening rather than
+ *           the whole window, so no work goes into rows and columns the frame hides anyway.
  */
 public class BoardGrid extends Entity {
 
@@ -28,16 +30,16 @@ public class BoardGrid extends Entity {
     private static final int OVERSCAN = 1;
 
     private final BoardCamera camera;
-    private final int viewportWidth;
-    private final int viewportHeight;
+
+    /** The window rectangle the board shows through; the grid is only built for these cells. */
+    private final Rectangle viewport;
 
     /** Whether the cell under the mouse is marked; the scene drops this while the HUD has the mouse. */
     private boolean cursorVisible = true;
 
-    public BoardGrid(BoardCamera camera, int viewportWidth, int viewportHeight) {
+    public BoardGrid(BoardCamera camera, Rectangle viewport) {
         this.camera = camera;
-        this.viewportWidth = viewportWidth;
-        this.viewportHeight = viewportHeight;
+        this.viewport = viewport;
         this.renderOrder = UiTheme.LAYER_GRID;
     }
 
@@ -56,8 +58,8 @@ public class BoardGrid extends Entity {
         double cellSize = camera.getTileSize();
         if (cellSize <= 0) return;
 
-        Position topLeft = camera.screenToBoard(0, 0);
-        Position bottomRight = camera.screenToBoard(viewportWidth, viewportHeight);
+        Position topLeft = camera.screenToBoard(viewport.x, viewport.y);
+        Position bottomRight = camera.screenToBoard(viewport.x + viewport.width, viewport.y + viewport.height);
 
         int firstColumn = topLeft.x() - OVERSCAN;
         int lastColumn = bottomRight.x() + OVERSCAN;

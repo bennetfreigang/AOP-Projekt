@@ -12,13 +12,15 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * The bar along the bottom of the screen showing the current player's tiles, their score and
- * what they scored last turn.
+ * The current player's tiles, as a bare row of slots along the bottom of the screen.
  *
+ * @note Nothing but the slots and the tiles standing in them: no panel around the row and no
+ *       labels. The player's name is on the {@code TurnIndicator} above the frame, so repeating
+ *       it here would only cost the tiles room.
  * @note Lives in screen space: it deliberately ignores the board camera so it stays put while
  *       the board is panned and zoomed.
  * @implNote Draws its tiles itself instead of registering them as scene entities. That keeps them
- *           glued to the panel's draw order and spares the scene from adding/removing six entities
+ *           glued to the row's draw order and spares the scene from adding/removing six entities
  *           on every turn.
  */
 public class TileRack extends PanelEntity {
@@ -29,12 +31,19 @@ public class TileRack extends PanelEntity {
     private Tile selectedTile;
 
     /**
-     * @param centerX horizontal screen center of the rack
-     * @param bottomY screen y of the rack's lower edge
+     * @param centerX horizontal screen center of the row of slots
+     * @param centerY vertical screen center of the row of slots
+     * @note The bounds are exactly the row, which is also the rack's hit area. A click just
+     *       outside a slot therefore falls through to the board instead of being swallowed by a
+     *       panel that is no longer there.
      */
-    public TileRack(int centerX, int bottomY) {
-        setFrame(UiTheme.FRAME_RACK);
-        setBounds(centerX, bottomY, UiTheme.RACK_WIDTH, UiTheme.RACK_HEIGHT, OriginPresets.BOTTOM_MID);
+    public TileRack(int centerX, int centerY) {
+        setBounds(centerX, centerY, rowWidth(), UiTheme.RACK_TILE_SIZE, OriginPresets.CENTER);
+    }
+
+    /** @return the width of the whole row: every slot plus the gaps between them. */
+    private static int rowWidth() {
+        return (Player.HAND_SIZE - 1) * UiTheme.RACK_TILE_SPACING + UiTheme.RACK_TILE_SIZE;
     }
 
     /**
@@ -101,9 +110,6 @@ public class TileRack extends PanelEntity {
 
     @Override
     public void onRender(Graphics2D g) {
-        drawFrame(g);
-        drawLabels(g);
-
         // Every slot gets its socket, so the row keeps its shape as the hand empties out.
         for (int i = 0; i < slots.length; i++) {
             drawSlot(g, i);
@@ -127,34 +133,6 @@ public class TileRack extends PanelEntity {
 
         NineSlice.draw(g, UiTheme.FRAME_SLOT, left, top, size, size,
                 UiTheme.CONTAINER_SOURCE_INSET, UiTheme.SLOT_BORDER);
-    }
-
-    /**
-     * Draws the current player's name on the left and their scores on the right.
-     *
-     * @note All three sit inside the panel, unlike the old label that floated above it.
-     * @implNote Three weights rather than one: the name is the headline and carries the accent
-     *           color, the score is the number being played for, and last round's points are
-     *           background information and step back into {@link UiTheme#TEXT_DIMMED}.
-     */
-    private void drawLabels(Graphics2D g) {
-        if (player == null) return;
-
-        int textY = getTop() + UiTheme.RACK_PADDING_Y;
-
-        drawText(player.getName().toUpperCase(), UiTheme.FONT_SIZE_RACK_NAME, UiTheme.GOLD,
-                UiTheme.FONT, getLeft() + UiTheme.RACK_PADDING_X, textY, 0.0,
-                OriginPresets.TOP_LEFT, g);
-
-        int rightX = getRight() - UiTheme.RACK_PADDING_X;
-
-        drawText(UiTheme.text("points") + ": " + player.getScore(),
-                UiTheme.FONT_SIZE_RACK, UiTheme.TEXT, UiTheme.FONT,
-                rightX, textY, 0.0, OriginPresets.TOP_RIGHT, g);
-
-        drawText(UiTheme.text("points_last_round") + ": +" + player.getLastRoundScore(),
-                UiTheme.FONT_SIZE_RACK_SMALL, UiTheme.TEXT_DIMMED, UiTheme.FONT,
-                rightX, textY + UiTheme.RACK_LINE_HEIGHT, 0.0, OriginPresets.TOP_RIGHT, g);
     }
 
     private void syncSlots(List<Tile> hand) {
@@ -234,7 +212,8 @@ public class TileRack extends PanelEntity {
         return firstSlotX + index * UiTheme.RACK_TILE_SPACING;
     }
 
+    /** @return the screen y every slot is centered on; the row is one slot tall. */
     private int getRestingY() {
-        return getTop() + UiTheme.RACK_SLOT_CENTER_Y;
+        return (int) y;
     }
 }
