@@ -10,6 +10,7 @@ import quirkle.game.gamePlay.hand.TileRack;
 import quirkle.game.gamePlay.player.Player;
 import quirkle.game.gamePlay.tiles.*;
 import quirkle.game.gamePlay.ui.BoardFrame;
+import quirkle.game.gamePlay.ui.Handover;
 import quirkle.game.gamePlay.ui.PlayerCardColumn;
 import quirkle.game.gamePlay.ui.SideButton;
 import quirkle.game.gamePlay.ui.SideButtonBar;
@@ -37,6 +38,12 @@ public class GamePlayScene extends Scene {
     /** Set while a right-button press that began off the board is still being held. */
     private boolean isDragBlocked = false;
 
+    // Handover
+    /** The clock every HUD element animates a turn change on. */
+    private final Handover handover = new Handover();
+    /** The player the HUD is presenting, which lags the game while a handover plays out. */
+    private Player presentedPlayer;
+
     // UI
     private final BoardView boardView;
     private final BoardFrame boardFrame;
@@ -55,9 +62,9 @@ public class GamePlayScene extends Scene {
 
         this.boardView = new BoardView(camera, viewport);
         this.boardFrame = new BoardFrame();
-        this.tileRack = new TileRack((int) viewport.getCenterX(), bandCenterY(viewport));
-        this.turnIndicator = new TurnIndicator(game, (int) viewport.getCenterX());
-        this.playerCards = new PlayerCardColumn(game);
+        this.tileRack = new TileRack((int) viewport.getCenterX(), bandCenterY(viewport), handover);
+        this.turnIndicator = new TurnIndicator(game, (int) viewport.getCenterX(), handover);
+        this.playerCards = new PlayerCardColumn(game, handover);
         this.tileBagCounter = new TileBagCounter(game.getTileBag());
         this.sideButtons = new SideButtonBar(getWidth() - UiTheme.SIDE_BUTTON_MARGIN_RIGHT, this::endTurn);
         this.endTurnButton = sideButtons.getEndTurnButton();
@@ -88,6 +95,11 @@ public class GamePlayScene extends Scene {
 
     @Override
     public void onTick(double dt) {
+        // Ahead of everything else: the HUD elements read this clock during their own ticks, and
+        // they have to see the same frame of it.
+        handover.advance(dt);
+        startHandoverIfTurnPassed();
+
         handleZoomInput();
         handleDragInput();
         handleClickInput();
@@ -99,6 +111,25 @@ public class GamePlayScene extends Scene {
         boardView.setCursorVisible(isPointerOnBoard());
 
         boardView.sync(game.getBoard());
+    }
+
+    /**
+     * Kicks off the HUD's handover animation once the turn has moved to another player.
+     *
+     * @note Detected here rather than in each element: one place decides that a handover is due,
+     *       and the elements only decide what to do about it. It also means an element cannot miss
+     *       the change while it is busy playing the previous one out.
+     */
+    private void startHandoverIfTurnPassed() {
+        Player currentPlayer = game.getCurrentPlayer();
+        if (currentPlayer == presentedPlayer) return;
+        if (handover.isRunning()) return;
+
+        boolean isFirstFrame = presentedPlayer == null;
+        presentedPlayer = currentPlayer;
+
+        // Nothing to hand over from at the start of the game; the HUD is simply there.
+        if (!isFirstFrame) handover.start();
     }
 
     /**

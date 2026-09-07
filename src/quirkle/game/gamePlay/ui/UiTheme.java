@@ -148,6 +148,15 @@ public final class UiTheme {
     /** Distance from the name's top edge down to the status line's. */
     public static final int TURN_LINE_HEIGHT = 46;
 
+    /**
+     * @return the top edge the banner is parked at while it is off screen
+     * @note Its full height above the window plus a margin, so the brush frame clears the edge
+     *       rather than resting against it.
+     */
+    public static int turnHiddenTop() {
+        return -(TURN_PANEL_HEIGHT + 20);
+    }
+
     // Layout: the board itself
 
     /**
@@ -175,6 +184,13 @@ public final class UiTheme {
     public static final int CARD_HEIGHT = 160;
     /** Distance between the top edges of two stacked cards. */
     public static final int CARD_SPACING = 208;
+    /**
+     * Top edge a card is heading for once its player takes their turn.
+     *
+     * @note Clear of the window rather than one slot up: slot -1 would leave the card's lower
+     *       edge hanging 12px into view, since a card is taller than the gap between two slots.
+     */
+    public static final int CARD_EXIT_TOP = -(CARD_HEIGHT + 20);
     /** Inset from the card's side edges; clears {@link #PANEL_BORDER} so text is not overdrawn. */
     public static final int CARD_PADDING_X = 22;
     public static final int CARD_PADDING_Y = 20;
@@ -202,6 +218,25 @@ public final class UiTheme {
     public static final int RACK_TILE_SIZE = 108;
     /** Distance between the centers of two rack slots. */
     public static final int RACK_TILE_SPACING = 142;
+
+    /**
+     * How long one half of a turn handover takes, in seconds.
+     *
+     * @note The whole thing therefore runs 0.4s: long enough to read as one player leaving and
+     *       the next arriving, short enough not to sit between two turns. Everything the HUD
+     *       animates on a handover is timed off this one value through {@link Handover}, which is
+     *       what keeps the rack, the banner and the cards moving as one.
+     */
+    public static final double HANDOVER_PHASE_SECONDS = 0.2;
+
+    /**
+     * @return the vertical center the rack is parked at while it is off screen
+     * @note A full slot below the window's lower edge, so neither a tile nor the brush socket
+     *       around it is left peeking over the bottom during the handover.
+     */
+    public static int rackHiddenCenterY() {
+        return EngineConfig.WINDOW_HEIGHT + RACK_TILE_SIZE;
+    }
 
     // Layout: side button bar on the right
 

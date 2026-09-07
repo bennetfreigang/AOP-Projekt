@@ -4,6 +4,7 @@ import quirkle.engine.InputManager;
 import quirkle.engine.NineSlice;
 import quirkle.game.gamePlay.player.Player;
 import quirkle.game.gamePlay.tiles.Tile;
+import quirkle.game.gamePlay.ui.Handover;
 import quirkle.game.gamePlay.ui.PanelEntity;
 import quirkle.game.gamePlay.ui.UiTheme;
 
@@ -17,6 +18,10 @@ import java.util.List;
  * @note Nothing but the slots and the tiles standing in them: no panel around the row and no
  *       labels. The player's name is on the {@code TurnIndicator} above the frame, so repeating
  *       it here would only cost the tiles room.
+ * @note Hands over with an animation rather than swapping in place: the outgoing player's row
+ *       drops off the bottom of the window and the incoming one rises back into the band. The
+ *       tiles are exchanged while the row is parked off screen, so the swap itself is never
+ *       seen - what reads as one rack leaving and another arriving is the same six slots.
  * @note Lives in screen space: it deliberately ignores the board camera so it stays put while
  *       the board is panned and zoomed.
  * @implNote Draws its tiles itself instead of registering them as scene entities. That keeps them
@@ -26,6 +31,12 @@ import java.util.List;
 public class TileRack extends PanelEntity {
 
     private final HandTileEntity[] slots = new HandTileEntity[Player.HAND_SIZE];
+
+    /** Vertical center the row sits at while it belongs to the active player. */
+    private final int restingCenterY;
+
+    /** The HUD-wide handover clock; the row reads its phase rather than timing its own slide. */
+    private final Handover handover;
 
     private Player player;
     private Tile selectedTile;
@@ -37,7 +48,10 @@ public class TileRack extends PanelEntity {
      *       outside a slot therefore falls through to the board instead of being swallowed by a
      *       panel that is no longer there.
      */
-    public TileRack(int centerX, int centerY) {
+    public TileRack(int centerX, int centerY, Handover handover) {
+        this.restingCenterY = centerY;
+        this.handover = handover;
+
         setBounds(centerX, centerY, rowWidth(), UiTheme.RACK_TILE_SIZE, OriginPresets.CENTER);
     }
 
@@ -47,23 +61,41 @@ public class TileRack extends PanelEntity {
     }
 
     /**
-     * Points the rack at {@code currentPlayer} and rebuilds it if their hand changed.
+     * Points the rack at {@code currentPlayer}, sliding the row out and back in if the turn has
+     * passed to somebody else.
      *
      * @note Cheap enough to call every tick; it only rebuilds when the tiles actually differ.
+     * @note A handover deliberately does <em>not</em> take on the new hand here. The row keeps
+     *       showing the player who just finished until it is off screen, which is what makes the
+     *       two racks read as two racks rather than as one that changed its mind.
      */
     public void showPlayer(Player currentPlayer) {
-        boolean playerChanged = this.player != currentPlayer;
-        if (playerChanged && matchesHand(currentPlayer.getHand())) return;
-
-        if (playerChanged) {
-            this.player = currentPlayer;
-            Arrays.fill(slots, null);
+        if (player == null) {                       // first frame: there is nothing to hand over from
+            takeOver(currentPlayer);
+            return;
         }
+
+        if (handover.isRunning()) {
+            // Off screen at the turn between the halves, and therefore the one moment the
+            // exchange cannot be seen. Until then the row keeps the finishing player's tiles.
+            if (handover.getPhase() == Handover.Phase.ARRIVING && player != currentPlayer) {
+                takeOver(currentPlayer);
+            }
+            return;
+        }
+
+        // Safety net for a turn that passed without the animation running at all.
+        if (player != currentPlayer) takeOver(currentPlayer);
 
         syncSlots(currentPlayer.getHand());
 
         if (!currentPlayer.getHand().contains(selectedTile)) selectedTile = null;
         applySelection();
+    }
+
+    /** @return whether the row is currently sliding out or back in. */
+    private boolean isChangingHands() {
+        return handover.isRunning();
     }
 
     /** @return the tile the player picked, or {@code null} if nothing is selected. */
@@ -88,6 +120,8 @@ public class TileRack extends PanelEntity {
      *       is a global flag that both would otherwise consume.
      */
     public boolean handleInput() {
+        // A row in transit belongs to nobody yet; let the click through rather than swallow it.
+        if (isChangingHands()) return false;
         if (!InputManager.isMouseClicked()) return false;
 
         for (HandTileEntity tileEntity : slots) {
@@ -103,8 +137,49 @@ public class TileRack extends PanelEntity {
 
     @Override
     public void onTick(double dt) {
+        applySlide();
+        layoutSlots();
+
         for (HandTileEntity tileEntity : slots) {
             if (tileEntity != null) tileEntity.update(dt);
+        }
+    }
+
+    /** Puts the row where the handover clock says it should be: out of the window and back. */
+    private void applySlide() {
+        if (!handover.isRunning()) {
+            y = restingCenterY;
+            return;
+        }
+
+        int hiddenCenterY = UiTheme.rackHiddenCenterY();
+        double progress = handover.getPhaseProgress();
+
+        y = handover.getPhase() == Handover.Phase.LEAVING
+                ? Handover.at(restingCenterY, hiddenCenterY, progress)
+                : Handover.at(hiddenCenterY, restingCenterY, progress);
+    }
+
+    /** Puts {@code newPlayer}'s hand into the slots outright, wherever the row happens to be. */
+    private void takeOver(Player newPlayer) {
+        this.player = newPlayer;
+        Arrays.fill(slots, null);
+
+        syncSlots(newPlayer.getHand());
+
+        selectedTile = null;
+        applySelection();
+    }
+
+    /**
+     * Puts every tile on its slot.
+     *
+     * @note Run every tick, not just when a slot is filled: the tiles have to ride along while
+     *       the row slides, and they take their position from it.
+     */
+    private void layoutSlots() {
+        for (int i = 0; i < slots.length; i++) {
+            if (slots[i] != null) layoutSlot(i);
         }
     }
 
@@ -147,7 +222,6 @@ public class TileRack extends PanelEntity {
             if (freeSlot < 0) break;
 
             slots[freeSlot] = new HandTileEntity(tile);
-            layoutSlot(freeSlot);
         }
     }
 
@@ -174,20 +248,6 @@ public class TileRack extends PanelEntity {
 
             tileEntity.setSelected(tileEntity.getTile() == selectedTile);
         }
-    }
-
-    /** @return {@code true} if the rack already shows exactly {@code hand}, compared by identity. */
-    private boolean matchesHand(List<Tile> hand) {
-        int occupiedSlots = 0;
-
-        for (HandTileEntity tileEntity : slots) {
-            if (tileEntity == null) continue;
-
-            occupiedSlots++;
-            if (!hand.contains(tileEntity.getTile())) return false;
-        }
-
-        return occupiedSlots == hand.size();
     }
 
     private HandTileEntity findEntity(Tile tile) {
