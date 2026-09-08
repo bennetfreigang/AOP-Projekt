@@ -8,7 +8,9 @@ import quirkle.game.gamePlay.tiles.TileBag;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class Game {
     private final Board board;
@@ -54,6 +56,20 @@ public class Game {
 
     public int getCurrentPlayerIndex() {
         return currentPlayerIndex;
+    }
+
+    /**
+     * @return the players in the order they will play from here on, the player to move first
+     * @note A view onto the turn order, not the order itself: {@link #getPlayers()} keeps the
+     *       seating that the HUD and the scoreboard index into, while this one answers who is up
+     *       and who comes after them.
+     */
+    public List<Player> getTurnOrder() {
+        List<Player> turnOrder = new ArrayList<>(players.size());
+        for (int i = 0; i < players.size(); i++) {
+            turnOrder.add(players.get((currentPlayerIndex + i) % players.size()));
+        }
+        return turnOrder;
     }
 
     /** @return the number of the turn being played, starting at {@code 1}. */
@@ -122,6 +138,35 @@ public class Game {
         turnNumber++;
 
         return points;
+    }
+
+    /**
+     * Rearranges the turn order.
+     *
+     * @param order the game's players, in the order they should play in from now on
+     * @throws IllegalArgumentException if {@code order} is not exactly the game's players, each
+     *         of them once
+     * @note Whoever is to move stays to move: the index is looked up again afterwards rather than
+     *       kept, so rearranging the order never silently passes the turn to somebody else. That
+     *       is also why tiles staged this turn can stay where they are - they still belong to the
+     *       player who staged them.
+     */
+    public void setPlayerOrder(List<Player> order) {
+        // Copied before anything is touched: getPlayers() hands out a live view of this very list,
+        // so passing it back in would leave the order empty the moment the list is cleared.
+        List<Player> newOrder = new ArrayList<>(order);
+
+        Set<Player> distinctPlayers = new HashSet<>(newOrder);
+        if (newOrder.size() != players.size() || distinctPlayers.size() != newOrder.size()
+                || !distinctPlayers.containsAll(players)) {
+            throw new IllegalArgumentException("Cannot set player order; it must hold each of the game's players once.");
+        }
+
+        Player currentPlayer = getCurrentPlayer();
+
+        players.clear();
+        players.addAll(newOrder);
+        currentPlayerIndex = players.indexOf(currentPlayer);
     }
 
     /** Deals a full hand to every player, in turn order.*/
