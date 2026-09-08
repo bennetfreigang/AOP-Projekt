@@ -2,6 +2,8 @@ package quirkle.game.gamePlay;
 
 import quirkle.engine.InputManager;
 import quirkle.engine.Scene;
+import quirkle.game.debug.DebugConsole;
+import quirkle.game.debug.DebugMode;
 import quirkle.game.gamePlay.board.Board;
 import quirkle.game.gamePlay.board.BoardCamera;
 import quirkle.game.gamePlay.board.BoardView;
@@ -70,6 +72,13 @@ public class GamePlayScene extends Scene {
         this.endTurnButton = sideButtons.getEndTurnButton();
 
         addEntities(boardView, boardFrame, turnIndicator, tileRack, playerCards, tileBagCounter, sideButtons);
+
+        DebugMode.attach(this.game);
+    }
+
+    @Override
+    public void onDestroy() {
+        DebugMode.detach();
     }
 
     /**
@@ -219,6 +228,7 @@ public class GamePlayScene extends Scene {
             int points = game.endTurn();
             tileRack.clearSelection();
             System.out.println(player.getName() + " erhält " + points + " Punkte.");
+            DebugMode.printScores();
         } catch (IllegalStateException e) {
             // Zug ist noch nicht abschließbar (z.B. kein Stein gelegt) -> Eingabe wird ignoriert
             System.out.println(e.getMessage());
