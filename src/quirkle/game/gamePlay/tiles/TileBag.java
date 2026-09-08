@@ -73,6 +73,41 @@ public class TileBag {
         return drawnTiles;
     }
 
+    /**
+     * Puts {@code tile} on top of the stack, so it is the next one drawn.
+     */
+    public void putOnTop(Tile tile) {
+        tiles.addFirst(tile);
+    }
+
+    /**
+     * Puts {@code newTiles} on top of the stack, keeping their order: the first element of the
+     * list is the next tile drawn.
+     */
+    public void putOnTop(List<Tile> newTiles) {
+        for (int i = newTiles.size() - 1; i >= 0; i--) {
+            tiles.addFirst(newTiles.get(i));
+        }
+    }
+
+    /** Empties the bag. */
+    public void clear() {
+        tiles.clear();
+    }
+
+    /** Refills the bag with a full, freshly shuffled tile set. */
+    public void reset() {
+        tiles.clear();
+        generateStartTiles();
+    }
+
+    /**
+     * @return a copy of the next {@code count} tiles in draw order, without removing them
+     */
+    public List<Tile> peek(int count) {
+        return List.copyOf(tiles.subList(0, Math.min(count, tiles.size())));
+    }
+
     /** @return the number of tiles remaining in the bag. */
     public int getSize() {
         return tiles.size();

@@ -93,7 +93,9 @@ public class Board {
      *         or if placing {@code tile} there would make the pending tiles illegal.
      */
     public void placeTile(Position position, Tile tile) {
-        if (!PlacementValidator.isTilePlacementPossible(placedTiles, pendingTiles, position, tile)) {
+        PlacementResult result = checkPlacement(position, tile);
+
+        if (!result.isLegal()) {
             throw new IllegalStateException("Cannot place tile; placement is not possible.");
         }
 
@@ -143,6 +145,20 @@ public class Board {
         placedTiles.putAll(pendingTiles);
         pendingTiles.clear();
         return points;
+    }
+
+    public PlacementResult checkPlacement(Position position, Tile tile) {
+        return PlacementValidator.checkTilePlacement(placedTiles, pendingTiles, position, tile);
+    }
+
+    public PlacementResult checkPendingPlacement() {
+        if (pendingTiles.isEmpty()) return PlacementResult.LEGAL;
+        return PlacementValidator.checkPendingTilePlacement(placedTiles, pendingTiles);
+    }
+
+    public int getPendingScore() {
+        if (pendingTiles.isEmpty()) return 0;
+        return ScoreCalculator.calculatePendingTilesScore(placedTiles, pendingTiles);
     }
 
     /** @return {@code true} if {@link #pendingTiles} can be legally committed onto {@link #placedTiles}. */

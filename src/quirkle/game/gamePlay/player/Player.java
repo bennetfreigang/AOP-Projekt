@@ -97,6 +97,39 @@ public class Player {
             throw new IllegalStateException("Cannot remove tile; " + name + " does not hold it.");
         }
     }
+
+    /** @return whether the rack is full, so a tile can only go on it by replacing another. */
+    public boolean isHandFull() {
+        return hand.size() >= HAND_SIZE;
+    }
+
+    /**
+     * Puts {@code tile} into rack slot {@code slotIndex}, in place of what stood there.
+     *
+     * @return the tile that was replaced
+     * @throws IndexOutOfBoundsException if the rack has no such slot
+     */
+    public Tile replaceTile(int slotIndex, Tile tile) {
+        if (slotIndex < 0 || slotIndex >= hand.size()) {
+            throw new IndexOutOfBoundsException(
+                    "No rack slot " + slotIndex + "; " + name + " holds " + hand.size() + " tiles.");
+        }
+        return hand.set(slotIndex, tile);
+    }
+
+    /**
+     * Takes every tile off the rack.
+     *
+     * @return the tiles that were on it, in rack order
+     * @note Returns them rather than dropping them, so the caller can decide where they go -
+     *       back into the bag, or nowhere.
+     */
+    public List<Tile> clearHand() {
+        List<Tile> removed = new ArrayList<>(hand);
+        hand.clear();
+        return removed;
+    }
+
     private void setScore(int score) {
         this.score = score;
     }
