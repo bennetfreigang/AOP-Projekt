@@ -81,7 +81,7 @@ public class Player {
      * @throws IllegalStateException if the rack already holds {@value #HAND_SIZE} tiles
      */
     public void addTile(Tile tile) {
-        if (hand.size() >= HAND_SIZE) {
+        if (isHandFull()) {
             throw new IllegalStateException("Cannot add tile; " + name + "'s rack is full.");
         }
         hand.add(tile);

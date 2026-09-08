@@ -13,27 +13,30 @@ public class TileBag {
 
     /** Creates a bag containing one full tile set, shuffled using the default source of randomness. */
     public TileBag() {
-        generateStartTiles();
+        this(RandomGenerator.getDefault());
     }
 
     /** Creates a bag containing one full tile set, shuffled using {@code random} instead of the default source of randomness. */
     public TileBag(RandomGenerator random) {
-        generateStartTiles(random);
+        this.random = random;
+        generateStartTiles();
     }
 
     /** Tiles remaining in the bag, in draw order; the next tile drawn is at index 0. */
-    private List<Tile> tiles = new ArrayList<>(TileSymbol.values().length * TileColor.values().length * COPIES_PER_TILE);
+    private final List<Tile> tiles = new ArrayList<>(TileSymbol.values().length * TileColor.values().length * COPIES_PER_TILE);
 
-    /** Fills {@link #tiles} with a full tile set and shuffles it using the default source of randomness. */
+    /**
+     * Every shuffle of this bag draws from here.
+     *
+     * @note Kept rather than only used once, so that {@link #reset()} shuffles the way the bag was
+     *       created: a bag built on a seeded generator stays reproducible across a reset.
+     */
+    private final RandomGenerator random;
+
+    /** Fills {@link #tiles} with a full tile set and shuffles it. */
     private void generateStartTiles() {
         createFullTileSet();
         shuffle();
-    }
-
-    /** Fills {@link #tiles} with a full tile set and shuffles it using {@code random}. */
-    private void generateStartTiles(RandomGenerator random) {
-        createFullTileSet();
-        shuffle(random);
     }
 
     /** Adds {@value COPIES_PER_TILE} tiles of every color/symbol combination to {@link #tiles}. */
@@ -47,13 +50,8 @@ public class TileBag {
         }
     }
 
-    /** Shuffles {@link #tiles} using the default source of randomness. */
+    /** Shuffles {@link #tiles} using this bag's source of randomness. */
     private void shuffle() {
-        Collections.shuffle(tiles);
-    }
-
-    /** Shuffles {@link #tiles} using {@code random}. */
-    private void shuffle(RandomGenerator random) {
         Collections.shuffle(tiles, random);
     }
 
@@ -103,9 +101,12 @@ public class TileBag {
 
     /**
      * @return a copy of the next {@code count} tiles in draw order, without removing them
+     * @apiNote Returns fewer tiles, never throws, if the bag holds fewer than {@code count};
+     *          a count below zero yields an empty list.
      */
     public List<Tile> peek(int count) {
-        return List.copyOf(tiles.subList(0, Math.min(count, tiles.size())));
+        int available = Math.max(0, Math.min(count, tiles.size()));
+        return List.copyOf(tiles.subList(0, available));
     }
 
     /** @return the number of tiles remaining in the bag. */

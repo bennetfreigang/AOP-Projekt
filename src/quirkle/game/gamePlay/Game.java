@@ -110,6 +110,18 @@ public class Game {
 
         if (board.isPendingPlacementLegal()) return;
 
+        takeBackAllTiles();
+    }
+
+    /**
+     * Takes every tile staged this turn back into the current player's hand.
+     *
+     * @note Staged tiles belong to whoever staged them, so anything that cuts a turn short has to
+     *       hand them back rather than leave them on the board for the next player to commit.
+     */
+    public void takeBackAllTiles() {
+        Player currentPlayer = getCurrentPlayer();
+
         for (Tile staged : board.removeAllPendingTiles()) {
             currentPlayer.addTile(staged);
         }
@@ -138,6 +150,28 @@ public class Game {
         turnNumber++;
 
         return points;
+    }
+
+    /**
+     * Makes the player at {@code index} the one to move.
+     *
+     * @throws IndexOutOfBoundsException if the game has no player at {@code index}
+     * @note Not the same as ending a turn: nothing is scored and {@link #getTurnNumber()} stands
+     *       still. What it does share with {@link #endTurn()} is that the tiles staged so far go
+     *       back to the player who staged them - leaving them would let the next player commit,
+     *       and be scored for, a move they never made.
+     * @note Pointing it at the player already to move leaves the turn untouched, staged tiles
+     *       included, so it can be called without first checking who is up.
+     */
+    public void setCurrentPlayerIndex(int index) {
+        if (index < 0 || index >= players.size()) {
+            throw new IndexOutOfBoundsException("No player at index " + index + "; the game has " + players.size() + ".");
+        }
+
+        if (index == currentPlayerIndex) return;
+
+        takeBackAllTiles();
+        currentPlayerIndex = index;
     }
 
     /**
