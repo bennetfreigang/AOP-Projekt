@@ -13,6 +13,18 @@ return == Zurück
 
 options == Optionen
 
+--- GAMEPLAY ---------------------------------------------
+
+points == PUNKTE
+last_round == LETZTE RUNDE
+points_last_round == PUNKTE LETZTE RUNDE
+in_bag == IM BEUTEL
+game_settings == EINSTELLUNGEN
+turn == ZUG
+turn_place_tile == STEIN LEGEN
+turn_tile_placed == STEIN GELEGT
+turn_tiles_placed == STEINE GELEGT
+
 --- CREDITS ----------------------------------------------
 
 creditEntry_title0 == Programmierung

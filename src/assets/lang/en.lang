@@ -6,7 +6,19 @@ play == Play
 settings == Settings
 credits == Credits
 quit == Quit
-return = Return
+return == Return
+
+--- GAMEPLAY ---------------------------------------------
+
+points == POINTS
+last_round == LAST ROUND
+points_last_round == POINTS LAST ROUND
+in_bag == IN BAG
+game_settings == SETTINGS
+turn == TURN
+turn_place_tile == PLACE A TILE
+turn_tile_placed == TILE PLACED
+turn_tiles_placed == TILES PLACED
 
 --- QUICKMENU --------------------------------------------
 

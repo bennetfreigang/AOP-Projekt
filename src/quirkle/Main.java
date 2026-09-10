@@ -1,6 +1,7 @@
 package quirkle;
 
 import quirkle.engine.*;
+import quirkle.game.gamePlay.GamePlayScene;
 
 import quirkle.game.startmenu.scenes.StartMenuScene;
 
@@ -32,8 +33,7 @@ public class Main {
             frame.setUndecorated(false); //disabling the frame
             frame.setResizable(false);
 
-            SceneManager.setScene(new StartMenuScene()); //uses dummy scene to compile for now -> put in actual start scene if available
-            //EXAMPLE: SceneManager.setScene(new ImplementedScene());
+            SceneManager.setScene(new GamePlayScene());
 
             RenderPanel panel = new RenderPanel();
             frame.add(panel);
@@ -42,7 +42,7 @@ public class Main {
             frame.setVisible(true);
 
             panel.requestFocusInWindow();
-            
+
             GameLoop loop = new GameLoop(panel);
             loop.start();
         });

@@ -1,4 +1,4 @@
-package quirkle.game.startmenu.scenes;
+package quirkle.game.startMenu.scenes;
 
 import quirkle.PersistentData;
 import quirkle.engine.*;

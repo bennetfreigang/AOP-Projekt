@@ -3,7 +3,6 @@ package quirkle.engine;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
-@Deprecated //THIS SHOULD BE REMOVED AND JUST BE REPLACED WITH CORRECT ASSET DESIGN
 /**
  * Draws a border sprite at an arbitrary size without smearing its stroke.
  *
@@ -16,7 +15,6 @@ import java.awt.image.BufferedImage;
  */
 public final class NineSlice {
 
-    @Deprecated //THIS SHOULD BE REMOVED AND JUST BE REPLACED WITH CORRECT ASSET DESIGN
     private NineSlice() {}
 
     /**
@@ -31,7 +29,6 @@ public final class NineSlice {
     }
 
     /** @see #draw(Graphics2D, String, int, int, int, int, int, int) */
-    @Deprecated //THIS SHOULD BE REMOVED AND JUST BE REPLACED WITH CORRECT ASSET DESIGN
     public static void draw(Graphics2D g, BufferedImage sprite,
                             int x, int y, int width, int height, int sourceInset, int targetInset) {
         if (sprite == null || width <= 0 || height <= 0) return;
