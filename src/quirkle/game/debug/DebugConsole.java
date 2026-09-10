@@ -66,12 +66,4 @@ public final class DebugConsole {
             println("  please answer y or n.");
         }
     }
-
-    public static <E extends Enum<E>> E readEnum(String prompt, E[] values) {
-        println(prompt + ":");
-        for (int i = 0; i < values.length; i++) {
-            println("  [" + i + "] " + values[i].name());
-        }
-        return values[readInt("choice", 0, values.length - 1)];
-    }
 }

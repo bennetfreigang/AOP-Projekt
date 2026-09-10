@@ -6,19 +6,20 @@ import java.awt.Graphics2D;
 import java.util.List;
 
 /**
- * The two buttons along the right edge: settings at the top, end turn at the bottom.
+ * The three buttons along the right edge: settings at the top, debug in the middle, end turn at
+ * the bottom.
  *
- * @note Only end turn is wired up; settings is a placeholder that renders and swallows its
- *       clicks but does nothing, since the action behind it does not exist yet. Giving it a
- *       function later means handing it a {@code Runnable} through
- *       {@link SideButton#setAction(Runnable)}, and its artwork through
- *       {@link SideButton#setArtwork(String)}.
+ * @note Settings is still a placeholder that renders and swallows its clicks but does nothing,
+ *       since the action behind it does not exist yet. Giving it a function later means handing
+ *       it a {@code Runnable} through {@link SideButton#setAction(Runnable)}, and its artwork
+ *       through {@link SideButton#setArtwork(String)}.
  * @implNote Draws and ticks its buttons itself rather than registering them as scene entities,
  *           so the scene adds and removes the whole bar as one unit.
  */
 public class SideButtonBar extends Entity {
 
     private final SideButton settingsButton;
+    private final SideButton debugButton;
     private final SideButton endTurnButton;
 
     private final List<SideButton> buttons;
@@ -26,16 +27,19 @@ public class SideButtonBar extends Entity {
     /**
      * @param rightX screen x the buttons' right edges line up on
      * @param endTurnAction what the checkmark button does
+     * @param debugAction what the debug button does
      */
-    public SideButtonBar(int rightX, Runnable endTurnAction) {
+    public SideButtonBar(int rightX, Runnable endTurnAction, Runnable debugAction) {
         this.renderOrder = UiTheme.LAYER_HUD;
 
         this.settingsButton = new SideButton(UiTheme.text("game_settings"), null, null);
+        this.debugButton = new SideButton("Debug", null, debugAction);
         this.endTurnButton = new SideButton(null, ButtonGlyph.CONFIRM, endTurnAction);
 
-        this.buttons = List.of(settingsButton, endTurnButton);
+        this.buttons = List.of(settingsButton, debugButton, endTurnButton);
 
         settingsButton.place(rightX, UiTheme.SIDE_BUTTON_SETTINGS_Y);
+        debugButton.place(rightX, UiTheme.SIDE_BUTTON_DEBUG_Y);
         endTurnButton.place(rightX, UiTheme.SIDE_BUTTON_END_TURN_Y);
     }
 

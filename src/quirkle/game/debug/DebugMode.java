@@ -43,8 +43,10 @@ public final class DebugMode {
             Map<Position, Tile> move = new LinkedHashMap<>();
             for (int i = 0; i < count; i++) {
                 println("tile " + (i + 1) + " of " + count + ":");
+                println(DebugPrompts.formatBoard(new Board(board.getPlacedTiles(), move)));
+
                 Position position = DebugPrompts.readPosition("  cell");
-                Tile tile = DebugPrompts.readTile("  tile");
+                Tile tile = DebugPrompts.readTile("  tile for " + describe(position));
 
                 if (move.put(position, tile) != null) {
                     println("  replaced the tile entered for " + describe(position) + " earlier");
@@ -78,20 +80,34 @@ public final class DebugMode {
             Game current = requireGame();
 
             Player player = current.getPlayers().get(DebugPrompts.readPlayerIndex(current, "rack"));
-            println(player.getName() + ": " + DebugPrompts.formatHand(player.getHand()));
 
             if (player.getHand().isEmpty()) {
-                Tile tile = DebugPrompts.readTile("tile");
-                player.addTile(tile);
-                println("put " + DebugPrompts.format(tile) + " onto the empty rack");
+                int count = DebugConsole.readInt("  how many tiles", 1, Player.HAND_SIZE);
+
+                for (int i = 0; i < count; i++) {
+                    println("tile " + (i + 1) + " of " + count + ":");
+                    println(player.getName() + ": " + DebugPrompts.formatHand(player.getHand()));
+
+                    Tile tile = DebugPrompts.readTile("new tile for the empty rack");
+                    player.addTile(tile);
+                    println("added " + DebugPrompts.format(tile));
+                }
                 return;
             }
 
-            int slot = DebugConsole.readInt("  slot", 0, player.getHand().size() - 1);
-            Tile tile = DebugPrompts.readTile("tile");
+            println(player.getName() + ": " + DebugPrompts.formatHand(player.getHand()));
+            int count = DebugConsole.readInt("  how many slots to change", 1, player.getHand().size());
 
-            Tile replaced = player.replaceTile(slot, tile);
-            println("slot " + slot + ": " + DebugPrompts.format(replaced) + " -> " + DebugPrompts.format(tile));
+            for (int i = 0; i < count; i++) {
+                println("slot " + (i + 1) + " of " + count + ":");
+                println(player.getName() + ": " + DebugPrompts.formatHand(player.getHand()));
+
+                int slot = DebugConsole.readInt("  slot", 0, player.getHand().size() - 1);
+                Tile tile = DebugPrompts.readTile("tile for slot " + slot);
+
+                Tile replaced = player.replaceTile(slot, tile);
+                println("slot " + slot + ": " + DebugPrompts.format(replaced) + " -> " + DebugPrompts.format(tile));
+            }
         });
     }
 
@@ -106,7 +122,7 @@ public final class DebugMode {
         run("STACK TILE ON BAG", () -> {
             TileBag bag = requireGame().getTileBag();
 
-            Tile tile = DebugPrompts.readTile("tile");
+            Tile tile = DebugPrompts.readTile("next tile for the bag");
             bag.putOnTop(tile);
 
             println("next draw: " + DebugPrompts.format(tile) + "   (" + bag.getSize() + " tiles in the bag)");

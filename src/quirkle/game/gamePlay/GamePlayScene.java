@@ -2,8 +2,8 @@ package quirkle.game.gamePlay;
 
 import quirkle.engine.InputManager;
 import quirkle.engine.Scene;
-import quirkle.game.debug.DebugConsole;
 import quirkle.game.debug.DebugMode;
+import quirkle.game.debug.scenes.DebugModeScene;
 import quirkle.game.gamePlay.board.Board;
 import quirkle.game.gamePlay.board.BoardCamera;
 import quirkle.game.gamePlay.board.BoardView;
@@ -54,6 +54,8 @@ public class GamePlayScene extends Scene {
     private final TileBagCounter tileBagCounter;
     private final SideButtonBar sideButtons;
     private final SideButton endTurnButton;
+    /** The debug panel, or {@code null} while it is closed. */
+    private DebugModeScene debugModeScene;
 
     public GamePlayScene() {
         // The frame's opening, not the window, is what the board has to fit into.
@@ -68,7 +70,7 @@ public class GamePlayScene extends Scene {
         this.turnIndicator = new TurnIndicator(game, (int) viewport.getCenterX(), handover);
         this.playerCards = new PlayerCardColumn(game, handover);
         this.tileBagCounter = new TileBagCounter(game.getTileBag());
-        this.sideButtons = new SideButtonBar(getWidth() - UiTheme.SIDE_BUTTON_MARGIN_RIGHT, this::endTurn);
+        this.sideButtons = new SideButtonBar(getWidth() - UiTheme.SIDE_BUTTON_MARGIN_RIGHT, this::endTurn, this::openDebugMode);
         this.endTurnButton = sideButtons.getEndTurnButton();
 
         addEntities(boardView, boardFrame, turnIndicator, tileRack, playerCards, tileBagCounter, sideButtons);
@@ -102,8 +104,21 @@ public class GamePlayScene extends Scene {
         g.fillRect(0, 0, getWidth(), getHeight());
     }
 
+    /** @note Draws the debug panel over the whole HUD, not just as another entity among it. */
+    @Override
+    public void render(Graphics2D g) {
+        super.render(g);
+        if (debugModeScene != null) debugModeScene.render(g);
+    }
+
     @Override
     public void onTick(double dt) {
+        if (debugModeScene != null) {
+            // The board underneath stays exactly as it was while the panel is open.
+            debugModeScene.update(dt);
+            return;
+        }
+
         // Ahead of everything else: the HUD elements read this clock during their own ticks, and
         // they have to see the same frame of it.
         handover.advance(dt);
@@ -222,12 +237,36 @@ public class GamePlayScene extends Scene {
         isDragging = true;
     }
 
+    /**
+     * Opens the debug panel over the board.
+     *
+     * @note Driven straight from this scene rather than through {@code SceneManager}'s temp-scene
+     *       stack: this scene is already itself a temp scene over the start menu, and the manager
+     *       only remembers one background scene at a time, so nesting a second temp scene through
+     *       it would destroy this one instead of just the panel.
+     */
+    private void openDebugMode() {
+        if (debugModeScene != null) return;
+
+        debugModeScene = new DebugModeScene();
+        debugModeScene.setOnClose(this::closeDebugMode);
+    }
+
+    private void closeDebugMode() {
+        if (debugModeScene == null) return;
+
+        debugModeScene.destroy();
+        debugModeScene = null;
+    }
+
     private void endTurn() {
         try {
             Player player = game.getCurrentPlayer();
             int points = game.endTurn();
             tileRack.clearSelection();
             System.out.println(player.getName() + " erhält " + points + " Punkte.");
+
+            DebugMode.printScores();
         } catch (IllegalStateException e) {
             // Zug ist noch nicht abschließbar (z.B. kein Stein gelegt) -> Eingabe wird ignoriert
             System.out.println(e.getMessage());

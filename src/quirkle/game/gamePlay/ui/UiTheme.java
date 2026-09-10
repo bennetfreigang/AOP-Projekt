@@ -266,10 +266,13 @@ public final class UiTheme {
     /**
      * Vertical center of the settings button, at the top of the bar.
      *
-     * @note The two slots between this and {@link #SIDE_BUTTON_END_TURN_Y} are the mockup's
-     *       positions for the new game and take back buttons, which the bar no longer shows.
+     * @note The two slots between this and {@link #SIDE_BUTTON_END_TURN_Y} were the mockup's
+     *       positions for the new game and take back buttons, which the bar no longer shows; one
+     *       of them is now spent on {@link #SIDE_BUTTON_DEBUG_Y}.
      */
     public static final int SIDE_BUTTON_SETTINGS_Y = 74;
+    /** Vertical center of the debug button, halfway between settings and end turn. */
+    public static final int SIDE_BUTTON_DEBUG_Y = 507;
     /** Vertical center of the end turn button, at the bottom of the bar. */
     public static final int SIDE_BUTTON_END_TURN_Y = 939;
 
