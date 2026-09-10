@@ -1,11 +1,6 @@
 package quirkle.game.gamePlay.board;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import quirkle.game.gamePlay.tiles.Tile;
 import quirkle.game.gamePlay.tiles.TileColor;
@@ -20,25 +15,7 @@ class PlacementValidator {
      *         (unless it is still empty), and every line they touch is a valid Qwirkle line.
      */
     static boolean isPendingTilePlacementPossible(Map<Position, Tile> placedTiles, Map<Position, Tile> pendingTiles) {
-        if (!isPendingTilesInLine(pendingTiles.keySet())) {
-            return false;
-        }
-        if (!isConnectedToBoard(placedTiles, pendingTiles)) {
-            return false;
-        }
-
-        Map<Position, Tile> allTiles = new HashMap<>(placedTiles);
-        allTiles.putAll(pendingTiles);
-
-        for (Map.Entry<Position, Tile> entry : pendingTiles.entrySet()) {
-            if (!isPositionFree(placedTiles, entry.getKey())) {
-                return false;
-            }
-            if (!formsValidLines(allTiles, entry.getKey())) {
-                return false;
-            }
-        }
-        return true;
+        return checkPendingTilePlacement(placedTiles, pendingTiles).isLegal();
     }
 
     /**
@@ -46,16 +23,33 @@ class PlacementValidator {
      *         {@code position} is not already occupied and the resulting pending tiles would still be a legal placement.
      */
     static boolean isTilePlacementPossible(Map<Position, Tile> placedTiles, Map<Position, Tile> pendingTiles, Position position, Tile tile) {
-        if (placedTiles.containsKey(position) || pendingTiles.containsKey(position)) {
-            return false;
+        return checkTilePlacement(placedTiles, pendingTiles, position, tile).isLegal();
+    }
+
+    static PlacementResult checkPendingTilePlacement(Map<Position, Tile> placedTiles, Map<Position, Tile> pendingTiles) {
+        for (Position position : pendingTiles.keySet()) {
+            if (!isPositionFree(placedTiles, position)) return PlacementResult.POSITION_OCCUPIED;
         }
+        if (!isPendingTilesInLine(pendingTiles.keySet())) return PlacementResult.NOT_IN_ONE_LINE;
+        if (!isPendingTilesContiguous(placedTiles, pendingTiles)) return PlacementResult.LINE_HAS_GAP;
+        if (!isConnectedToBoard(placedTiles, pendingTiles)) return PlacementResult.NOT_CONNECTED_TO_BOARD;
+
+        Map<Position, Tile> allTiles = new HashMap<>(placedTiles);
+        allTiles.putAll(pendingTiles);
+
+        for (Position position : pendingTiles.keySet()) {
+            if (!formsValidLines(allTiles, position)) return PlacementResult.INVALID_LINE;
+        }
+        return PlacementResult.LEGAL;
+    }
+
+    static PlacementResult checkTilePlacement(Map<Position, Tile> placedTiles, Map<Position, Tile> pendingTiles, Position position, Tile tile) {
+        if (placedTiles.containsKey(position) || pendingTiles.containsKey(position)) return PlacementResult.POSITION_OCCUPIED;
 
         Map<Position, Tile> candidatePendingTiles = new HashMap<>(pendingTiles);
         candidatePendingTiles.put(position, tile);
-        return isPendingTilePlacementPossible(placedTiles, candidatePendingTiles);
+        return checkPendingTilePlacement(placedTiles, candidatePendingTiles);
     }
-
-    // --- Rule: pending tiles share one common row or column --------------------
 
     /** @return {@code true} if every position in {@code positions} shares the same row or the same column. */
     private static boolean isPendingTilesInLine(Set<Position> positions) {
@@ -64,7 +58,40 @@ class PlacementValidator {
         return sameRow || sameColumn;
     }
 
-    // --- Rule: pending tiles connect to the existing board ----------------------
+    /**
+     * @return {@code true} if the pending tiles form one unbroken run along their shared line.
+     * @apiNote Assumes {@link #isPendingTilesInLine} has already passed.
+     */
+    private static boolean isPendingTilesContiguous(Map<Position, Tile> placedTiles, Map<Position, Tile> pendingTiles) {
+        LineOrientation orientation = getPendingTilesOrientation(pendingTiles.keySet());
+        if (orientation == null) {
+            return true;
+        }
+
+        int lineEnd = pendingTiles.keySet().stream().mapToInt(orientation.extentCoordinate).max().getAsInt();
+        Position current = pendingTiles.keySet().stream()
+                .min(Comparator.comparingInt(orientation.extentCoordinate))
+                .orElseThrow();
+
+        // walk from the first to the last pending tile; every position on the way must hold a tile
+        while (orientation.extentCoordinate.applyAsInt(current) <= lineEnd) {
+            if (!pendingTiles.containsKey(current) && !placedTiles.containsKey(current)) {
+                return false;
+            }
+            current = current.neighbor(orientation.forwardDirection);
+        }
+        return true;
+    }
+
+    /** @return the orientation {@code positions} run in, or {@code null} if a single tile leaves it undecided. */
+    private static LineOrientation getPendingTilesOrientation(Set<Position> positions) {
+        if (positions.size() <= 1) {
+            return null;
+        }
+
+        boolean sameRow = positions.stream().map(Position::y).distinct().count() == 1;
+        return sameRow ? LineOrientation.HORIZONTAL : LineOrientation.VERTICAL;
+    }
 
     /** @return {@code true} if {@code placedTiles} is empty (first move) or some position in {@code pendingTiles} touches a tile in {@code placedTiles}. */
     private static boolean isConnectedToBoard(Map<Position, Tile> placedTiles, Map<Position, Tile> pendingTiles) {

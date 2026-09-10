@@ -7,4 +7,33 @@ play == Play
 settings == Settings
 credits == Credits
 quit == Quit
-return = Return
+return == Return
+
+--- GAMEPLAY ---------------------------------------------
+
+points == POINTS
+last_round == LAST ROUND
+points_last_round == POINTS LAST ROUND
+in_bag == IN BAG
+game_settings == SETTINGS
+turn == TURN
+turn_place_tile == PLACE A TILE
+turn_tile_placed == TILE PLACED
+turn_tiles_placed == TILES PLACED
+
+--- CREDITS ----------------------------------------------
+
+creditsTitle0 == Programming
+creditsContent0 == Bennet Freigang
+
+creditsTitle1 == Game Concept & Design
+creditsContent1 == [Name/Team]
+
+creditsTitle2 == Assets & Graphics
+creditsContent2 == [Name/Team]
+
+creditsTitle3 == Testing
+creditsContent3 == [Name/Team]
+
+creditsTitle4 == Special Thanks
+creditsContent4 == Thanks for playing!

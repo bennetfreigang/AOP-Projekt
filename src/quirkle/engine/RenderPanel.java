@@ -4,6 +4,7 @@ import javax.swing.JPanel;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 
 public class RenderPanel extends JPanel {
 
@@ -23,6 +24,12 @@ public class RenderPanel extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g.create();
+
+        g2d.setRenderingHint(
+            RenderingHints.KEY_TEXT_ANTIALIASING,
+            RenderingHints.VALUE_TEXT_ANTIALIAS_ON
+        );
+
         SceneManager.render(g2d);
         g2d.dispose();
     }
