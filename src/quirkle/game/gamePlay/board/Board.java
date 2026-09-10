@@ -145,6 +145,16 @@ public class Board {
         pendingTiles.put(position, tile);
     }
 
+    public void placeTiles(Map<Position, Tile> tiles) {
+        Map<Position, Tile> candidate = new HashMap<>(pendingTiles);
+        candidate.putAll(tiles);
+
+        PlacementResult result = PlacementValidator.checkPendingTilePlacement(placedTiles, candidate);
+        if (!result.isLegal()) throw new IllegalStateException("Cannot place tiles; " + result.getDescription() + ".");
+
+        pendingTiles.putAll(tiles);
+    }
+
     /**
      * Takes the pending tile at {@code position} off the board.
      *

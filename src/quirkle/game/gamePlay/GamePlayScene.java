@@ -228,7 +228,6 @@ public class GamePlayScene extends Scene {
             int points = game.endTurn();
             tileRack.clearSelection();
             System.out.println(player.getName() + " erhält " + points + " Punkte.");
-            DebugMode.printScores();
         } catch (IllegalStateException e) {
             // Zug ist noch nicht abschließbar (z.B. kein Stein gelegt) -> Eingabe wird ignoriert
             System.out.println(e.getMessage());
