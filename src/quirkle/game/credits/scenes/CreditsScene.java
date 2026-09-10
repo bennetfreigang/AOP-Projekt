@@ -3,7 +3,6 @@ package quirkle.game.credits.scenes;
 import quirkle.engine.*;
 import quirkle.game.credits.entities.*;
 import quirkle.game.util.*;
-import quirkle.game.util.SimpleSpriteEntity;
 
 import java.awt.event.KeyEvent;
 

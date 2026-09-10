@@ -30,12 +30,11 @@ public class AssetManager {
 
     public static BufferedImage getTexture(String identifier) {
         identifier = EngineConfig.ASSET_ORIGIN + EngineConfig.TEXTURE_SUBDIR + "/" + identifier + ".png"; //direct translation in prep for future precaching (frontend-shift)
-        
+
         if (identifier == null || identifier.isEmpty()) return getFallbackTexture();
         if (textureCache.containsKey(identifier)) return textureCache.get(identifier);
 
         try (InputStream in = AssetManager.class.getResourceAsStream(identifier)) {
-            
             if (in == null) {
                 EngineConfig.message("Could not find texture: " + identifier, AssetManager.class.getSimpleName(), EngineConfig.messageType.WARNING);
                 return getFallbackTexture();
@@ -48,6 +47,27 @@ public class AssetManager {
             return getFallbackTexture();
         }
     }
+
+    //Fallback textures only loads if AssetManager needs it
+    private static BufferedImage getFallbackTexture() {
+        if (fallbackTexture == null) {
+            int size = 128;
+            int halfSize = size / 2;
+
+            fallbackTexture = new BufferedImage(size, size, BufferedImage.TYPE_INT_RGB);
+            Graphics2D g = fallbackTexture.createGraphics();
+            g.setColor(Color.MAGENTA);
+            g.fillRect(0, 0, halfSize, halfSize);
+            g.fillRect(halfSize, halfSize, halfSize, halfSize);
+            g.setColor(Color.BLACK);
+            g.fillRect(halfSize, 0, halfSize, halfSize);
+            g.fillRect(0, halfSize, halfSize, halfSize);
+            g.dispose();
+        }
+        return fallbackTexture;
+    }
+
+    //----------[ FONT ]------------------------------------------------------------------------------------------------------------------------------------
 
     private static final Map<String, Font> fontCache = new HashMap<>();
     private static final Font fallbackFont = new Font("Arial", Font.PLAIN, 24);
@@ -72,6 +92,8 @@ public class AssetManager {
             return fallbackFont;
         }
     }
+
+    //----------[ LANG ]------------------------------------------------------------------------------------------------------------------------------------
 
     private static LangPackage lang = null;
 
@@ -103,6 +125,8 @@ public class AssetManager {
         if (lang.elements.containsKey(identifier)) return lang.elements.get(identifier);
         else return "CURRENT LANG DOESNT CONTAIN KEY: " + identifier;
     }
+
+    //----------[ SOUND ]------------------------------------------------------------------------------------------------------------------------------------
 
     private static final Map<String, byte[]> soundCache = new HashMap<>();
     private static void fallbackSound(String identifier) {
@@ -150,24 +174,5 @@ public class AssetManager {
         } catch (Exception e) {
             fallbackSound(identifier);
         }
-    }
-
-    //Fallback textures only loads if AssetManager needs it
-    private static BufferedImage getFallbackTexture() {
-        if (fallbackTexture == null) {
-            int size = 128;
-            int halfSize = size / 2;
-
-            fallbackTexture = new BufferedImage(size, size, BufferedImage.TYPE_INT_RGB);
-            Graphics2D g = fallbackTexture.createGraphics();
-            g.setColor(Color.MAGENTA);
-            g.fillRect(0, 0, halfSize, halfSize);
-            g.fillRect(halfSize, halfSize, halfSize, halfSize);
-            g.setColor(Color.BLACK);
-            g.fillRect(halfSize, 0, halfSize, halfSize);
-            g.fillRect(0, halfSize, halfSize, halfSize);
-            g.dispose();
-        }
-        return fallbackTexture;
     }
 }

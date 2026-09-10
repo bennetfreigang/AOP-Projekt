@@ -1,6 +1,8 @@
 package quirkle.engine;
 
 import java.awt.Graphics2D;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -54,7 +56,7 @@ public class Scene {
             EngineConfig.message(getClass().getSimpleName() + ": added: " + e.getClass().getSimpleName(), getClass().getSimpleName(), EngineConfig.messageType.INFO);
         }
     }
-    
+
     /**
      * Removs given {@link Entity}'s from the Scenes {@link #sceneEntities}-CopyOnWriteArrayList
      * @param entities Entity Objects that should be removed from the scene
@@ -79,9 +81,22 @@ public class Scene {
 
     public void render(Graphics2D g) {
         onRender(g);
-        for (Entity entity : sceneEntities) {
+        for (Entity entity : getRenderOrderedEntities()) {
             entity.render(g);
         }
+    }
+
+    /**
+     * @return the scene's entities ordered by {@link Entity#renderOrder}, lowest first
+     * @note Sorts a copy rather than {@link #sceneEntities} itself, since reordering a
+     *       CopyOnWriteArrayList copies the whole backing array on every write.
+     * @implNote {@link List#sort} is stable, so entities sharing a renderOrder keep the
+     *           order they were added in.
+     */
+    private List<Entity> getRenderOrderedEntities() {
+        List<Entity> ordered = new ArrayList<>(sceneEntities);
+        ordered.sort(Comparator.comparingInt(entity -> entity.renderOrder));
+        return ordered;
     }
 
     public void destroy() {
