@@ -1,13 +1,13 @@
 package quirkle.game.debug;
 
 import quirkle.engine.EngineConfig;
-import quirkle.game.gamePlay.Game;
-import quirkle.game.gamePlay.board.Board;
-import quirkle.game.gamePlay.board.PlacementResult;
-import quirkle.game.gamePlay.board.Position;
-import quirkle.game.gamePlay.player.Player;
-import quirkle.game.gamePlay.tiles.Tile;
-import quirkle.game.gamePlay.tiles.TileBag;
+import quirkle.game.gameplay.Game;
+import quirkle.game.gameplay.board.Board;
+import quirkle.game.gameplay.board.PlacementResult;
+import quirkle.game.gameplay.board.Position;
+import quirkle.game.gameplay.player.Player;
+import quirkle.game.gameplay.tiles.Tile;
+import quirkle.game.gameplay.tiles.TileBag;
 
 import java.util.LinkedHashMap;
 import java.util.List;

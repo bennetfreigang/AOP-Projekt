@@ -1,7 +1,7 @@
 package quirkle;
 
 import quirkle.engine.*;
-import quirkle.game.gamePlay.GamePlayScene;
+import quirkle.game.gameplay.GamePlayScene;
 
 import quirkle.game.startmenu.scenes.StartMenuScene;
 
@@ -21,7 +21,7 @@ public class Main {
             EngineConfig.setSize(1920, 1080);
             EngineConfig.BACKGROUND_COLOR = Color.BLACK;
             EngineConfig.FPS = 120;
-            EngineConfig.DEFAULT_LANG_IDENTIFIER = "en";
+            EngineConfig.DEFAULT_LANG_IDENTIFIER = "de";
 
             EngineConfig.SUPPRES_WARNINGS = false;
             EngineConfig.SUPPRES_INFO = false;
@@ -33,7 +33,7 @@ public class Main {
             frame.setUndecorated(false); //disabling the frame
             frame.setResizable(false);
 
-            SceneManager.setScene(new GamePlayScene());
+            SceneManager.setScene(new StartMenuScene());
 
             RenderPanel panel = new RenderPanel();
             frame.add(panel);

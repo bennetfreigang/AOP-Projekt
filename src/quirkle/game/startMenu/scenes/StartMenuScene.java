@@ -1,12 +1,11 @@
-package quirkle.game.startMenu.scenes;
+package quirkle.game.startmenu.scenes;
 
-import quirkle.PersistentData;
 import quirkle.engine.*;
 
+import quirkle.game.gameplay.GamePlayScene;
 import quirkle.game.quickmenu.scenes.QuickMenuScene;
 import quirkle.game.startmenu.entities.*;
 import quirkle.game.credits.scenes.CreditsScene;
-import quirkle.game.util.DebugIndicator;
 import quirkle.game.util.PrlxEntity;
 import quirkle.game.util.RectangularButton;
 import quirkle.game.util.ReloadDialogBox;
@@ -55,7 +54,7 @@ public class StartMenuScene extends Scene {
         prlxBackground.tarX = InputManager.getMouseX();
         prlxBackground.tarY = InputManager.getMouseY();
 
-        if (playButton.isClicked()) SceneManager.setTempScene(new ReloadDialogBox("ich hasse"), true, true); //dummy
+        if (playButton.isClicked()) SceneManager.setScene(new GamePlayScene());
         if (settingsButton.isClicked()) SceneManager.setTempScene(new QuickMenuScene(), true, true); //dumy
         if (creditsButton.isClicked()) SceneManager.setTempScene(new CreditsScene(), false, true); //dumy
         if (quitButton.isClicked()) System.exit(0);

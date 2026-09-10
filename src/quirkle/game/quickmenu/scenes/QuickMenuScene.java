@@ -10,13 +10,12 @@ import quirkle.game.util.*;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.security.Key;
 
 public class QuickMenuScene extends Scene {
     private RectangularButton buttonContinue;
     private RectangularButton buttonSettings;
     private RectangularButton buttonCredits;
-    private RectangularButton buttonQuit;
+    private RectangularButton buttonBack;
 
     private static int buttonSpacing = 20;
     private static float optionsTitleFontSize = 80;
@@ -26,18 +25,18 @@ public class QuickMenuScene extends Scene {
         SimpleSpriteEntity background = new SimpleSpriteEntity("quickmenu/background", Entity.OriginPresets.TOP_LEFT);
         SimpleTextEntity optionsTitle = new SimpleTextEntity(AssetManager.getMessage("options"), optionsTitleFontSize, "higher_jump", Color.WHITE, Entity.OriginPresets.BOTTOM_LEFT);
 
-        buttonContinue = new RectangularButton("Continue");
-        buttonSettings = new RectangularButton("Settings");
-        buttonCredits = new RectangularButton("Credits");
-        buttonQuit = new RectangularButton("Quit");
+        buttonContinue = new RectangularButton(AssetManager.getMessage("continue"));
+        buttonSettings = new RectangularButton(AssetManager.getMessage("settings"));
+        buttonCredits = new RectangularButton(AssetManager.getMessage("credits"));
+        buttonBack = new RectangularButton(AssetManager.getMessage("return"));
 
-        addEntities(background, optionsTitle, buttonContinue, buttonSettings, buttonCredits, buttonQuit);
+        addEntities(background, optionsTitle, buttonContinue, buttonSettings, buttonCredits, buttonBack);
 
         optionsTitle.x = getCenterX()/8;
         optionsTitle.y = getCenterY()*0.8;
 
         int i = 0;
-        for (Entity e : new Entity[] {buttonContinue, buttonSettings, buttonCredits, buttonQuit}) {
+        for (Entity e : new Entity[] {buttonContinue, buttonSettings, buttonCredits, buttonBack}) {
             e.y = getCenterY() + i*buttonContinue.getScaledHeight() + i*buttonSpacing;
             e.x = getCenterX()/3;
             i++;
@@ -51,7 +50,7 @@ public class QuickMenuScene extends Scene {
         if (buttonContinue.isClicked()) SceneManager.stopTempScene();
         if (buttonSettings.isClicked()) SceneManager.setScene(new SettingsScene());
         if (buttonCredits.isClicked()) SceneManager.setTempScene(new CreditsScene(), false, true);
-        if (buttonQuit.isClicked()) SceneManager.setScene(new StartMenuScene());
+        if (buttonBack.isClicked()) SceneManager.setScene(new StartMenuScene());
 
         if (InputManager.isKeyPressed(KeyEvent.VK_ESCAPE)) SceneManager.stopTempScene();
     }

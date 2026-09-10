@@ -1,12 +1,14 @@
 English
 
---- STARTMENU --------------------------------------------
+--- MENUS ------------------------------------------------
 
 play == Play
 settings == Settings
 credits == Credits
 quit == Quit
 return == Return
+options == Options
+continue == Continue
 
 --- GAMEPLAY ---------------------------------------------
 
@@ -19,10 +21,6 @@ turn == TURN
 turn_place_tile == PLACE A TILE
 turn_tile_placed == TILE PLACED
 turn_tiles_placed == TILES PLACED
-
---- QUICKMENU --------------------------------------------
-
-options == Options
 
 --- CREDITS ----------------------------------------------
 

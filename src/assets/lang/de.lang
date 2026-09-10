@@ -5,13 +5,11 @@ Deutsch
 title == QWIRKEL
 play == Starten
 settings == Einstellungen
-credits == Credits
+credits == Abspann
 quit == Beenden
 return == Zurück
-
---- QUICKMENU --------------------------------------------
-
 options == Optionen
+continue == Weitermachen
 
 --- GAMEPLAY ---------------------------------------------
 

@@ -1,11 +1,11 @@
 package quirkle.game.debug;
 
-import quirkle.game.gamePlay.Game;
-import quirkle.game.gamePlay.board.Position;
-import quirkle.game.gamePlay.player.Player;
-import quirkle.game.gamePlay.tiles.Tile;
-import quirkle.game.gamePlay.tiles.TileColor;
-import quirkle.game.gamePlay.tiles.TileSymbol;
+import quirkle.game.gameplay.Game;
+import quirkle.game.gameplay.board.Position;
+import quirkle.game.gameplay.player.Player;
+import quirkle.game.gameplay.tiles.Tile;
+import quirkle.game.gameplay.tiles.TileColor;
+import quirkle.game.gameplay.tiles.TileSymbol;
 
 import java.util.List;
 
