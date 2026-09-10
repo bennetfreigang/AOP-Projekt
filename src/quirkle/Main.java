@@ -3,13 +3,19 @@ package quirkle;
 import quirkle.engine.*;
 import quirkle.game.gamePlay.GamePlayScene;
 
-import java.awt.Color;
+import quirkle.game.startmenu.scenes.StartMenuScene;
 
+import java.awt.Color;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
 public class Main {
     public static void main(String[] args) {
+
+        if (args.length > 0 && args[0].equalsIgnoreCase("debug")) {
+            PersistentData.debugMode = true;
+        }
+
         SwingUtilities.invokeLater(() -> {
             EngineConfig.setTitle("Qwirkle - Game");
             EngineConfig.setSize(1920, 1080);

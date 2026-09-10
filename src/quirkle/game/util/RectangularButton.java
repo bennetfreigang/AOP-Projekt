@@ -1,10 +1,10 @@
-package quirkle.game.startmenu.entities;
+package quirkle.game.util;
 
-import quirkle.engine.Entity;
+import quirkle.engine.*;
 
 import java.awt.*;
 
-public class StartMenuButton extends Entity {
+public class RectangularButton extends Entity {
 
     String text;
     public double minSize = 1.0;
@@ -12,7 +12,7 @@ public class StartMenuButton extends Entity {
     public double maxSizeModifier = 1.1;
     public double growthSpeed = 0.01;
 
-    public StartMenuButton(String text) {
+    public RectangularButton(String text) {
         this.text = text;
     }
 
@@ -20,25 +20,26 @@ public class StartMenuButton extends Entity {
     public void onCreate() {
         origin = OriginPresets.CENTER;
         scale = minSize;
-        setSprite("startmenu/button/inactive");
+        setSprite("util/rectangularbutton/inactive");
+        x = SceneManager.getCurrentScene().getCenterX();
     }
 
     @Override
     public void onTick(double dt) {
         if (isHovered() && sizeModifier <= maxSizeModifier) {
             if (sizeModifier <= maxSizeModifier) sizeModifier += growthSpeed;
+            setSprite("util/rectangularbutton/active");
 
-            setSprite("startmenu/button/active");
         }   else if (!isHovered() && sizeModifier >= minSize) {
             if (sizeModifier >= minSize) sizeModifier -= growthSpeed;
-
-            setSprite("startmenu/button/inactive");
+            setSprite("util/rectangularbutton/inactive");
         }
+
         scale = sizeModifier;
     }
 
     @Override
     public void onRender(Graphics2D g) {
-        drawText(text, (float) (50*sizeModifier), Color.WHITE, "DEBUG_Poly-Regular", x, y-4, 0.0, OriginPresets.CENTER, g);
+        drawText(text, (float) (50*sizeModifier), Color.WHITE, "poly_regular", x, y-4, 0.0, OriginPresets.CENTER, g);
     }
 }
