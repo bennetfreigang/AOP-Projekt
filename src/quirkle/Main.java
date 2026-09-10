@@ -1,7 +1,6 @@
 package quirkle;
 
 import quirkle.engine.*;
-import quirkle.game.gamePlay.GamePlayScene;
 
 import java.awt.Color;
 
@@ -27,7 +26,7 @@ public class Main {
             frame.setUndecorated(false); //disabling the frame
             frame.setResizable(false);
 
-            SceneManager.setScene(new GamePlayScene());
+            SceneManager.setScene(new Scene());
 
             RenderPanel panel = new RenderPanel();
             frame.add(panel);
