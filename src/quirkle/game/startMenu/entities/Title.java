@@ -12,8 +12,8 @@ public class Title extends Entity {
 
     public Title(String title) {
         this.title = title;
-        setSprite("startmenu/gold_titleBg");
-        scale = 0.8;
+        setSprite("startmenu/title");
+        scale = 1.6/2;
         origin = OriginPresets.CENTER;
         x = SceneManager.getCurrentScene().getCenterX();
         y = (int) (SceneManager.getCurrentScene().getHeight() / 2 / 1.8);
@@ -21,6 +21,6 @@ public class Title extends Entity {
 
     @Override
     public void onRender(Graphics2D g) {
-        drawText(AssetManager.getMessage("title"), 220, Color.white, "edosz", x, y, 0.0, OriginPresets.CENTER, g);
+        //drawText(AssetManager.getMessage("title"), 110, Color.white, "higher_jump", x, y+10, 0.0, OriginPresets.CENTER, g);
     }
 }

@@ -3,16 +3,16 @@ package quirkle.game.settings.scenes;
 import quirkle.engine.AssetManager;
 import quirkle.engine.Scene;
 import quirkle.engine.SceneManager;
-import quirkle.game.startmenu.entities.StartMenuButton;
+import quirkle.game.util.RectangularButton;
 
 public class SettingsScene extends Scene {
 
-    StartMenuButton returnButton;
+    RectangularButton returnButton;
 
 
     @Override
     public void onCreate() {
-        returnButton = new StartMenuButton(AssetManager.getMessage("return from Settings"));
+        returnButton = new RectangularButton(AssetManager.getMessage("return from Settings"));
 
         addEntities(returnButton);
 

@@ -9,19 +9,23 @@ credits == Credits
 quit == Beenden
 return == Zurück
 
+--- QUICKMENU --------------------------------------------
+
+options == Optionen
+
 --- CREDITS ----------------------------------------------
 
-creditsTitle0 == Programmierung
-creditsContent0 == Bennet Freigang
+creditEntry_title0 == Programmierung
+creditEntry_content0 == Bennet\Alex\Jarosch
 
-creditsTitle1 == Spielkonzept & Design
-creditsContent1 == [Name/Team einfügen]
+creditEntry_title1 == Game Konzept & Design
+creditEntry_content1 == Bennet\Alex\Jarosch
 
-creditsTitle2 == Assets & Grafik
-creditsContent2 == [Name/Team einfügen]
+creditEntry_title2 == Grafik
+creditEntry_content2 == Bennet\Alex\Jarosch
 
-creditsTitle3 == Testing
-creditsContent3 == [Name/Team einfügen]
+creditEntry_title3 == Beta Tester
+creditEntry_tcontent3 == Was ist denn mit Carsten los
 
-creditsTitle4 == Besonderer Dank
-creditsContent4 == Danke fürs Spielen!
+creditEntry_title4 == Besodnerer Dank
+creditEntry_content4 == Danke fürs spielen!
