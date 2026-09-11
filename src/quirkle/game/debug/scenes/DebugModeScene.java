@@ -17,11 +17,9 @@ import java.util.List;
  * {@link DebugAction.Group}, plus a button back to the game.
  *
  * @note Driven directly by {@link quirkle.game.gamePlay.GamePlayScene} - {@code update()} and
- *       {@code render()} called by hand, {@code destroy()} on close - rather than opened through
- *       {@link quirkle.engine.SceneManager#setTempScene}. The gameplay scene is already itself a
- *       temp scene over the start menu, and {@code SceneManager} only tracks one background scene
- *       at a time, so a second nested {@code setTempScene} call would destroy the gameplay scene
- *       instead of just this panel.
+ *       {@code render()} by hand, {@code destroy()} on close - rather than through
+ *       {@link quirkle.engine.SceneManager#setTempScene}: the gameplay scene is already a temp
+ *       scene, and a nested one would destroy it instead of just this panel.
  */
 public class DebugModeScene extends Scene {
 
@@ -36,13 +34,12 @@ public class DebugModeScene extends Scene {
     private SideButton backButton;
 
     /**
-     * @note {@code buttons} is filled here rather than at field-declaration: {@link Scene}'s
-     *       constructor calls {@code onCreate()} before a subclass's own field initializers run,
-     *       so a {@code = new ArrayList<>()} initializer would still be {@code null} at this point.
-     *       The same reasoning is why {@link #setOnClose} exists instead of a constructor
-     *       parameter: a value handed to this class's own constructor would not be assigned to a
-     *       field until after {@code super()} - and therefore after {@code onCreate()} - has
-     *       already run.
+     * Builds the panel: the title, a heading and buttons per group, and the back button.
+     *
+     * @note {@code buttons} is filled here rather than at its declaration, since {@link Scene}'s
+     *       constructor calls {@code onCreate()} before a subclass's field initializers run.
+     * @note {@link #setOnClose} exists for the same reason: a constructor parameter would not reach
+     *       its field until after {@code super()}, and therefore after {@code onCreate()}.
      */
     @Override
     public void onCreate() {
@@ -76,7 +73,11 @@ public class DebugModeScene extends Scene {
         backButton.setAction(onClose);
     }
 
-    /** @return how far the row cursor advances past this button. */
+    /**
+     * Adds one action's button at {@code rowTop}, disabled while no game is attached.
+     *
+     * @return how far the row cursor advances past this button
+     */
     private int placeActionButton(DebugAction action, int centerX, int rowTop) {
         SideButton button = new SideButton(action.getLabel(), null, action::run);
         button.setEnabled(DebugMode.hasGame());
@@ -95,7 +96,7 @@ public class DebugModeScene extends Scene {
         }
     }
 
-    /** @note Dims the gameplay scene showing through underneath so the panel's own text reads. */
+    /** @note Dims the gameplay scene showing through underneath, so the panel's own text reads. */
     @Override
     public void onRender(Graphics2D g) {
         g.setColor(new Color(0, 0, 0, 180));

@@ -4,12 +4,12 @@ import java.util.Map;
 
 import quirkle.game.gamePlay.tiles.Tile;
 
-/** Walks contiguous streaks of occupied positions on the board along a single direction. */
+// used in PlacementValidator and ScoreCalculator
 final class StreakWalker {
 
     private StreakWalker() {}
 
-    /** @return the outermost position reachable from {@code start} by repeatedly stepping {@code direction} through {@code tiles}. */
+    /** @return the last occupied position reached by stepping {@code direction} from {@code start}. */
     static Position walkToStreakEnd(Map<Position, Tile> tiles, Position start, Direction direction) {
         Position current = start;
         while (tiles.containsKey(current.neighbor(direction))) {

@@ -7,84 +7,72 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/** A Quirkle player with a name and a running score. */
 public class Player {
-    public static  final int HAND_SIZE = 6;
+    public static  final int RACK_SIZE = 6;
 
     private final String name;
     private int score;
 
-    /** Points scored on this player's most recent completed turn; {@code 0} before their first. */
+    /** Points scored on this player's most recent completed turn */
     private int lastRoundScore;
 
-    private final List<Tile> hand = new ArrayList<>();
+    private final List<Tile> rack = new ArrayList<>();
 
     public Player(String name) {
         this.name = name;
         this.score = 0;
     }
 
-    /** @return the player's name. */
     public String getName() {
         return name;
     }
 
-    /** @return the player's current score. */
     public int getScore() {
         return score;
     }
 
-    /** Adds {@code points} to the player's score. */
     public void increaseScore(int points) {
         setScore(this.score + points);
     }
 
-    /** @return the points this player scored on their most recent completed turn. */
     public int getLastRoundScore() {
         return lastRoundScore;
     }
 
-    /** Records what this player scored on the turn they just finished. */
     public void setLastRoundScore(int lastRoundScore) {
         this.lastRoundScore = lastRoundScore;
     }
 
-    /** Resets the player's score to zero. */
     public void resetScore() {
         setScore(0);
     }
 
-    /** @return the player's tiles, in rack order.*/
-    public List<Tile> getHand() {
-        return Collections.unmodifiableList(hand);
+    public List<Tile> getRack() {
+        return Collections.unmodifiableList(rack);
     }
 
     /**
-     * Draws from {@code tileBag} until the hand holds {@value #HAND_SIZE} tiles.
-     *
-     * @apiNote Refills only partially, and never throws, if the bag runs out of tiles.
+     * Draws from {@code tileBag} until the rack holds {@value #RACK_SIZE} tiles
      */
-    public void refillHand(TileBag tileBag) {
-        hand.addAll(tileBag.drawTiles(HAND_SIZE - hand.size()));
+    public void refillRack(TileBag tileBag) {
+        rack.addAll(tileBag.drawTiles(RACK_SIZE - rack.size()));
     }
 
-    /** @return {@code true} if this exact tile is on the player's rack. */
+    /** @return if this exact tile instance is on the player's rack */
     public boolean hasTile(Tile tile) {
-        return hand.contains(tile);
+        return rack.contains(tile);
     }
 
     /**
      * Puts {@code tile} onto the player's rack.
      *
-     * @note Used to hand a staged tile back when its placement is taken back; drawing from the
-     *       bag goes through {@link #refillHand} instead.
-     * @throws IllegalStateException if the rack already holds {@value #HAND_SIZE} tiles
+     * @throws IllegalStateException if the rack already holds {@value #RACK_SIZE} tiles
      */
     public void addTile(Tile tile) {
-        if (isHandFull()) {
+        if (isRackFull()) {
             throw new IllegalStateException("Cannot add tile; " + name + "'s rack is full.");
         }
-        hand.add(tile);
+        rack.add(tile);
     }
 
     /**
@@ -93,40 +81,38 @@ public class Player {
      * @throws IllegalStateException if the player does not hold that exact tile
      */
     public void removeTile(Tile tile) {
-        if (!hand.remove(tile)) {
+        if (!rack.remove(tile)) {
             throw new IllegalStateException("Cannot remove tile; " + name + " does not hold it.");
         }
     }
 
-    /** @return whether the rack is full, so a tile can only go on it by replacing another. */
-    public boolean isHandFull() {
-        return hand.size() >= HAND_SIZE;
+    /** @return if the rack is full, so a tile can only go on it by replacing another. */
+    public boolean isRackFull() {
+        return rack.size() >= RACK_SIZE;
     }
 
     /**
-     * Puts {@code tile} into rack slot {@code slotIndex}, in place of what stood there.
+     * replaces tile on rack slot {@code slotIndex} with {@code tile}
      *
      * @return the tile that was replaced
      * @throws IndexOutOfBoundsException if the rack has no such slot
      */
     public Tile replaceTile(int slotIndex, Tile tile) {
-        if (slotIndex < 0 || slotIndex >= hand.size()) {
+        if (slotIndex < 0 || slotIndex >= rack.size()) {
             throw new IndexOutOfBoundsException(
-                    "No rack slot " + slotIndex + "; " + name + " holds " + hand.size() + " tiles.");
+                    "No rack slot " + slotIndex + "; " + name + " holds " + rack.size() + " tiles.");
         }
-        return hand.set(slotIndex, tile);
+        return rack.set(slotIndex, tile);
     }
 
     /**
      * Takes every tile off the rack.
      *
      * @return the tiles that were on it, in rack order
-     * @note Returns them rather than dropping them, so the caller can decide where they go -
-     *       back into the bag, or nowhere.
      */
-    public List<Tile> clearHand() {
-        List<Tile> removed = new ArrayList<>(hand);
-        hand.clear();
+    public List<Tile> clearRack() {
+        List<Tile> removed = new ArrayList<>(rack);
+        rack.clear();
         return removed;
     }
 

@@ -12,16 +12,12 @@ import static quirkle.testing.Assertions.assertEquals;
 
 public class ScoreCalculatorTest {
 
-    // --- Rule: one point per newly placed tile (no line formed) -----------------
-
     @Test
     void testSinglePendingTileWithoutNeighbors() {
         Board board = new Board(tilesAt(), tilesAt(at(0, 0)));
 
         assertScore("Single tile without neighbors (first move)", 1, board);
     }
-
-    // --- Rule: the new length of every row/column formed or extended ------------
 
     @Test
     void testPendingTilesFormVerticalLine() {
@@ -90,8 +86,6 @@ public class ScoreCalculatorTest {
         // Row (0,5)-(3,5): 4 points. Column (2,3)-(2,5): 3 points. Total: 7.
         assertScore("Multiple new tiles simultaneously extend a row and a column", 7, board);
     }
-
-    // --- Rule: a completed six-tile line earns the Qwirkle bonus ----------------
 
     @Test
     void testCompletingSixTileLineScoresQwirkleBonus() {

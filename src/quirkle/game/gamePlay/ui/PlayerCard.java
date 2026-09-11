@@ -4,12 +4,6 @@ import quirkle.game.gamePlay.player.Player;
 
 import java.awt.Graphics2D;
 
-/**
- * One waiting player's card on the left edge: name, total score and what they scored last turn.
- *
- * @note Read-only view onto its {@link Player}; it never writes back.
- * @see PlayerCardColumn for the stacking and for which players get a card
- */
 public class PlayerCard extends PanelEntity {
 
     private final Player player;
@@ -25,7 +19,6 @@ public class PlayerCard extends PanelEntity {
         return player;
     }
 
-    /** Moves the card so its top edge sits at {@code top}. */
     public void setTop(int top) {
         this.y = top;
     }
@@ -49,7 +42,6 @@ public class PlayerCard extends PanelEntity {
                 x, y, 0.0, OriginPresets.TOP_LEFT, g);
     }
 
-    /** @return the last turn's score with an explicit {@code +}, as the mockup shows it. */
     private String formatLastRound() {
         return "+" + player.getLastRoundScore();
     }

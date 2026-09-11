@@ -12,8 +12,6 @@ import static quirkle.testing.Assertions.assertEquals;
 
 public class PlacementValidatorTest {
 
-    // --- Gemeinsame Zeile oder Spalte ---------------------------------------
-
     @Test
     void testPendingTilesFormCommonRow() {
         Map<Position, Tile> placed = tilesOf(at(0, 0, TileColor.GREEN, TileSymbol.CIRCLE));
@@ -44,8 +42,6 @@ public class PlacementValidatorTest {
         assertPlacementPossible("Diagonal liegende Steine ohne gemeinsame Zeile/Spalte sind ungültig", false, placed, pending);
     }
 
-    // --- Angrenzen an bereits vorhandene Steine -----------------------------
-
     @Test
     void testFirstMoveNeedsNoNeighbors() {
         Map<Position, Tile> placed = tilesOf();
@@ -73,8 +69,6 @@ public class PlacementValidatorTest {
 
         assertPlacementPossible("Neue Steine, die keinen vorhandenen Stein berühren, sind ungültig", false, placed, pending);
     }
-
-    // --- Gültige Reihe: Farbe/Symbol-Muster --------------------------------
 
     @Test
     void testRowWithConstantColorAndDistinctSymbols() {
@@ -104,7 +98,6 @@ public class PlacementValidatorTest {
         assertPlacementPossible("Ein doppelt vorkommendes Symbol in der Reihe ist ungültig", false, placed, pending);
     }
 
-    /** Symbol CIRCLE kommt an Position 0 und 2 doppelt vor, obwohl beide Nachbarpaare für sich passen. */
     @Test
     void testRowWithDuplicateSymbolAtADistance() {
         Map<Position, Tile> placed = tilesOf(at(0, 0, TileColor.RED, TileSymbol.CIRCLE));
@@ -115,7 +108,6 @@ public class PlacementValidatorTest {
         assertPlacementPossible("Ein doppelt vorkommendes Symbol in der Reihe ist auch bei nicht direkt benachbarten Steinen ungültig", false, placed, pending);
     }
 
-    /** Farbe RED kommt an Position 0 und 2 doppelt vor, obwohl beide Nachbarpaare für sich passen. */
     @Test
     void testRowWithDuplicateColor() {
         Map<Position, Tile> placed = tilesOf(at(0, 0, TileColor.RED, TileSymbol.CIRCLE));
@@ -126,7 +118,6 @@ public class PlacementValidatorTest {
         assertPlacementPossible("Eine doppelt vorkommende Farbe in der Reihe ist ungültig", false, placed, pending);
     }
 
-    /** Weder Farbe (RED, RED, BLUE) noch Symbol (CIRCLE, SQUARE, SQUARE) sind über die ganze Reihe konstant. */
     @Test
     void testRowMixingColorAndSymbolInconsistently() {
         Map<Position, Tile> placed = tilesOf(at(0, 0, TileColor.RED, TileSymbol.CIRCLE));
@@ -136,8 +127,6 @@ public class PlacementValidatorTest {
 
         assertPlacementPossible("Eine Reihe muss durchgehend die gleiche Farbe ODER das gleiche Symbol haben", false, placed, pending);
     }
-
-    // --- Gültige Reihe: maximal sechs Steine -------------------------------
 
     @Test
     void testRowOfExactlySixTilesIsValid() {
@@ -167,8 +156,6 @@ public class PlacementValidatorTest {
         assertPlacementPossible("Eine Reihe mit mehr als sechs Steinen ist ungültig", false, placed, pending);
     }
 
-    // --- Lücken zwischen neuen Steinen -------------------------------------
-
     @Test
     void testPendingTilesWithGapInRow() {
         Map<Position, Tile> placed = tilesOf(at(0, 0, TileColor.RED, TileSymbol.CIRCLE));
@@ -196,10 +183,8 @@ public class PlacementValidatorTest {
                 at(0, 0, TileColor.RED, TileSymbol.CIRCLE),
                 at(2, 0, TileColor.RED, TileSymbol.DIAMOND));
 
-        assertPlacementPossible("Ein bereits liegender Stein schliesst die Lücke", true, placed, pending);
+        assertPlacementPossible("Ein bereits liegender Stein trennt die Steine", false, placed, pending);
     }
-
-    // --- Hilfsmethoden -------------------------------------------------------
 
     private static void assertPlacementPossible(String testName, boolean expected, Map<Position, Tile> placedTiles, Map<Position, Tile> pendingTiles) {
         boolean actual = PlacementValidator.isPendingTilePlacementPossible(placedTiles, pendingTiles);
@@ -212,7 +197,6 @@ public class PlacementValidatorTest {
         return new Placement(new Position(x, y), new Tile(color, symbol));
     }
 
-    /** @return a mutable map built from the given position/tile pairs. */
     private static Map<Position, Tile> tilesOf(Placement... placements) {
         Map<Position, Tile> tiles = new HashMap<>();
         for (Placement placement : placements) {

@@ -21,10 +21,15 @@ public class Game {
     /**
      * The turn being played right now, counted from one across all players.
      *
-     * @note Counts turns, not rounds: with two players, turn 3 is the first player's second move.
+     * @note Counts turns, not rounds
      */
     private int turnNumber = 1;
 
+    /**
+     * Starts a match and deals a full hand to every player.
+     *
+     * @throws IllegalArgumentException if {@code players} is empty
+     */
     public Game(Board board, TileBag tileBag, List<Player> players) {
         if (players.isEmpty()) {
             throw new IllegalArgumentException("Cannot start a game without players.");
@@ -59,10 +64,7 @@ public class Game {
     }
 
     /**
-     * @return the players in the order they will play from here on, the player to move first
-     * @note A view onto the turn order, not the order itself: {@link #getPlayers()} keeps the
-     *       seating that the HUD and the scoreboard index into, while this one answers who is up
-     *       and who comes after them.
+     * @return the players in the order they will play from here on
      */
     public List<Player> getTurnOrder() {
         List<Player> turnOrder = new ArrayList<>(players.size());
@@ -72,7 +74,6 @@ public class Game {
         return turnOrder;
     }
 
-    /** @return the number of the turn being played, starting at {@code 1}. */
     public int getTurnNumber() {
         return turnNumber;
     }
@@ -81,6 +82,12 @@ public class Game {
         return !board.getPendingTiles().isEmpty();
     }
 
+    /**
+     * Stages {@code tile} at {@code position} and takes it off the current player's rack.
+     *
+     * @throws IllegalStateException if the current player does not hold {@code tile}, or if the
+     *         board rejects the placement
+     */
     public void placeTile(Position position, Tile tile) {
         Player currentPlayer = getCurrentPlayer();
         if (!currentPlayer.hasTile(tile)) {
@@ -94,9 +101,7 @@ public class Game {
     /**
      * Takes the tile staged at {@code position} back into the current player's hand.
      *
-     * @note If what is left behind is no longer a legal placement, the whole turn's staging goes
-     *       back with it. Pulling a tile out of the middle of a run is the common case: the rest
-     *       would sit there as two disconnected groups the player could never commit.
+     * @note If the remaining tiles form an invalid move all tiles go back with it
      * @throws IllegalStateException if no tile was staged at {@code position} this turn
      */
     public void takeBackTile(Position position) {
@@ -108,16 +113,13 @@ public class Game {
         Player currentPlayer = getCurrentPlayer();
         currentPlayer.addTile(tile);
 
-        if (board.isPendingPlacementLegal()) return;
+        if (board.checkPendingPlacement().isLegal()) return;
 
         takeBackAllTiles();
     }
 
     /**
      * Takes every tile staged this turn back into the current player's hand.
-     *
-     * @note Staged tiles belong to whoever staged them, so anything that cuts a turn short has to
-     *       hand them back rather than leave them on the board for the next player to commit.
      */
     public void takeBackAllTiles() {
         Player currentPlayer = getCurrentPlayer();
@@ -128,8 +130,7 @@ public class Game {
     }
 
     /**
-     * Ends the current turn: commits the pending tiles, credits the points, refills the hand
-     * and passes the turn on.
+     * commits the pending tiles, credits the points, refills the hand and passes the turn on
      *
      * @return the points scored this turn
      * @throws IllegalStateException if no tile was placed this turn
@@ -144,7 +145,7 @@ public class Game {
 
         currentPlayer.increaseScore(points);
         currentPlayer.setLastRoundScore(points);
-        currentPlayer.refillHand(tileBag);
+        currentPlayer.refillRack(tileBag);
 
         currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
         turnNumber++;
@@ -156,12 +157,6 @@ public class Game {
      * Makes the player at {@code index} the one to move.
      *
      * @throws IndexOutOfBoundsException if the game has no player at {@code index}
-     * @note Not the same as ending a turn: nothing is scored and {@link #getTurnNumber()} stands
-     *       still. What it does share with {@link #endTurn()} is that the tiles staged so far go
-     *       back to the player who staged them - leaving them would let the next player commit,
-     *       and be scored for, a move they never made.
-     * @note Pointing it at the player already to move leaves the turn untouched, staged tiles
-     *       included, so it can be called without first checking who is up.
      */
     public void setCurrentPlayerIndex(int index) {
         if (index < 0 || index >= players.size()) {
@@ -174,39 +169,10 @@ public class Game {
         currentPlayerIndex = index;
     }
 
-    /**
-     * Rearranges the turn order.
-     *
-     * @param order the game's players, in the order they should play in from now on
-     * @throws IllegalArgumentException if {@code order} is not exactly the game's players, each
-     *         of them once
-     * @note Whoever is to move stays to move: the index is looked up again afterwards rather than
-     *       kept, so rearranging the order never silently passes the turn to somebody else. That
-     *       is also why tiles staged this turn can stay where they are - they still belong to the
-     *       player who staged them.
-     */
-    public void setPlayerOrder(List<Player> order) {
-        // Copied before anything is touched: getPlayers() hands out a live view of this very list,
-        // so passing it back in would leave the order empty the moment the list is cleared.
-        List<Player> newOrder = new ArrayList<>(order);
-
-        Set<Player> distinctPlayers = new HashSet<>(newOrder);
-        if (newOrder.size() != players.size() || distinctPlayers.size() != newOrder.size()
-                || !distinctPlayers.containsAll(players)) {
-            throw new IllegalArgumentException("Cannot set player order; it must hold each of the game's players once.");
-        }
-
-        Player currentPlayer = getCurrentPlayer();
-
-        players.clear();
-        players.addAll(newOrder);
-        currentPlayerIndex = players.indexOf(currentPlayer);
-    }
-
-    /** Deals a full hand to every player, in turn order.*/
+    /** Deals a full hand to every player, in turn order. */
     private void dealStartHands() {
         for (Player player : players) {
-            player.refillHand(tileBag);
+            player.refillRack(tileBag);
         }
     }
 }

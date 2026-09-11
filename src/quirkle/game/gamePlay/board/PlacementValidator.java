@@ -6,32 +6,25 @@ import quirkle.game.gamePlay.tiles.Tile;
 import quirkle.game.gamePlay.tiles.TileColor;
 import quirkle.game.gamePlay.tiles.TileSymbol;
 
-/** Validates whether tiles may legally be placed onto a Qwirkle board, per the game's placement rules. */
 class PlacementValidator {
 
     /**
-     * @return {@code true} if every tile in {@code pendingTiles} could legally be committed onto {@code placedTiles}:
-     *         all pending positions lie in one common row or column, are unoccupied, connect to the existing board
-     *         (unless it is still empty), and every line they touch is a valid Qwirkle line.
+     * @return is placement for {@code pendingTiles} onto {@code placedTiles} possible
      */
     static boolean isPendingTilePlacementPossible(Map<Position, Tile> placedTiles, Map<Position, Tile> pendingTiles) {
         return checkPendingTilePlacement(placedTiles, pendingTiles).isLegal();
     }
 
     /**
-     * @return {@code true} if {@code tile} could be added to {@code pendingTiles} at {@code position} — i.e.
-     *         {@code position} is not already occupied and the resulting pending tiles would still be a legal placement.
+     * Checks {@code pendingTiles} against every placement rule
+     * @return {@link PlacementResult#LEGAL}, or the first rule that rejects them
      */
-    static boolean isTilePlacementPossible(Map<Position, Tile> placedTiles, Map<Position, Tile> pendingTiles, Position position, Tile tile) {
-        return checkTilePlacement(placedTiles, pendingTiles, position, tile).isLegal();
-    }
-
     static PlacementResult checkPendingTilePlacement(Map<Position, Tile> placedTiles, Map<Position, Tile> pendingTiles) {
         for (Position position : pendingTiles.keySet()) {
             if (!isPositionFree(placedTiles, position)) return PlacementResult.POSITION_OCCUPIED;
         }
         if (!isPendingTilesInLine(pendingTiles.keySet())) return PlacementResult.NOT_IN_ONE_LINE;
-        if (!isPendingTilesContiguous(placedTiles, pendingTiles)) return PlacementResult.LINE_HAS_GAP;
+        if (!isPendingTilesContiguous(pendingTiles)) return PlacementResult.LINE_HAS_GAP;
         if (!isConnectedToBoard(placedTiles, pendingTiles)) return PlacementResult.NOT_CONNECTED_TO_BOARD;
 
         Map<Position, Tile> allTiles = new HashMap<>(placedTiles);
@@ -43,6 +36,7 @@ class PlacementValidator {
         return PlacementResult.LEGAL;
     }
 
+    /** @return {@link PlacementResult#LEGAL}, or the rule that rejects {@code tile} at {@code position} */
     static PlacementResult checkTilePlacement(Map<Position, Tile> placedTiles, Map<Position, Tile> pendingTiles, Position position, Tile tile) {
         if (placedTiles.containsKey(position) || pendingTiles.containsKey(position)) return PlacementResult.POSITION_OCCUPIED;
 
@@ -51,7 +45,7 @@ class PlacementValidator {
         return checkPendingTilePlacement(placedTiles, candidatePendingTiles);
     }
 
-    /** @return {@code true} if every position in {@code positions} shares the same row or the same column. */
+    /** @return every tile shares the same row or the same column */
     private static boolean isPendingTilesInLine(Set<Position> positions) {
         boolean sameRow = positions.stream().map(Position::y).distinct().count() == 1;
         boolean sameColumn = positions.stream().map(Position::x).distinct().count() == 1;
@@ -59,10 +53,10 @@ class PlacementValidator {
     }
 
     /**
-     * @return {@code true} if the pending tiles form one unbroken run along their shared line.
-     * @apiNote Assumes {@link #isPendingTilesInLine} has already passed.
+     * @return pending tiles form one unbroken run
+     * @apiNote Assumes {@link #isPendingTilesInLine} has already passed
      */
-    private static boolean isPendingTilesContiguous(Map<Position, Tile> placedTiles, Map<Position, Tile> pendingTiles) {
+    private static boolean isPendingTilesContiguous(Map<Position, Tile> pendingTiles) {
         LineOrientation orientation = getPendingTilesOrientation(pendingTiles.keySet());
         if (orientation == null) {
             return true;
@@ -75,7 +69,7 @@ class PlacementValidator {
 
         // walk from the first to the last pending tile; every position on the way must hold a tile
         while (orientation.extentCoordinate.applyAsInt(current) <= lineEnd) {
-            if (!pendingTiles.containsKey(current) && !placedTiles.containsKey(current)) {
+            if (!pendingTiles.containsKey(current)) {
                 return false;
             }
             current = current.neighbor(orientation.forwardDirection);
@@ -93,7 +87,7 @@ class PlacementValidator {
         return sameRow ? LineOrientation.HORIZONTAL : LineOrientation.VERTICAL;
     }
 
-    /** @return {@code true} if {@code placedTiles} is empty (first move) or some position in {@code pendingTiles} touches a tile in {@code placedTiles}. */
+    /** @return if a pending tile touches the board, or the board is still empty (first move). */
     private static boolean isConnectedToBoard(Map<Position, Tile> placedTiles, Map<Position, Tile> pendingTiles) {
         if (placedTiles.isEmpty()) {
             return true;
@@ -106,7 +100,7 @@ class PlacementValidator {
         return false;
     }
 
-    /** @return {@code true} if {@code position} has at least one occupied neighbor in {@code tiles}. */
+    /** @return if {@code position} has at least one occupied neighbor */
     private static boolean tileHasNeighbor(Map<Position, Tile> tiles, Position position) {
         for (Direction direction : Direction.values()) {
             if (tiles.containsKey(position.neighbor(direction))) {
@@ -116,16 +110,13 @@ class PlacementValidator {
         return false;
     }
 
-    // --- Rule: every pending position is still free -----------------------------
-
-    /** @return {@code true} if {@code position} is free in {@code placedTiles}. */
+    /** @return if {@code position} is free in {@code placedTiles} */
     private static boolean isPositionFree(Map<Position, Tile> placedTiles, Position position) {
         return !placedTiles.containsKey(position);
     }
 
-    // --- Rule: every line a pending tile touches is a valid Qwirkle line --------
 
-    /** @return {@code true} if both the horizontal and the vertical line through {@code position} are valid Qwirkle lines. */
+    /** @return if both lines through {@code position} are valid Qwirkle lines */
     private static boolean formsValidLines(Map<Position, Tile> tiles, Position position) {
         for (LineOrientation orientation : LineOrientation.values()) {
             if (!isValidLine(collectLine(tiles, position, orientation))) return false;
@@ -133,7 +124,7 @@ class PlacementValidator {
         return true;
     }
 
-    /** @return every tile contiguously connected to {@code position} along {@code orientation}, {@code position}'s own tile included. */
+    /** @return every tile contiguously connected to {@code position} along {@code orientation} */
     private static List<Tile> collectLine(Map<Position, Tile> tiles, Position position, LineOrientation orientation) {
         Position lineStart = StreakWalker.walkToStreakEnd(tiles, position, orientation.backwardDirection);
         Position lineEnd = StreakWalker.walkToStreakEnd(tiles, position, orientation.forwardDirection);
@@ -151,8 +142,8 @@ class PlacementValidator {
     }
 
     /**
-     * @return {@code true} if {@code line} has at most one tile, or all its tiles share one color with pairwise
-     *         distinct symbols, or all share one symbol with pairwise distinct colors.
+     * @return if {@code line} holds at most one tile, or shares one color with distinct symbols,
+     *         or one symbol with distinct colors
      */
     private static boolean isValidLine(List<Tile> line) {
         if (line.size() <= 1) return true;

@@ -17,7 +17,6 @@ import static quirkle.testing.Assertions.assertTrue;
 
 public class GameTest {
 
-    /** @return a two-player game with a deterministically shuffled bag. */
     private Game newGame() {
         return new Game(
                 new Board(),
@@ -30,26 +29,26 @@ public class GameTest {
         Game game = newGame();
 
         for (Player player : game.getPlayers()) {
-            assertEquals(Player.HAND_SIZE, player.getHand().size(), "every player starts with a full hand");
+            assertEquals(Player.RACK_SIZE, player.getRack().size(), "every player starts with a full hand");
         }
     }
 
     @Test
     public void placingATileTakesItOffTheRack() {
         Game game = newGame();
-        Tile tile = game.getCurrentPlayer().getHand().getFirst();
+        Tile tile = game.getCurrentPlayer().getRack().getFirst();
 
         game.placeTile(new Position(0, 0), tile);
 
         assertFalse(game.getCurrentPlayer().hasTile(tile), "placed tile leaves the rack");
-        assertEquals(Player.HAND_SIZE - 1, game.getCurrentPlayer().getHand().size(), "hand shrinks by one");
+        assertEquals(Player.RACK_SIZE - 1, game.getCurrentPlayer().getRack().size(), "hand shrinks by one");
         assertTrue(game.hasPendingTiles(), "the tile is staged, not yet committed");
     }
 
     @Test
     public void cannotPlaceATileTheCurrentPlayerDoesNotHold() {
         Game game = newGame();
-        Tile foreignTile = game.getPlayers().get(1).getHand().getFirst();
+        Tile foreignTile = game.getPlayers().get(1).getRack().getFirst();
 
         assertThrows(IllegalStateException.class,
                 () -> game.placeTile(new Position(0, 0), foreignTile),
@@ -60,11 +59,11 @@ public class GameTest {
     public void anIllegalPlacementLeavesTheRackUntouched() {
         Game game = newGame();
         Player player = game.getCurrentPlayer();
-        Tile tile = player.getHand().getFirst();
+        Tile tile = player.getRack().getFirst();
 
         game.placeTile(new Position(0, 0), tile);
 
-        Tile secondTile = player.getHand().getFirst();
+        Tile secondTile = player.getRack().getFirst();
         assertThrows(IllegalStateException.class,
                 () -> game.placeTile(new Position(0, 0), secondTile),
                 "the occupied position is rejected");
@@ -75,14 +74,14 @@ public class GameTest {
     public void endTurnScoresRefillsAndPassesOn() {
         Game game = newGame();
         Player firstPlayer = game.getCurrentPlayer();
-        Tile tile = firstPlayer.getHand().getFirst();
+        Tile tile = firstPlayer.getRack().getFirst();
 
         game.placeTile(new Position(0, 0), tile);
         int points = game.endTurn();
 
         assertEquals(1, points, "a single opening tile scores one point");
         assertEquals(1, firstPlayer.getScore(), "the points are credited to the player who played them");
-        assertEquals(Player.HAND_SIZE, firstPlayer.getHand().size(), "the hand is refilled");
+        assertEquals(Player.RACK_SIZE, firstPlayer.getRack().size(), "the hand is refilled");
         assertEquals(1, game.getCurrentPlayerIndex(), "the turn passes to the next player");
         assertFalse(game.hasPendingTiles(), "the pending tiles are committed");
     }
@@ -98,7 +97,7 @@ public class GameTest {
     public void turnOrderWrapsAroundToTheFirstPlayer() {
         Game soloGame = new Game(new Board(), new TileBag(new Random(42)), List.of(new Player("A")));
 
-        soloGame.placeTile(new Position(0, 0), soloGame.getCurrentPlayer().getHand().getFirst());
+        soloGame.placeTile(new Position(0, 0), soloGame.getCurrentPlayer().getRack().getFirst());
         soloGame.endTurn();
 
         assertEquals(0, soloGame.getCurrentPlayerIndex(), "after the last player it is the first player's turn again");

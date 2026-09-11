@@ -37,13 +37,10 @@ public class GamePlayScene extends Scene {
     private int lastMouseX;
     private int lastMouseY;
     private boolean isDragging = false;
-    /** Set while a right-button press that began off the board is still being held. */
     private boolean isDragBlocked = false;
 
     // Handover
-    /** The clock every HUD element animates a turn change on. */
     private final Handover handover = new Handover();
-    /** The player the HUD is presenting, which lags the game while a handover plays out. */
     private Player presentedPlayer;
 
     // UI
@@ -54,11 +51,30 @@ public class GamePlayScene extends Scene {
     private final TileBagCounter tileBagCounter;
     private final SideButtonBar sideButtons;
     private final SideButton endTurnButton;
-    /** The debug panel, or {@code null} while it is closed. */
     private DebugModeScene debugModeScene;
 
+    // TODO: use this init for the real game
+    public GamePlayScene(List<Player> players) {
+        Rectangle viewport = UiTheme.boardViewport();
+
+        this.game = new Game(new Board(), new TileBag(), players);
+        this.camera = new BoardCamera(viewport.getCenterX(), viewport.getCenterY(), UiTheme.BOARD_BASE_CELL_SIZE);
+
+        this.boardView = new BoardView(camera, viewport);
+        this.boardFrame = new BoardFrame();
+        this.tileRack = new TileRack((int) viewport.getCenterX(), bandCenterY(viewport), handover);
+        this.turnIndicator = new TurnIndicator(game, (int) viewport.getCenterX(), handover);
+        this.playerCards = new PlayerCardColumn(game, handover);
+        this.tileBagCounter = new TileBagCounter(game.getTileBag());
+        this.sideButtons = new SideButtonBar(getWidth() - UiTheme.SIDE_BUTTON_MARGIN_RIGHT, this::endTurn, this::openDebugMode);
+        this.endTurnButton = sideButtons.getEndTurnButton();
+
+        addEntities(boardView, boardFrame, turnIndicator, tileRack, playerCards, tileBagCounter, sideButtons);
+
+        DebugMode.attach(this.game);
+    }
+
     public GamePlayScene() {
-        // The frame's opening, not the window, is what the board has to fit into.
         Rectangle viewport = UiTheme.boardViewport();
 
         this.game = new Game(new Board(), new TileBag(), List.of(new Player("Player 1"), new Player("Player 2")));
@@ -83,28 +99,17 @@ public class GamePlayScene extends Scene {
         DebugMode.detach();
     }
 
-    /**
-     * @return the vertical center of the band between the frame's opening and the bottom of the
-     *         window, which is where the row of rack slots goes
-     * @note Now that the rack is a bare row rather than a 215px panel it fits into the band whole,
-     *       so it no longer has to reach up onto the board to find room.
-     */
     private int bandCenterY(Rectangle viewport) {
         int bandTop = viewport.y + viewport.height;
         return bandTop + (getHeight() - bandTop) / 2;
     }
 
-    /**
-     * @note Paints the backdrop the HUD assets were drawn for; the brush strokes are white and
-     *       the tiles are unfilled outlines, so both only read on a dark ground.
-     */
     @Override
     public void onRender(Graphics2D g) {
         g.setColor(UiTheme.BACKGROUND);
         g.fillRect(0, 0, getWidth(), getHeight());
     }
 
-    /** @note Draws the debug panel over the whole HUD, not just as another entity among it. */
     @Override
     public void render(Graphics2D g) {
         super.render(g);
@@ -137,13 +142,6 @@ public class GamePlayScene extends Scene {
         boardView.sync(game.getBoard());
     }
 
-    /**
-     * Kicks off the HUD's handover animation once the turn has moved to another player.
-     *
-     * @note Detected here rather than in each element: one place decides that a handover is due,
-     *       and the elements only decide what to do about it. It also means an element cannot miss
-     *       the change while it is busy playing the previous one out.
-     */
     private void startHandoverIfTurnPassed() {
         Player currentPlayer = game.getCurrentPlayer();
         if (currentPlayer == presentedPlayer) return;
@@ -156,13 +154,6 @@ public class GamePlayScene extends Scene {
         if (!isFirstFrame) handover.start();
     }
 
-    /**
-     * @return whether the mouse points at a board cell that is both visible through the frame and
-     *         not covered by a HUD panel
-     * @note The HUD checks are kept even though every panel now sits outside the opening: they
-     *       cost nothing and stop a later panel that does reach over the board from silently
-     *       placing tiles through itself.
-     */
     private boolean isPointerOnBoard() {
         if (!boardView.contains(InputManager.getMouseX(), InputManager.getMouseY())) return false;
 
@@ -199,23 +190,14 @@ public class GamePlayScene extends Scene {
         }
     }
 
-    /** @note Scrolling over the frame or the HUD leaves the board alone. */
     private void handleZoomInput() {
         double scroll = InputManager.getScrollDelta();
         if (scroll == 0) return;
         if (!boardView.contains(InputManager.getMouseX(), InputManager.getMouseY())) return;
 
-        camera.zoomAt(-scroll * ZOOM_FACTOR, InputManager.getMouseX(), InputManager.getMouseY());
+        camera.zoomBy(-scroll * ZOOM_FACTOR);
     }
 
-    /**
-     * Pans the board while the right button is held.
-     *
-     * @note A pan has to start inside the frame's opening, but may continue outside it; letting go
-     *       of a drag the moment the pointer crosses the frame's edge would make the board stick.
-     *       A press that began off the board stays inert until the button is released, so dragging
-     *       the frame itself never nudges the board.
-     */
     private void handleDragInput() {
         if (!InputManager.isRightMousePressed()) {
             isDragging = false;
@@ -237,14 +219,6 @@ public class GamePlayScene extends Scene {
         isDragging = true;
     }
 
-    /**
-     * Opens the debug panel over the board.
-     *
-     * @note Driven straight from this scene rather than through {@code SceneManager}'s temp-scene
-     *       stack: this scene is already itself a temp scene over the start menu, and the manager
-     *       only remembers one background scene at a time, so nesting a second temp scene through
-     *       it would destroy this one instead of just the panel.
-     */
     private void openDebugMode() {
         if (debugModeScene != null) return;
 

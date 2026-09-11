@@ -4,18 +4,9 @@ import quirkle.game.gamePlay.tiles.TileBag;
 
 import java.awt.Graphics2D;
 
-/**
- * The golden diamond in the bottom left corner, showing how many tiles are left to draw.
- *
- * @note Reads {@link TileBag#getSize()} every frame; the bag itself is never touched.
- * @implNote Draws the diamond as a plain sprite rather than through nine-slice, since the asset
- *           is square and is drawn square - stretching it would break the gold leaf texture.
- */
 public class TileBagCounter extends PanelEntity {
 
-    /** Distance from the diamond's center down to the "in bag" caption. */
     private static final int LABEL_OFFSET_Y = 74;
-    /** The count sits slightly above the center so count and caption read as one block. */
     private static final int COUNT_OFFSET_Y = -8;
 
     private final TileBag tileBag;

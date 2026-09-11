@@ -6,31 +6,16 @@ import quirkle.game.gamePlay.player.Player;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
-/**
- * The banner in the band above the frame: whose turn it is, which turn it is and what the game
- * is waiting for.
- *
- * @note Three lines, three weights: the name is the headline and carries the accent color, the
- *       score is the number being played for, and the turn and prompt are background information
- *       that steps back into {@link UiTheme#TEXT_DIMMED}. The waiting players' scores stay on
- *       their cards; this banner only ever speaks for whoever is at the table.
- * @note Leaves upwards on a handover and the next one drops in from above. It therefore has to
- *       hold on to the name and turn number it is carrying rather than reading them live: the
- *       banner on its way out still belongs to the player who just finished.
- */
 public class TurnIndicator extends PanelEntity {
 
-    /** Separator between the turn number and the prompt. */
     private static final String SEPARATOR = "  ·  ";
 
     private final Game game;
     private final Handover handover;
 
-    /** The player the banner is carrying, which lags the game while one banner swaps for the next. */
     private Player shownPlayer;
     private int shownTurnNumber;
 
-    /** @param centerX horizontal screen center the banner is centered on */
     public TurnIndicator(Game game, int centerX, Handover handover) {
         this.game = game;
         this.handover = handover;
@@ -57,7 +42,6 @@ public class TurnIndicator extends PanelEntity {
         applySlide();
     }
 
-    /** Puts the banner where the handover clock says it should be: off the top and back down. */
     private void applySlide() {
         if (!handover.isRunning()) {
             y = UiTheme.TURN_PANEL_TOP;
@@ -93,10 +77,6 @@ public class TurnIndicator extends PanelEntity {
         drawText(text, fontSize, color, UiTheme.FONT, centerX, top, 0.0, OriginPresets.TOP_MID, g);
     }
 
-    /**
-     * @return the turn number followed by what the player is expected to do, or by how many tiles
-     *         they have staged once they have started placing
-     */
     private String buildStatusLine() {
         int stagedTiles = game.getBoard().getPendingTiles().size();
 
