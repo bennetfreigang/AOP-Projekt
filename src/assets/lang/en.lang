@@ -23,6 +23,19 @@ turn_place_tile == PLACE A TILE
 turn_tile_placed == TILE PLACED
 turn_tiles_placed == TILES PLACED
 
+--- NICKNAMES --------------------------------------------
+
+nickname0 == Bennet
+nickname1 == Alex
+nickname2 == Jarosch
+nickname3 == Kris
+nickname4 == Kris
+nickname5 == Kris
+nickname6 == Kris
+nickname7 == Kris
+nickname8 == Kris
+nickname9 == Kris
+
 --- CREDITS ----------------------------------------------
 
 creditEntry_title0 == Programming

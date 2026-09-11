@@ -24,6 +24,19 @@ turn_place_tile == STEIN LEGEN
 turn_tile_placed == STEIN GELEGT
 turn_tiles_placed == STEINE GELEGT
 
+--- NICKNAMES --------------------------------------------
+
+nickname0 == Bennet
+nickname1 == Alex
+nickname2 == Jarosch
+nickname3 == Kris
+nickname4 == Kris
+nickname5 == Kris
+nickname6 == Kris
+nickname7 == Kris
+nickname8 == Kris
+nickname9 == Kris
+
 --- CREDITS ----------------------------------------------
 
 creditEntry_title0 == Programmierung
