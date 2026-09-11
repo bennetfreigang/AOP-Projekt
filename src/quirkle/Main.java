@@ -14,6 +14,8 @@ public class Main {
 
         if (args.length > 0 && args[0].equalsIgnoreCase("debug")) {
             PersistentData.debugMode = true;
+            EngineConfig.SUPPRES_WARNINGS = false;
+            EngineConfig.SUPPRES_INFO = false;
         }
 
         SwingUtilities.invokeLater(() -> {
@@ -22,9 +24,6 @@ public class Main {
             EngineConfig.BACKGROUND_COLOR = Color.BLACK;
             EngineConfig.FPS = 120;
             EngineConfig.DEFAULT_LANG_IDENTIFIER = "de";
-
-            EngineConfig.SUPPRES_WARNINGS = false;
-            EngineConfig.SUPPRES_INFO = false;
 
             AssetManager.setLang(EngineConfig.DEFAULT_LANG_IDENTIFIER);
 

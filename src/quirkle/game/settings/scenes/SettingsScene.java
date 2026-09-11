@@ -12,15 +12,11 @@ public class SettingsScene extends Scene {
 
     @Override
     public void onCreate() {
-        returnButton = new RectangularButton(AssetManager.getMessage("return from Settings"));
+        returnButton = new RectangularButton(AssetManager.getMessage("return"));
 
         addEntities(returnButton);
 
         returnButton.x = getCenterX(); returnButton.y = getCenterY();
-
-        returnButton.minSize = 2.0;
-        returnButton.maxSizeModifier = 2.2;
-        returnButton.growthSpeed = 0.1;
     }
 
     @Override

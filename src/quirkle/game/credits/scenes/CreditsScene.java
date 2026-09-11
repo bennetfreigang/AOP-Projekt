@@ -7,8 +7,10 @@ import quirkle.game.util.*;
 import java.awt.event.KeyEvent;
 
 public class CreditsScene extends Scene {
-    PrlxEntity prlxBackground;
-    CreditTextManager creditManager;
+    private PrlxEntity prlxBackground;
+    private CreditTextManager creditManager;
+
+    public static final int CREDIT_ENTRY_COUNT = 6;
 
     @Override
     public void onCreate() {
@@ -17,7 +19,7 @@ public class CreditsScene extends Scene {
         PrlxEntity.PrlxLayer prlxLayer2 = new PrlxEntity.PrlxLayer("credits/small_brush", 0.3);
 
         prlxBackground = new PrlxEntity(prlxLayer0, prlxLayer1, prlxLayer2);
-        creditManager = new CreditTextManager(6);
+        creditManager = new CreditTextManager(CREDIT_ENTRY_COUNT);
         SimpleSpriteEntity frame = new SimpleSpriteEntity("credits/credit_frame", Entity.OriginPresets.TOP_LEFT);
 
         addEntities(prlxBackground, creditManager, frame);
