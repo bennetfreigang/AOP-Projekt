@@ -3,6 +3,11 @@ package quirkle.game.debug;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * The actions the debug panel offers, each a caption plus the {@link DebugMode} call behind it.
+ *
+ * @note Declaration order is the order the panel lists them in, per {@link Group}.
+ */
 public enum DebugAction {
 
     PLACE_TILES(Group.BOARD, "Place tiles", DebugMode::placeTiles),
@@ -24,6 +29,7 @@ public enum DebugAction {
 
         private final String label;
 
+        /** @param label the section's heading in the panel */
         Group(String label) {
             this.label = label;
         }
@@ -38,12 +44,14 @@ public enum DebugAction {
     private final String label;
     private final Runnable action;
 
+    /** @param action the {@link DebugMode} entry point this button triggers */
     DebugAction(Group group, String label, Runnable action) {
         this.group = group;
         this.label = label;
         this.action = action;
     }
 
+    /** @return the panel section this action belongs to. */
     public Group getGroup() {
         return group;
     }
@@ -56,8 +64,8 @@ public enum DebugAction {
     /**
      * Runs the action.
      *
-     * @note Safe to call from a button without catching anything: every action wraps itself, so a
-     *       rack slot that does not exist ends as a line on the console rather than a broken frame.
+     * @note Safe to call from a button without catching anything; {@link DebugMode} turns every
+     *       failure into a console line rather than letting it out.
      */
     public void run() {
         action.run();

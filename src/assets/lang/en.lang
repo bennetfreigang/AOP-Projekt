@@ -18,10 +18,10 @@ last_round == LAST ROUND
 points_last_round == POINTS LAST ROUND
 in_bag == IN BAG
 game_settings == SETTINGS
-turn == TURN
-turn_place_tile == PLACE A TILE
-turn_tile_placed == TILE PLACED
-turn_tiles_placed == TILES PLACED
+turn == Turn
+turn_place_tile == Place a tile
+turn_tile_placed == Tile placed
+turn_tiles_placed == Tiles placed
 
 --- NICKNAMES --------------------------------------------
 

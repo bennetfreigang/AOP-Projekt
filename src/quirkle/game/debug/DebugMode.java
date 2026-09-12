@@ -29,7 +29,7 @@ public final class DebugMode {
         EngineConfig.message("detached", DebugMode.class.getSimpleName(), EngineConfig.messageType.INFO);
     }
 
-    /** @return whether an action would find a game to work on; what the UI greys its buttons out by. */
+    /** @return whether an action would find a game to work on; the panel greys its buttons out by this. */
     public static boolean hasGame() {
         return game != null;
     }
@@ -69,9 +69,8 @@ public final class DebugMode {
     /**
      * Puts a tile of the tester's choosing onto a rack.
      *
-     * @note Replaces rather than adds while the rack still holds tiles, so the hand keeps the size
-     *       the rules give it; the tile that made way is dropped rather than returned to the bag,
-     *       since it was never drawn from anywhere the debug mode could put it back into.
+     * @note Replaces rather than adds while the rack holds tiles, so the hand keeps its size; the
+     *       tile that made way is dropped, not returned to the bag. An empty rack is filled instead.
      */
     public static void setHandTile() {
         run("SET HAND TILE", () -> {
@@ -98,9 +97,9 @@ public final class DebugMode {
     /**
      * Puts a tile of the tester's choosing on top of the bag, so it is the next one drawn.
      *
-     * @note The way to decide what a player draws at the end of their turn, which is otherwise the
-     *       one part of a turn nothing can steer. Together with {@link #clearBag()} it is also how
-     *       a draw pile is composed from scratch: empty it, then stack the tiles in reverse order.
+     * @note The only way to steer what a player draws at the end of their turn. With
+     *       {@link #clearBag()} it also composes a draw pile from scratch: empty, then stack in
+     *       reverse order.
      */
     public static void stackTileOnBag() {
         run("STACK TILE ON BAG", () -> {
@@ -116,8 +115,8 @@ public final class DebugMode {
     /**
      * Empties the bag.
      *
-     * @note Where composing a draw pile by hand starts, and what the end of the game is tested
-     *       with: once the bag is empty, refilling a rack leaves it short.
+     * @note Asks for confirmation first. An empty bag is how the endgame is tested: refilling a
+     *       rack then leaves it short.
      */
     public static void clearBag() {
         run("CLEAR BAG", () -> {
@@ -160,8 +159,8 @@ public final class DebugMode {
     /**
      * Hands the turn to any player - before the first move, that is who starts.
      *
-     * @note Scores nothing and does not advance the turn number; it only changes who is to move,
-     *       which is what makes it the way to reach another player's rack mid-turn.
+     * @note Scores nothing and leaves the turn number alone, which is what makes it the way to
+     *       reach another player's rack mid-turn.
      */
     public static void setCurrentPlayer() {
         run("SET STARTING PLAYER", () -> {
@@ -187,9 +186,8 @@ public final class DebugMode {
      * Runs one action between its heading and a blank line, and reports rather than propagates
      * whatever it throws.
      *
-     * @note An action is reached from a button in a running game: letting an exception out would
-     *       take the frame it was clicked in down with it, over something as ordinary as a rack
-     *       slot that does not exist. The message is what the tester came for anyway.
+     * @note Actions run off a button in a live frame, where an escaping exception would take the
+     *       game down over something as ordinary as a rack slot that does not exist.
      */
     private static void run(String title, Runnable action) {
         DebugConsole.printHeading(title);

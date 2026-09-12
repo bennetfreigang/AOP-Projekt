@@ -10,16 +10,12 @@ public class HandTileEntity extends TileEntity {
     private static final Color HOVER_COLOR = new Color(255, 255, 255, 140);
     private static final Color REJECTION_COLOR = new Color(229, 57, 53);
 
-    /** How long the "that move is not allowed" feedback runs, in seconds. */
     private static final double REJECTION_DURATION = 0.35;
-    /** Shake speed in radians per second; roughly three shakes over {@link #REJECTION_DURATION}. */
     private static final double SHAKE_FREQUENCY = 55.0;
-    /** Peak horizontal shake offset in pixels, reached at the start of the animation. */
     private static final double SHAKE_AMPLITUDE = 9.0;
 
     private boolean selected = false;
 
-    /** Seconds left of the rejection animation; {@code 0} while the tile is at rest. */
     private double rejectionTimer = 0.0;
 
     public HandTileEntity(Tile tile) {

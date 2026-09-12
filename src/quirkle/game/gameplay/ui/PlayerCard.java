@@ -1,56 +1,58 @@
 package quirkle.game.gameplay.ui;
 
+import quirkle.game.gameplay.Game;
 import quirkle.game.gameplay.player.Player;
 
 import java.awt.Graphics2D;
 
-/**
- * One waiting player's card on the left edge: name, total score and what they scored last turn.
- *
- * @note Read-only view onto its {@link Player}; it never writes back.
- * @see PlayerCardColumn for the stacking and for which players get a card
- */
 public class PlayerCard extends PanelEntity {
 
-    private final Player player;
+    private final Game game;
+    private final Handover handover;
 
-    public PlayerCard(Player player) {
-        this.player = player;
-        setFrame(UiTheme.FRAME_PLAYER_CARD);
-        setBounds(UiTheme.CARD_LEFT, UiTheme.CARD_TOP,
+    private Player shownPlayer;
+
+    public PlayerCard(Game game, Handover handover) {
+        this.game = game;
+        this.handover = handover;
+
+        takeOver();
+
+        setSprite(UiTheme.SPRITE_PLAYER_CARD);
+        setBounds(UiTheme.CARD_LEFT, UiTheme.cardTop(),
                 UiTheme.CARD_WIDTH, UiTheme.CARD_HEIGHT, OriginPresets.TOP_LEFT);
     }
 
-    public Player getPlayer() {
-        return player;
+    @Override
+    public void onTick(double dt) {
+        // Like the rack, the card only changes hands during the moment it cannot be seen.
+        if (!handover.isRunning() || handover.getPhase() == Handover.Phase.ARRIVING) takeOver();
+
+        applySlide();
     }
 
-    /** Moves the card so its top edge sits at {@code top}. */
-    public void setTop(int top) {
-        this.y = top;
+    private void takeOver() {
+        shownPlayer = game.getCurrentPlayer();
+    }
+
+    private void applySlide() {
+        if (!handover.isRunning()) {
+            y = UiTheme.cardTop();
+            return;
+        }
+
+        int hiddenTop = UiTheme.cardHiddenTop();
+        double progress = handover.getPhaseProgress();
+
+        y = handover.getPhase() == Handover.Phase.LEAVING
+                ? Handover.at(UiTheme.cardTop(), hiddenTop, progress)
+                : Handover.at(hiddenTop, UiTheme.cardTop(), progress);
     }
 
     @Override
     public void onRender(Graphics2D g) {
-        drawFrame(g);
-
-        int textX = getLeft() + UiTheme.CARD_PADDING_X;
-        int textY = getTop() + UiTheme.CARD_PADDING_Y;
-
-        drawLine(g, player.getName().toUpperCase(), textX, textY);
-        drawLine(g, UiTheme.text("points") + ": " + player.getScore(),
-                textX, textY + UiTheme.CARD_LINE_HEIGHT);
-        drawLine(g, UiTheme.text("last_round") + ": " + formatLastRound(),
-                textX, textY + 2 * UiTheme.CARD_LINE_HEIGHT);
-    }
-
-    private void drawLine(Graphics2D g, String text, int x, int y) {
-        drawText(text, UiTheme.FONT_SIZE_CARD, UiTheme.TEXT, UiTheme.FONT,
-                x, y, 0.0, OriginPresets.TOP_LEFT, g);
-    }
-
-    /** @return the last turn's score with an explicit {@code +}, as the mockup shows it. */
-    private String formatLastRound() {
-        return "+" + player.getLastRoundScore();
+        drawText(String.valueOf(shownPlayer.getScore()), UiTheme.FONT_SIZE_CARD_SCORE, UiTheme.TEXT,
+                UiTheme.FONT_SCORE, getLeft() + getWidth() / 2, getTop() + UiTheme.CARD_SCORE_CENTER_Y,
+                0.0, OriginPresets.CENTER, g);
     }
 }

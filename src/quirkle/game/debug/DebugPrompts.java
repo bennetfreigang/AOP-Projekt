@@ -13,9 +13,8 @@ import java.util.List;
  * Reads and formats the game's own types on the debug console.
  *
  * @note Sits between {@link DebugConsole}, which knows only lines and numbers, and
- *       {@link DebugMode}, which only ever wants a tile, a position or a player. Keeping the two
- *       apart leaves the console reusable and makes every debug action ask for a tile the same
- *       way, so the prompts stay recognizable no matter which action is running.
+ *       {@link DebugMode}, which wants tiles, positions and players. Every action therefore asks
+ *       for a tile the same way.
  */
 public final class DebugPrompts {
 
@@ -28,9 +27,8 @@ public final class DebugPrompts {
      * Asks for a color and a symbol and builds the tile they name.
      *
      * @param what what the tile is being asked for, used as the prompt's heading
-     * @note Builds a new tile rather than looking one up: the debug mode is allowed to conjure a
-     *       tile that is in no bag and on no rack, which is the point of being able to set a
-     *       position up by hand.
+     * @note Builds a new tile rather than looking one up, so the debug mode can conjure one that is
+     *       in no bag and on no rack.
      */
     public static Tile readTile(String what) {
         DebugConsole.println(what + ":");
@@ -43,8 +41,7 @@ public final class DebugPrompts {
      * Asks for the two coordinates of a board cell.
      *
      * @param what what the position is being asked for, used as the prompt's heading
-     * @note Unbounded on purpose: the board is a sparse grid without edges, so any pair of
-     *       coordinates names a cell that could hold a tile.
+     * @note Unbounded on purpose: the board is a sparse grid without edges.
      */
     public static Position readPosition(String what) {
         DebugConsole.println(what + ":");
@@ -57,8 +54,7 @@ public final class DebugPrompts {
      * Lists the game's players and asks which one is meant.
      *
      * @return the player's index in {@link Game#getPlayers()}
-     * @note Returns the index rather than the player, because that is what the game's own
-     *       setters take; the caller that wants the player looks it up.
+     * @note The index rather than the player, since that is what the game's own setters take.
      */
     public static int readPlayerIndex(Game game, String what) {
         List<Player> players = game.getPlayers();
@@ -78,10 +74,9 @@ public final class DebugPrompts {
     }
 
     /**
-     * @return the tile as two letters, e.g. {@code "RC"} for a red circle
-     * @note For a rack, where six tiles share one line. Colors are told apart by their initial,
-     *       symbols are not - {@code SQUARE} and {@code STAR} share one - so the symbol's letter
-     *       is assigned rather than taken.
+     * @return the tile as two letters, e.g. {@code "RC"} for a red circle, or a dash for {@code null}
+     * @note For racks and boards, where tiles share a line. Colors use their initial; symbols
+     *       cannot, since {@code SQUARE} and {@code STAR} share one - see {@link #symbolLetter}.
      */
     public static String shortFormat(Tile tile) {
         if (tile == null) return NO_TILE;

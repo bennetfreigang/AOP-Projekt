@@ -1,6 +1,6 @@
 package quirkle.game.gameplay.tiles;
 
-/** A single Quirkle tile with a color and a symbol. */
+/** A single Qwirkle tile, identified by its color and symbol. */
 public class Tile {
     private TileColor color;
     private TileSymbol symbol;
@@ -10,12 +10,10 @@ public class Tile {
         this.symbol = symbol;
     }
 
-    /** @return the tile's color. */
     public TileColor getColor() {
         return color;
     }
 
-    /** @return the tile's symbol. */
     public TileSymbol getSymbol() {
         return symbol;
     }

@@ -1,8 +1,6 @@
 package quirkle.game.gameplay.board;
 
-/**
- * The outcome of checking a placement: either legal, or the one rule that rejected it.
- */
+/** The outcome of checking a placement: legal, or the first rule that rejected it. */
 public enum PlacementResult {
     LEGAL("legal"),
     POSITION_OCCUPIED("the position already holds a tile"),
@@ -17,11 +15,11 @@ public enum PlacementResult {
         this.description = description;
     }
 
+    /** @return if this is {@link #LEGAL} */
     public boolean isLegal() {
         return this == LEGAL;
     }
 
-    /** @return a sentence naming the rule, for an error message or a debug readout. */
     public String getDescription() {
         return description;
     }

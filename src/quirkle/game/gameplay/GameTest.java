@@ -17,7 +17,6 @@ import static quirkle.testing.Assertions.assertTrue;
 
 public class GameTest {
 
-    /** @return a two-player game with a deterministically shuffled bag. */
     private Game newGame() {
         return new Game(
                 new Board(),
