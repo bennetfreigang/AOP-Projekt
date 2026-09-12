@@ -1,12 +1,10 @@
 package quirkle.game.gameplay.board;
 
 import quirkle.engine.Entity;
-import quirkle.engine.InputManager;
 import quirkle.game.gameplay.ui.UiTheme;
 
 import java.awt.BasicStroke;
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.Path2D;
 
@@ -20,16 +18,10 @@ public class BoardGrid extends Entity {
 
     private final Rectangle viewport;
 
-    private boolean cursorVisible = true;
-
     public BoardGrid(BoardCamera camera, Rectangle viewport) {
         this.camera = camera;
         this.viewport = viewport;
         this.renderOrder = UiTheme.LAYER_GRID;
-    }
-
-    public void setCursorVisible(boolean cursorVisible) {
-        this.cursorVisible = cursorVisible;
     }
 
     @Override
@@ -47,7 +39,6 @@ public class BoardGrid extends Entity {
 
         drawLines(g, cellSize, firstColumn, lastColumn, firstRow, lastRow);
         drawMarkers(g, cellSize, firstColumn, lastColumn, firstRow, lastRow);
-        drawCursor(g, cellSize);
     }
 
     private void drawLines(Graphics2D g, double cellSize, int firstColumn, int lastColumn, int firstRow, int lastRow) {
@@ -87,21 +78,6 @@ public class BoardGrid extends Entity {
         }
 
         gMarkers.dispose();
-    }
-
-    private void drawCursor(Graphics2D g, double cellSize) {
-        if (!cursorVisible) return;
-
-        Position hovered = camera.screenToBoard(InputManager.getMouseX(), InputManager.getMouseY());
-        Point center = camera.boardToScreen(hovered);
-
-        int size = (int) cellSize;
-
-        Graphics2D gCursor = (Graphics2D) g.create();
-        gCursor.setColor(UiTheme.GRID_CURSOR);
-        gCursor.setStroke(new BasicStroke(UiTheme.CURSOR_STROKE));
-        gCursor.drawRect(center.x - size / 2, center.y - size / 2, size, size);
-        gCursor.dispose();
     }
 
     private Path2D.Double buildDiamond(int centerX, int centerY, double radius) {

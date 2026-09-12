@@ -2,6 +2,7 @@ package quirkle.game.gameplay.hand;
 
 import quirkle.engine.AssetManager;
 import quirkle.engine.InputManager;
+import quirkle.engine.extensions.RecolorUtil;
 import quirkle.game.gameplay.player.Player;
 import quirkle.game.gameplay.tiles.Tile;
 import quirkle.game.gameplay.ui.Handover;
@@ -9,12 +10,16 @@ import quirkle.game.gameplay.ui.PanelEntity;
 import quirkle.game.gameplay.ui.UiTheme;
 
 import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 import java.util.Arrays;
 import java.util.List;
 
 public class TileRack extends PanelEntity {
 
     private final HandTileEntity[] slots = new HandTileEntity[Player.HAND_SIZE];
+
+    private final BufferedImage slotFrame;
+    private final BufferedImage selectedSlotFrame;
 
     private final int restingCenterY;
 
@@ -27,8 +32,11 @@ public class TileRack extends PanelEntity {
         this.restingCenterY = centerY;
         this.handover = handover;
 
-        setBounds(centerX, centerY, UiTheme.RACK_FRAME_WIDTH, UiTheme.RACK_FRAME_HEIGHT,
-                OriginPresets.CENTER);
+        // Tinted once here rather than per frame; the selected slot only swaps which one it draws.
+        this.slotFrame = AssetManager.getTexture(UiTheme.SPRITE_SLOT_FRAME);
+        this.selectedSlotFrame = RecolorUtil.tint(slotFrame, UiTheme.SELECTION);
+
+        setBounds(centerX, centerY, rackWidth(), UiTheme.RACK_FRAME_SIZE, OriginPresets.CENTER);
     }
 
     public void showPlayer(Player currentPlayer) {
@@ -130,13 +138,27 @@ public class TileRack extends PanelEntity {
 
     @Override
     public void onRender(Graphics2D g) {
-        // One image carries all six sockets, so the row keeps its shape as the hand empties out.
-        g.drawImage(AssetManager.getTexture(UiTheme.FRAME_SLOT_STRIP),
-                getLeft(), getTop(), getWidth(), getHeight(), null);
+        // Every slot gets its own frame, so the row keeps its shape as the hand empties out.
+        for (int i = 0; i < slots.length; i++) {
+            drawSlotFrame(g, i);
+        }
 
         for (HandTileEntity tileEntity : slots) {
             if (tileEntity != null) tileEntity.render(g);
         }
+    }
+
+    private void drawSlotFrame(Graphics2D g, int index) {
+        int size = UiTheme.RACK_FRAME_SIZE;
+        int left = (int) getSlotX(index) - size / 2;
+        int top = getRestingY() - size / 2;
+
+        BufferedImage frame = holdsSelectedTile(index) ? selectedSlotFrame : slotFrame;
+        g.drawImage(frame, left, top, size, size, null);
+    }
+
+    private boolean holdsSelectedTile(int index) {
+        return slots[index] != null && slots[index].isSelected();
     }
 
     private void syncSlots(List<Tile> hand) {
@@ -198,5 +220,10 @@ public class TileRack extends PanelEntity {
 
     private int getRestingY() {
         return (int) y;
+    }
+
+    /** @return the width the row of slot frames covers, which is also the rack's hover area */
+    private static int rackWidth() {
+        return (Player.HAND_SIZE - 1) * UiTheme.RACK_TILE_SPACING + UiTheme.RACK_FRAME_SIZE;
     }
 }

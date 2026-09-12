@@ -6,8 +6,6 @@ import quirkle.game.gameplay.tiles.TileEntity;
 import java.awt.*;
 
 public class HandTileEntity extends TileEntity {
-    private static final Color SELECTION_COLOR = new Color(255, 193, 7);
-    private static final Color HOVER_COLOR = new Color(255, 255, 255, 140);
     private static final Color REJECTION_COLOR = new Color(229, 57, 53);
 
     private static final double REJECTION_DURATION = 0.35;
@@ -50,17 +48,9 @@ public class HandTileEntity extends TileEntity {
 
     @Override
     public void onRender(Graphics2D g) {
-        Color outlineColor = getOutlineColor();
-        if (outlineColor == null) return;
-
-        drawOutline(g, outlineColor);
-    }
-
-    private Color getOutlineColor() {
-        if (isRejecting()) return REJECTION_COLOR;
-        if (selected) return SELECTION_COLOR;
-        if (isHovered()) return HOVER_COLOR;
-        return null;
+        // The tinted frame behind the tile is what marks a selection, so only a rejected
+        // placement still draws an outline of its own.
+        if (isRejecting()) drawOutline(g, REJECTION_COLOR);
     }
 
     private int getShakeOffset() {

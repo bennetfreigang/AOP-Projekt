@@ -28,7 +28,7 @@ class PlacementValidator {
             if (!isPositionFree(placedTiles, position)) return PlacementResult.POSITION_OCCUPIED;
         }
         if (!isPendingTilesInLine(pendingTiles.keySet())) return PlacementResult.NOT_IN_ONE_LINE;
-        if (!isPendingTilesContiguous(placedTiles, pendingTiles)) return PlacementResult.LINE_HAS_GAP;
+        if (!isPendingTilesContiguous(pendingTiles)) return PlacementResult.LINE_HAS_GAP;
         if (!isConnectedToBoard(placedTiles, pendingTiles)) return PlacementResult.NOT_CONNECTED_TO_BOARD;
 
         Map<Position, Tile> allTiles = new HashMap<>(placedTiles);
@@ -59,7 +59,7 @@ class PlacementValidator {
      * @return pending tiles form one unbroken run
      * @apiNote Assumes {@link #isPendingTilesInLine} has already passed
      */
-    private static boolean isPendingTilesContiguous(Map<Position, Tile> placedTiles, Map<Position, Tile> pendingTiles) {
+    private static boolean isPendingTilesContiguous(Map<Position, Tile> pendingTiles) {
         LineOrientation orientation = getPendingTilesOrientation(pendingTiles.keySet());
         if (orientation == null) {
             return true;
@@ -72,7 +72,7 @@ class PlacementValidator {
 
         // walk from the first to the last pending tile; every position on the way must hold a tile
         while (orientation.extentCoordinate.applyAsInt(current) <= lineEnd) {
-            if (!pendingTiles.containsKey(current) && !placedTiles.containsKey(current)) {
+            if (!pendingTiles.containsKey(current)) {
                 return false;
             }
             current = current.neighbor(orientation.forwardDirection);
