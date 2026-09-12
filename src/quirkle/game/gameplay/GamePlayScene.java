@@ -42,11 +42,11 @@ public class GamePlayScene extends Scene {
     private final PlayerCard playerCard;
     private final TileBagCounter tileBagCounter;
 
-    public GamePlayScene() {
+    public GamePlayScene(List<Player> players) {
         // The frame's opening, not the window, is what the board has to fit into.
         Rectangle viewport = UiTheme.boardViewport();
 
-        this.game = new Game(new Board(), new TileBag(), List.of(new Player("Player 1"), new Player("Player 2")));
+        this.game = new Game(new Board(), new TileBag(), players);
         this.camera = new BoardCamera(viewport.getCenterX(), viewport.getCenterY(), UiTheme.BOARD_BASE_CELL_SIZE);
 
         this.boardView = new BoardView(camera, viewport);

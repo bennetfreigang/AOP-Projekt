@@ -1,5 +1,6 @@
 package quirkle.game.gameplay.board;
 
+import quirkle.engine.EngineConfig;
 import quirkle.engine.Entity;
 import quirkle.game.gameplay.tiles.BoardTileEntity;
 import quirkle.game.gameplay.tiles.Tile;
@@ -25,8 +26,15 @@ public class BoardView extends Entity {
         this.viewport = viewport;
         this.renderOrder = UiTheme.LAYER_GRID;
 
-        this.grid = new BoardGrid(camera, viewport);
+        // Board space covers the whole window; the frame lying over it is what leaves only the
+        // opening visible. The viewport stays the frame's opening, since a click outside it is
+        // not a move even though the cell under it is drawn.
+        this.grid = new BoardGrid(camera, windowBounds());
         this.grid.create();
+    }
+
+    private static Rectangle windowBounds() {
+        return new Rectangle(0, 0, EngineConfig.WINDOW_WIDTH, EngineConfig.WINDOW_HEIGHT);
     }
 
     public boolean contains(int screenX, int screenY) {
@@ -55,15 +63,13 @@ public class BoardView extends Entity {
 
     @Override
     public void onRender(Graphics2D g) {
-        Graphics2D gBoard = (Graphics2D) g.create();
-        gBoard.clip(viewport);
+        // No clip: the board is drawn across the window and the frame masks it, so the opening's
+        // ragged brush edge cuts it instead of a straight rectangle.
+        grid.render(g);
 
-        grid.render(gBoard);
         for (BoardTileEntity tileEntity : tileEntities.values()) {
-            tileEntity.render(gBoard);
+            tileEntity.render(g);
         }
-
-        gBoard.dispose();
     }
 
     @Override

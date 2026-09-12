@@ -20,7 +20,6 @@ public final class UiTheme {
     // Fonts
 
     public static final String FONT = "poly_regular";
-    /** Brush font for the two big numbers: the score on the card and the count in the bag */
     public static final String FONT_SCORE = "higher_jump";
 
     public static final float FONT_SIZE_BUTTON = 24f;
@@ -131,9 +130,10 @@ public final class UiTheme {
     // Layout: the active player's rack along the bottom
 
     public static final int RACK_TILE_SIZE = 108;
-    public static final int RACK_TILE_SPACING = 142;
+    public static final int RACK_TILE_SPACING = 129;
 
-    /** Height of the cardframes backdrop; kept apart from the tile size so one can grow alone */
+    /** Size of the cardframes backdrop; fixed, so changing the spacing above only moves the tiles */
+    public static final int RACK_FRAME_WIDTH = 818;
     public static final int RACK_FRAME_HEIGHT = 168;
 
     public static final double HANDOVER_PHASE_SECONDS = 0.2;

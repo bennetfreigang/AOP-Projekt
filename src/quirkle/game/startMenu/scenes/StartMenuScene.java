@@ -3,6 +3,7 @@ package quirkle.game.startmenu.scenes;
 import quirkle.engine.*;
 
 import quirkle.game.gameplay.GamePlayScene;
+import quirkle.game.gameplay.player.Player;
 import quirkle.game.quickmenu.scenes.QuickMenuScene;
 import quirkle.game.startmenu.entities.*;
 import quirkle.game.credits.scenes.CreditsScene;
@@ -11,6 +12,7 @@ import quirkle.game.util.RectangularButton;
 import quirkle.game.util.ReloadDialogBox;
 
 import java.awt.event.KeyEvent;
+import java.util.List;
 
 public class StartMenuScene extends Scene {
 
@@ -54,7 +56,7 @@ public class StartMenuScene extends Scene {
         prlxBackground.tarX = InputManager.getMouseX();
         prlxBackground.tarY = InputManager.getMouseY();
 
-        if (playButton.isClicked()) SceneManager.setScene(new GamePlayScene());
+        if (playButton.isClicked()) SceneManager.setScene(new GamePlayScene(List.of(new Player("Nuttöööö"), new Player("Ansgar"))));
         if (settingsButton.isClicked()) SceneManager.setTempScene(new QuickMenuScene(), true, true); //dumy
         if (creditsButton.isClicked()) SceneManager.setTempScene(new CreditsScene(), false, true); //dumy
         if (quitButton.isClicked()) System.exit(0);

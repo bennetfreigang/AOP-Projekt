@@ -6,7 +6,7 @@ import java.awt.Graphics2D;
 
 public class TileBagCounter extends PanelEntity {
 
-    private static final int COUNT_OFFSET_Y = -8;
+    private static final int COUNT_OFFSET_Y = 10;
 
     private final TileBag tileBag;
 

@@ -12,6 +12,9 @@ public class PlayerCard extends PanelEntity {
 
     private Player shownPlayer;
 
+    private static final int COUNT_OFFSET_X = 10;
+    private static final int COUNT_OFFSET_Y = 20;
+
     public PlayerCard(Game game, Handover handover) {
         this.game = game;
         this.handover = handover;
@@ -52,7 +55,7 @@ public class PlayerCard extends PanelEntity {
     @Override
     public void onRender(Graphics2D g) {
         drawText(String.valueOf(shownPlayer.getScore()), UiTheme.FONT_SIZE_CARD_SCORE, UiTheme.TEXT,
-                UiTheme.FONT_SCORE, getLeft() + getWidth() / 2, getTop() + UiTheme.CARD_SCORE_CENTER_Y,
+                UiTheme.FONT_SCORE, getLeft() + (getWidth() / 2) + COUNT_OFFSET_X, getTop() + (getHeight() / 2) +COUNT_OFFSET_Y,
                 0.0, OriginPresets.CENTER, g);
     }
 }

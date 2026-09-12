@@ -27,11 +27,8 @@ public class TileRack extends PanelEntity {
         this.restingCenterY = centerY;
         this.handover = handover;
 
-        setBounds(centerX, centerY, rowWidth(), UiTheme.RACK_FRAME_HEIGHT, OriginPresets.CENTER);
-    }
-
-    private static int rowWidth() {
-        return (Player.HAND_SIZE - 1) * UiTheme.RACK_TILE_SPACING + UiTheme.RACK_TILE_SIZE;
+        setBounds(centerX, centerY, UiTheme.RACK_FRAME_WIDTH, UiTheme.RACK_FRAME_HEIGHT,
+                OriginPresets.CENTER);
     }
 
     public void showPlayer(Player currentPlayer) {
