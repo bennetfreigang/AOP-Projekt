@@ -89,9 +89,9 @@ public class Scene {
     /**
      * @return the scene's entities ordered by {@link Entity#renderOrder}, lowest first
      * @note Sorts a copy rather than {@link #sceneEntities} itself, since reordering a
-     *       CopyOnWriteArrayList copies the whole backing array on every write.
+     *  copyOnWriteArrayList copies the whole backing array on every write.
      * @implNote {@link List#sort} is stable, so entities sharing a renderOrder keep the
-     *           order they were added in.
+     *  order they were added in
      */
     private List<Entity> getRenderOrderedEntities() {
         List<Entity> ordered = new ArrayList<>(sceneEntities);

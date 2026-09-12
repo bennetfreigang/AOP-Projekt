@@ -27,19 +27,20 @@ public class QuickMenuScene extends Scene {
         SimpleSpriteEntity background = new SimpleSpriteEntity("quickmenu/background", Entity.OriginPresets.TOP_LEFT);
         SimpleTextEntity optionsTitle = new SimpleTextEntity(AssetManager.getMessage("options"), optionsTitleFontSize, "higher_jump", Color.WHITE, Entity.OriginPresets.BOTTOM_LEFT);
 
-        buttonContinue = new RectangularButton(AssetManager.getMessage("continue"));
+        buttonBack = new RectangularButton(AssetManager.getMessage("mainmenu"));
+        buttonContinue = new RectangularButton(AssetManager.getMessage("return"));
         buttonSettings = new RectangularButton(AssetManager.getMessage("settings"));
         buttonTutorial = new RectangularButton(AssetManager.getMessage("tutorial"));
         buttonCredits = new RectangularButton(AssetManager.getMessage("credits"));
-        buttonBack = new RectangularButton(AssetManager.getMessage("return"));
+        buttonContinue = new RectangularButton(AssetManager.getMessage("return"));
 
-        addEntities(background, optionsTitle, buttonContinue, buttonSettings, buttonTutorial, buttonCredits, buttonBack);
+        addEntities(background, optionsTitle, buttonBack, buttonSettings, buttonTutorial, buttonCredits, buttonContinue);
 
         optionsTitle.x = getCenterX()/8;
         optionsTitle.y = getCenterY()*0.8;
 
         int i = 0;
-        for (Entity e : new Entity[] {buttonContinue, buttonSettings, buttonTutorial, buttonCredits, buttonBack}) {
+        for (Entity e : new Entity[] {buttonBack, buttonSettings, buttonTutorial, buttonCredits, buttonContinue}) {
             e.y = getCenterY() + i*buttonContinue.getScaledHeight() + i*buttonSpacing;
             e.x = getCenterX()/3;
             i++;

@@ -46,8 +46,8 @@ public abstract class Entity {
 
     public double x = 0;
     public double y = 0;
-    public int targetX = 0;
-    public int targetY = 0;
+    public double targetX = 0;
+    public double targetY = 0;
     public double rotation = 0;
 
     /**

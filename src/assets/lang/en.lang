@@ -8,8 +8,8 @@ credits == Credits
 quit == Quit
 return == Return
 options == Options
-continue == Continue
 tutorial == Tutorial
+mainmenu == Main menu
 
 --- GAMEPLAY ---------------------------------------------
 
@@ -22,6 +22,26 @@ turn == Turn
 turn_place_tile == Place a tile
 turn_tile_placed == Tile placed
 turn_tiles_placed == Tiles placed
+
+--- TUTORIAL ---------------------------------------------
+
+tutorial_intro_title == Tutorial
+tutorial_intro_content == qwirkle is a game ... place stuff... idk\somestuff\morestuff\evenmorestuff\\skrr skrr\\press [ ENTER ] to advance the tutorial
+
+tutorial_playerPoints_title == Player Points
+tutorial_playerPoints_content == This indicator shows the points\the player has in the current\game of qwirkle
+
+tutorial_bagIndicator_title == Bag Count
+tutorial_bagIndicator_content == This indicator shows the count\of left cards still in the\card bag left to draw\you can click on it\to end your turn
+
+tutorial_nameIndicator_title == Player name
+tutorial_nameIndicator_content == Nickname of the current player
+
+tutorial_cardHotbar_title == Your cards
+tutorial_cardHotbar_content == cardhotbar placeholder
+
+tutorial_playground_title == Playground
+tutorial_playground_content == playground placeholder
 
 --- NICKNAMES --------------------------------------------
 
