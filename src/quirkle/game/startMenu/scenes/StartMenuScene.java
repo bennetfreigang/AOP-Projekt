@@ -6,7 +6,7 @@ import quirkle.engine.SceneManager;
 import quirkle.game.gamePlay.GamePlayScene;
 import quirkle.game.settings.scenes.SettingsScene;
 import quirkle.game.credits.scenes.CreditsScene;
-import quirkle.game.startmenu.entities.StartMenuButton;
+import quirkle.game.startMenu.entities.StartMenuButton;
 import quirkle.game.startMenu.entities.Title;
 
 public class StartMenuScene extends Scene {
@@ -33,7 +33,7 @@ public class StartMenuScene extends Scene {
 
     @Override
     public void onTick(double dt) {
-        if (playButton.isClicked()) SceneManager.setTempScene(new GamePlayScene(), true, true);
+        if (playButton.isClicked()) SceneManager.setTempScene(new PlayerCountScene(), true, true);
         SceneManager.storedSceneAlpha = 0.2f;
         if (settingsButton.isClicked()) SceneManager.setTempScene(new SettingsScene(), true, true);
         SceneManager.storedSceneAlpha = 0.2f;
