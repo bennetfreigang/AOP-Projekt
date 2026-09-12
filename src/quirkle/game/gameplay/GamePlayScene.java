@@ -205,7 +205,7 @@ public class GamePlayScene extends Scene {
             turnScorePopup.show(points);
             System.out.println(player.getName() + " erhält " + points + " Punkte.");
 
-            if (game.isOver()) SceneManager.setScene(new EndGameScene(game.getWinner()));
+            if (game.isOver()) SceneManager.setScene(new EndGameScene(game));
         } catch (IllegalStateException e) {
             // Zug ist noch nicht abschließbar (z.B. kein Stein gelegt) -> Eingabe wird ignoriert
             System.out.println(e.getMessage());

@@ -13,17 +13,28 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * The debug actions themselves: each one reads its input from {@link DebugConsole} and applies it
+ * to the attached {@link Game}.
+ *
+ * @note Holds the running game statically, so the panel's buttons can reach it without being
+ *       handed one; {@link #attach} and {@link #detach} bracket a game's lifetime.
+ * @note Actions bypass the rules on purpose - a tile can be conjured, the bag emptied, the turn
+ *       handed on - so nothing here is reachable from normal play.
+ */
 public final class DebugMode {
 
     private static Game game;
 
     private DebugMode() {}
 
+    /** Points the debug actions at {@code currentGame}, replacing any game attached before. */
     public static void attach(Game currentGame) {
         game = currentGame;
         EngineConfig.message("attached to a game", DebugMode.class.getSimpleName(), EngineConfig.messageType.INFO);
     }
 
+    /** Drops the attached game, leaving every action to abort until the next {@link #attach}. */
     public static void detach() {
         game = null;
         EngineConfig.message("detached", DebugMode.class.getSimpleName(), EngineConfig.messageType.INFO);
@@ -34,6 +45,14 @@ public final class DebugMode {
         return game != null;
     }
 
+    /**
+     * Places a whole move of freely chosen tiles on the board, entered cell by cell.
+     *
+     * @note Shows the board after every tile and re-asks for a cell that was already entered, so a
+     *       multi-tile move can be built up and corrected before anything is staged.
+     * @note The move is validated as a whole and its score printed; an illegal one is reported and
+     *       dropped rather than placed.
+     */
     public static void placeTiles() {
         run("PLACE TILES", () -> {
             Board board = requireGame().getBoard();
@@ -43,8 +62,10 @@ public final class DebugMode {
             Map<Position, Tile> move = new LinkedHashMap<>();
             for (int i = 0; i < count; i++) {
                 println("tile " + (i + 1) + " of " + count + ":");
+                println(DebugPrompts.formatBoard(new Board(board.getPlacedTiles(), move)));
+
                 Position position = DebugPrompts.readPosition("  cell");
-                Tile tile = DebugPrompts.readTile("  tile");
+                Tile tile = DebugPrompts.readTile("  tile for " + describe(position));
 
                 if (move.put(position, tile) != null) {
                     println("  replaced the tile entered for " + describe(position) + " earlier");
@@ -77,20 +98,34 @@ public final class DebugMode {
             Game current = requireGame();
 
             Player player = current.getPlayers().get(DebugPrompts.readPlayerIndex(current, "rack"));
-            println(player.getName() + ": " + DebugPrompts.formatHand(player.getHand()));
 
             if (player.getHand().isEmpty()) {
-                Tile tile = DebugPrompts.readTile("tile");
-                player.addTile(tile);
-                println("put " + DebugPrompts.format(tile) + " onto the empty rack");
+                int count = DebugConsole.readInt("  how many tiles", 1, Player.HAND_SIZE);
+
+                for (int i = 0; i < count; i++) {
+                    println("tile " + (i + 1) + " of " + count + ":");
+                    println(player.getName() + ": " + DebugPrompts.formatHand(player.getHand()));
+
+                    Tile tile = DebugPrompts.readTile("new tile for the empty rack");
+                    player.addTile(tile);
+                    println("added " + DebugPrompts.format(tile));
+                }
                 return;
             }
 
-            int slot = DebugConsole.readInt("  slot", 0, player.getHand().size() - 1);
-            Tile tile = DebugPrompts.readTile("tile");
+            println(player.getName() + ": " + DebugPrompts.formatHand(player.getHand()));
+            int count = DebugConsole.readInt("  how many slots to change", 1, player.getHand().size());
 
-            Tile replaced = player.replaceTile(slot, tile);
-            println("slot " + slot + ": " + DebugPrompts.format(replaced) + " -> " + DebugPrompts.format(tile));
+            for (int i = 0; i < count; i++) {
+                println("slot " + (i + 1) + " of " + count + ":");
+                println(player.getName() + ": " + DebugPrompts.formatHand(player.getHand()));
+
+                int slot = DebugConsole.readInt("  slot", 0, player.getHand().size() - 1);
+                Tile tile = DebugPrompts.readTile("tile for slot " + slot);
+
+                Tile replaced = player.replaceTile(slot, tile);
+                println("slot " + slot + ": " + DebugPrompts.format(replaced) + " -> " + DebugPrompts.format(tile));
+            }
         });
     }
 
@@ -105,7 +140,7 @@ public final class DebugMode {
         run("STACK TILE ON BAG", () -> {
             TileBag bag = requireGame().getTileBag();
 
-            Tile tile = DebugPrompts.readTile("tile");
+            Tile tile = DebugPrompts.readTile("next tile for the bag");
             bag.putOnTop(tile);
 
             println("next draw: " + DebugPrompts.format(tile) + "   (" + bag.getSize() + " tiles in the bag)");
@@ -171,10 +206,15 @@ public final class DebugMode {
         });
     }
 
+    /** @return {@code position} as {@code "(x, y)"}. */
     private static String describe(Position position) {
         return "(" + position.x() + ", " + position.y() + ")";
     }
 
+    /**
+     * @return the attached game
+     * @throws IllegalStateException if none is attached; {@link #run} turns it into a console line
+     */
     private static Game requireGame() {
         if (game == null) {
             throw new IllegalStateException("no game running; start a game first");
