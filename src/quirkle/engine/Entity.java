@@ -308,13 +308,23 @@ public abstract class Entity {
             gSprite.dispose();
         }
 
-        onRender(g);
+        try {
+            onRender(g);
+        } catch (Throwable t) {
+            EngineConfig.message("Throwable Error in onRender() of " + getClass().getSimpleName() + ": " + t.getMessage(), getClass().getSimpleName(), EngineConfig.messageType.ERROR);
+        }
     }
 
     public void destroy() {
         if (!destroyed) {
+
             destroyed = true;
-            onDestroy();
+            try {
+                onDestroy();
+                destroyed = true;
+            } catch (Throwable t) {
+                EngineConfig.message("Throwable Error in onDestroy() of " + getClass().getSimpleName() + ": " + t.getMessage(), getClass().getSimpleName(), EngineConfig.messageType.ERROR);
+            }
         }
     }
 }
