@@ -25,20 +25,7 @@ public class BoardCamera {
         return zoom;
     }
 
-    /** Zooms by {@code delta}, keeping the board point currently under ({@code screenX}, {@code screenY}) fixed on screen. */
-    public void zoomAt(double delta, double screenX, double screenY) {
-        double oldTileSize = getTileSize();
-        double worldX = (screenX - centerX - offsetX) / oldTileSize;
-        double worldY = (screenY - centerY - offsetY) / oldTileSize;
-
-        zoomBy(delta);
-
-        double newTileSize = getTileSize();
-        offsetX = screenX - centerX - worldX * newTileSize;
-        offsetY = screenY - centerY - worldY * newTileSize;
-    }
-
-    private void zoomBy(double delta) {
+    public void zoomBy(double delta) {
         zoom = Math.clamp(zoom + delta, MIN_ZOOM, MAX_ZOOM);
     }
 

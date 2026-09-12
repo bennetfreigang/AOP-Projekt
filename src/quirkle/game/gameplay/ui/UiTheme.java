@@ -23,10 +23,11 @@ public final class UiTheme {
     public static final String FONT_SCORE = "higher_jump";
 
     public static final float FONT_SIZE_BUTTON = 24f;
-    public static final float FONT_SIZE_BAG_COUNT = 72f;
-    public static final float FONT_SIZE_CARD_SCORE = 64f;
+    public static final float FONT_SIZE_BAG_COUNT = 80f;
+    public static final float FONT_SIZE_CARD_SCORE = 80f;
     public static final float FONT_SIZE_TURN_CURRENT = 54f;
     public static final float FONT_SIZE_TURN_NEXT = 32f;
+    public static final float FONT_SIZE_SCORE_POPUP = 150f;
 
     // Colors
 
@@ -35,9 +36,11 @@ public final class UiTheme {
     public static final Color TEXT_DIMMED = new Color(245, 245, 245, 120);
     public static final Color GOLD = new Color(198, 154, 58);
 
+    /** Tints the frame behind the picked rack tile */
+    public static final Color SELECTION = new Color(255, 193, 7);
+
     public static final Color GRID_LINE = new Color(255, 255, 255, 34);
     public static final Color GRID_MARKER = new Color(255, 255, 255, 60);
-    public static final Color GRID_CURSOR = new Color(255, 255, 255, 140);
 
     public static final Color PLACEHOLDER_FILL = new Color(255, 255, 255, 22);
     public static final Color PLACEHOLDER_BORDER = new Color(255, 255, 255, 60);
@@ -48,11 +51,9 @@ public final class UiTheme {
 
     public static final int PANEL_BORDER = 14;
 
-    public static final float CURSOR_STROKE = 3f;
-
     public static final String SPRITE_GOLDEN_FRAME = "gameplay/ui/goldenframe";
     public static final String SPRITE_PLAYER_CARD = "gameplay/ui/player";
-    public static final String FRAME_SLOT_STRIP = "gameplay/ui/cardframes";
+    public static final String SPRITE_SLOT_FRAME = "gameplay/ui/tileframe";
 
     public static final String FRAME_BOARD = "gameplay/ui/frame";
 
@@ -87,9 +88,24 @@ public final class UiTheme {
     public static final int TURN_CURRENT_GAP = 52;
     public static final int TURN_NAME_GAP = 30;
 
-    public static int turnHiddenTop() {
-        return -(int) (TURN_TOP + 2 * FONT_SIZE_TURN_CURRENT);
-    }
+    /**
+     * How long the row takes to slide one place along on a turn change.
+     *
+     * @note Kept equal to the rack's two {@link #HANDOVER_PHASE_SECONDS} phases, so the name row
+     *       and the rack read as one event. Spelled out rather than derived: that constant is
+     *       declared further down, and a forward reference is not allowed here.
+     */
+    public static final double TURN_SHUFFLE_SECONDS = 0.4;
+
+    /** How far the finished player's name drifts past its slot on the way out */
+    public static final int TURN_LEAVE_SHIFT = 110;
+
+    // Layout: the points a finished turn scored, flashed over the middle of the board
+
+    public static final double SCORE_POPUP_SECONDS = 1.1;
+
+    /** How far the number drifts up over the course of the flash */
+    public static final int SCORE_POPUP_RISE = 70;
 
     // Layout: the board itself
     public static final int BOARD_BASE_CELL_SIZE = 64;
@@ -97,44 +113,61 @@ public final class UiTheme {
     // Layout: tiles, both on the board and in the rack
     public static final double TILE_PADDING_RATIO = 0.09;
 
+    /** How solid the selected tile looks while it is only a preview on the hovered cell */
+    public static final float PLACEMENT_PREVIEW_OPACITY = 0.45f;
+
     // Layout: the active player's card in the bottom left corner
 
-    public static final int CARD_LEFT = 40;
-    public static final int CARD_BOTTOM_MARGIN = 40;
-    public static final int CARD_WIDTH = 210;
-    public static final int CARD_HEIGHT = 300;
-    public static final int CARD_SCORE_CENTER_Y = 190;
+    public static final int CARD_LEFT = 12;
+
+    /** Negative: the sprite's transparent lower edge may hang off screen, the heart itself does not */
+    public static final int CARD_BOTTOM_MARGIN = -27;
+
+    /** Keeps the 321:461 aspect of player.png, so the heart is not squashed */
+    public static final int CARD_WIDTH = 329;
+    public static final int CARD_HEIGHT = 472;
 
     public static int cardTop() {
         return EngineConfig.WINDOW_HEIGHT - CARD_BOTTOM_MARGIN - CARD_HEIGHT;
     }
 
-    /** @return the top edge the card is parked at while it is off screen */
-    public static int cardHiddenTop() {
-        return EngineConfig.WINDOW_HEIGHT + 20;
-    }
-
     // Layout: tile bag counter, bottom right
 
-    public static final int BAG_SIZE = 217;
-    public static final int BAG_MARGIN = 148;
+    /** The size the diamond is drawn at, whatever the source sprite measures */
+    public static final int BAG_SIZE = 340;
+
+    public static final int BAG_MARGIN_X = 175;
+    public static final int BAG_MARGIN_Y = 205;
 
     public static int bagCenterX() {
-        return EngineConfig.WINDOW_WIDTH - BAG_MARGIN;
+        return EngineConfig.WINDOW_WIDTH - BAG_MARGIN_X;
     }
 
     public static int bagCenterY() {
-        return EngineConfig.WINDOW_HEIGHT - BAG_MARGIN;
+        return EngineConfig.WINDOW_HEIGHT - BAG_MARGIN_Y;
     }
 
     // Layout: the active player's rack along the bottom
 
-    public static final int RACK_TILE_SIZE = 108;
-    public static final int RACK_TILE_SPACING = 129;
+    public static final int RACK_TILE_SIZE = 120;
+    public static final int RACK_TILE_SPACING = 165;
 
-    /** Size of the cardframes backdrop; fixed, so changing the spacing above only moves the tiles */
-    public static final int RACK_FRAME_WIDTH = 818;
-    public static final int RACK_FRAME_HEIGHT = 168;
+    /** Size of the frame drawn behind a single rack tile; one of these per slot */
+    public static final int RACK_FRAME_SIZE = 165;
+
+    /**
+     * How far the row's center sits below the board opening's bottom edge.
+     *
+     * @note Less than half a frame, so the row straddles that edge and the frame's rope runs
+     *       behind the slots rather than above them.
+     */
+    private static final int RACK_CENTER_BELOW_OPENING = 59;
+
+    /** @return the vertical center the row of slots hangs at */
+    public static int rackCenterY() {
+        Rectangle opening = boardViewport();
+        return opening.y + opening.height + RACK_CENTER_BELOW_OPENING;
+    }
 
     public static final double HANDOVER_PHASE_SECONDS = 0.2;
 

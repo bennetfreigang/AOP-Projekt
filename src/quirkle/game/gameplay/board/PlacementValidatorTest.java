@@ -183,7 +183,7 @@ public class PlacementValidatorTest {
                 at(0, 0, TileColor.RED, TileSymbol.CIRCLE),
                 at(2, 0, TileColor.RED, TileSymbol.DIAMOND));
 
-        assertPlacementPossible("Ein bereits liegender Stein schliesst die Lücke", true, placed, pending);
+        assertPlacementPossible("Ein bereits liegender Stein trennt die beiden Steine", false, placed, pending);
     }
 
     private static void assertPlacementPossible(String testName, boolean expected, Map<Position, Tile> placedTiles, Map<Position, Tile> pendingTiles) {

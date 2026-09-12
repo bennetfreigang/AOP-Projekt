@@ -4,6 +4,7 @@ import quirkle.engine.InputManager;
 import quirkle.engine.Scene;
 import quirkle.engine.SceneManager;
 import quirkle.game.debug.DebugMode;
+import quirkle.game.endgame.scenes.EndGameScene;
 import quirkle.game.gameplay.board.*;
 import quirkle.game.gameplay.hand.*;
 import quirkle.game.gameplay.player.Player;
@@ -41,6 +42,7 @@ public class GamePlayScene extends Scene {
     private final TurnIndicator turnIndicator;
     private final PlayerCard playerCard;
     private final TileBagCounter tileBagCounter;
+    private final TurnScorePopup turnScorePopup;
 
     public GamePlayScene(List<Player> players) {
         // The frame's opening, not the window, is what the board has to fit into.
@@ -51,12 +53,14 @@ public class GamePlayScene extends Scene {
 
         this.boardView = new BoardView(camera, viewport);
         this.boardFrame = new BoardFrame();
-        this.tileRack = new TileRack((int) viewport.getCenterX(), bandCenterY(viewport), handover);
-        this.turnIndicator = new TurnIndicator(game, handover);
-        this.playerCard = new PlayerCard(game, handover);
+        this.tileRack = new TileRack((int) viewport.getCenterX(), UiTheme.rackCenterY(), handover);
+        this.turnIndicator = new TurnIndicator(game);
+        this.playerCard = new PlayerCard(game);
         this.tileBagCounter = new TileBagCounter(game.getTileBag());
+        this.turnScorePopup = new TurnScorePopup(viewport);
 
-        addEntities(boardView, boardFrame, turnIndicator, tileRack, playerCard, tileBagCounter);
+        addEntities(boardView, boardFrame, turnIndicator, tileRack, playerCard, tileBagCounter,
+                turnScorePopup);
 
         DebugMode.attach(this.game);
     }
@@ -64,11 +68,6 @@ public class GamePlayScene extends Scene {
     @Override
     public void onDestroy() {
         DebugMode.detach();
-    }
-
-    private int bandCenterY(Rectangle viewport) {
-        int bandTop = viewport.y + viewport.height;
-        return bandTop + (getHeight() - bandTop) / 2;
     }
 
     @Override
@@ -91,8 +90,7 @@ public class GamePlayScene extends Scene {
         if (InputManager.isKeyPressed(KeyEvent.VK_ENTER)) endTurn();
         tileRack.showPlayer(game.getCurrentPlayer());
 
-        // No placement cursor unless a click at the pointer would actually land on a cell.
-        boardView.setCursorVisible(isPointerOnBoard());
+        updatePlacementPreview();
 
         boardView.sync(game.getBoard());
 
@@ -109,6 +107,30 @@ public class GamePlayScene extends Scene {
 
         // Nothing to hand over from at the start of the game; the HUD is simply there.
         if (!isFirstFrame) handover.start();
+    }
+
+    /**
+     * Ghosts the selected tile onto the cell under the pointer, so the player sees where a click
+     * would land.
+     *
+     * @note Nothing is shown on a cell that already holds a tile, committed or staged this turn:
+     *       a click there is a take-back or a rejected move, never a placement.
+     */
+    private void updatePlacementPreview() {
+        Tile selectedTile = tileRack.getSelectedTile();
+
+        if (selectedTile == null || !isPointerOnBoard()) {
+            boardView.setPlacementPreview(null, null);
+            return;
+        }
+
+        Position hovered = camera.screenToBoard(InputManager.getMouseX(), InputManager.getMouseY());
+        if (game.getBoard().isOccupied(hovered)) {
+            boardView.setPlacementPreview(null, null);
+            return;
+        }
+
+        boardView.setPlacementPreview(selectedTile, hovered);
     }
 
     private boolean isPointerOnBoard() {
@@ -151,7 +173,7 @@ public class GamePlayScene extends Scene {
         if (scroll == 0) return;
         if (!boardView.contains(InputManager.getMouseX(), InputManager.getMouseY())) return;
 
-        camera.zoomAt(-scroll * ZOOM_FACTOR, InputManager.getMouseX(), InputManager.getMouseY());
+        camera.zoomBy(-scroll * ZOOM_FACTOR);
     }
 
     private void handleDragInput() {
@@ -180,7 +202,10 @@ public class GamePlayScene extends Scene {
             Player player = game.getCurrentPlayer();
             int points = game.endTurn();
             tileRack.clearSelection();
+            turnScorePopup.show(points);
             System.out.println(player.getName() + " erhält " + points + " Punkte.");
+
+            if (game.isOver()) SceneManager.setScene(new EndGameScene(game.getWinner()));
         } catch (IllegalStateException e) {
             // Zug ist noch nicht abschließbar (z.B. kein Stein gelegt) -> Eingabe wird ignoriert
             System.out.println(e.getMessage());

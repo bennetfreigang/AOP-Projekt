@@ -6,6 +6,7 @@ import quirkle.game.gameplay.tiles.BoardTileEntity;
 import quirkle.game.gameplay.tiles.Tile;
 import quirkle.game.gameplay.ui.UiTheme;
 
+import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -20,6 +21,8 @@ public class BoardView extends Entity {
     private final Rectangle viewport;
 
     private final Map<Position, BoardTileEntity> tileEntities = new LinkedHashMap<>();
+
+    private BoardTileEntity previewTile;
 
     public BoardView(BoardCamera camera, Rectangle viewport) {
         this.camera = camera;
@@ -41,8 +44,28 @@ public class BoardView extends Entity {
         return viewport.contains(screenX, screenY);
     }
 
-    public void setCursorVisible(boolean cursorVisible) {
-        grid.setCursorVisible(cursorVisible);
+    /**
+     * Shows {@code tile} on {@code position} as a translucent ghost, so the player can see where a
+     * click would put it. A {@code null} tile clears the preview.
+     *
+     * @note A real {@link BoardTileEntity} rather than a sprite drawn by hand, so the ghost is
+     *       sized and padded exactly like the tile it stands in for.
+     */
+    public void setPlacementPreview(Tile tile, Position position) {
+        if (tile == null || position == null) {
+            previewTile = null;
+            return;
+        }
+
+        // The pointer rests inside one cell for many frames; only a real move rebuilds the ghost.
+        if (previewTile != null && previewTile.getTile() == tile
+                && previewTile.getPosition().equals(position)) {
+            return;
+        }
+
+        previewTile = new BoardTileEntity(tile, position);
+        previewTile.create();
+        layoutTile(previewTile, camera.getTileSize());
     }
 
     public void sync(Board board) {
@@ -59,6 +82,9 @@ public class BoardView extends Entity {
         for (BoardTileEntity tileEntity : tileEntities.values()) {
             tileEntity.update(dt);
         }
+
+        // Keeps the ghost on its cell while the board is panned and zoomed under it.
+        if (previewTile != null) layoutTile(previewTile, camera.getTileSize());
     }
 
     @Override
@@ -70,6 +96,18 @@ public class BoardView extends Entity {
         for (BoardTileEntity tileEntity : tileEntities.values()) {
             tileEntity.render(g);
         }
+
+        drawPlacementPreview(g);
+    }
+
+    private void drawPlacementPreview(Graphics2D g) {
+        if (previewTile == null) return;
+
+        Graphics2D gPreview = (Graphics2D) g.create();
+        gPreview.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,
+                UiTheme.PLACEMENT_PREVIEW_OPACITY));
+        previewTile.render(gPreview);
+        gPreview.dispose();
     }
 
     @Override
@@ -87,12 +125,16 @@ public class BoardView extends Entity {
         Map<Position, Tile> pendingTiles = board.getPendingTiles();
 
         for (BoardTileEntity tileEntity : tileEntities.values()) {
-            Point screenPos = camera.boardToScreen(tileEntity.getPosition());
-            tileEntity.x = screenPos.x;
-            tileEntity.y = screenPos.y;
-            tileEntity.setTileSize(tileSize);
+            layoutTile(tileEntity, tileSize);
             tileEntity.setPending(pendingTiles.containsKey(tileEntity.getPosition()));
         }
+    }
+
+    private void layoutTile(BoardTileEntity tileEntity, double tileSize) {
+        Point screenPos = camera.boardToScreen(tileEntity.getPosition());
+        tileEntity.x = screenPos.x;
+        tileEntity.y = screenPos.y;
+        tileEntity.setTileSize(tileSize);
     }
 
     private void addMissingEntities(Map<Position, Tile> tiles) {

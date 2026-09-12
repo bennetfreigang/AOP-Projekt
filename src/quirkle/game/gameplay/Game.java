@@ -9,6 +9,7 @@ import quirkle.game.gameplay.tiles.TileBag;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
@@ -71,6 +72,25 @@ public class Game {
 
     public int getTurnNumber() {
         return turnNumber;
+    }
+
+    /**
+     * @return whether the game has run out: the bag is empty and somebody has played their last
+     *         tile, so no hand can be filled back up anymore
+     */
+    public boolean isOver() {
+        if (tileBag.getSize() > 0) return false;
+
+        return players.stream().anyMatch(player -> player.getHand().isEmpty());
+    }
+
+    /**
+     * @return the player holding the most points
+     * @note A tie falls to whoever sits earlier in the player list: the end screen has to name
+     *       somebody, and the rules do not settle a draw.
+     */
+    public Player getWinner() {
+        return players.stream().max(Comparator.comparingInt(Player::getScore)).orElseThrow();
     }
 
     public boolean hasPendingTiles() {

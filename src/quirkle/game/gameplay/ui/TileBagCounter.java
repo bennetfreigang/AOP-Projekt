@@ -1,12 +1,13 @@
 package quirkle.game.gameplay.ui;
 
+import quirkle.engine.AssetManager;
 import quirkle.game.gameplay.tiles.TileBag;
 
 import java.awt.Graphics2D;
 
 public class TileBagCounter extends PanelEntity {
 
-    private static final int COUNT_OFFSET_Y = 10;
+    private static final int COUNT_OFFSET_Y = 15;
 
     private final TileBag tileBag;
 
@@ -18,8 +19,11 @@ public class TileBagCounter extends PanelEntity {
 
     @Override
     public void onRender(Graphics2D g) {
-        drawSprite(UiTheme.SPRITE_GOLDEN_FRAME, UiTheme.BAG_SIZE / 210.0,
-                x, y, 0.0, OriginPresets.CENTER, g);
+        // Scaled off the sprite's own width: drawSprite multiplies the source size, so a hardcoded
+        // divisor silently changes the diamond's size whenever the asset is swapped.
+        double scale = UiTheme.BAG_SIZE / (double) AssetManager.getTexture(UiTheme.SPRITE_GOLDEN_FRAME).getWidth();
+
+        drawSprite(UiTheme.SPRITE_GOLDEN_FRAME, scale, x, y, 0.0, OriginPresets.CENTER, g);
 
         drawText(String.valueOf(tileBag.getSize()), UiTheme.FONT_SIZE_BAG_COUNT, UiTheme.TEXT,
                 UiTheme.FONT_SCORE, x, y + COUNT_OFFSET_Y, 0.0, OriginPresets.CENTER, g);
