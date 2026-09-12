@@ -20,6 +20,7 @@ public class TileRack extends PanelEntity {
 
     private final BufferedImage slotFrame;
     private final BufferedImage selectedSlotFrame;
+    private final BufferedImage rejectedSlotFrame;
 
     private final int restingCenterY;
 
@@ -32,9 +33,10 @@ public class TileRack extends PanelEntity {
         this.restingCenterY = centerY;
         this.handover = handover;
 
-        // Tinted once here rather than per frame; the selected slot only swaps which one it draws.
+        // Tinted once here rather than per frame; a slot only swaps which of the three it draws.
         this.slotFrame = AssetManager.getTexture(UiTheme.SPRITE_SLOT_FRAME);
         this.selectedSlotFrame = RecolorUtil.tint(slotFrame, UiTheme.SELECTION);
+        this.rejectedSlotFrame = RecolorUtil.tint(slotFrame, UiTheme.REJECTION);
 
         setBounds(centerX, centerY, rackWidth(), UiTheme.RACK_FRAME_SIZE, OriginPresets.CENTER);
     }
@@ -153,12 +155,22 @@ public class TileRack extends PanelEntity {
         int left = (int) getSlotX(index) - size / 2;
         int top = getRestingY() - size / 2;
 
-        BufferedImage frame = holdsSelectedTile(index) ? selectedSlotFrame : slotFrame;
-        g.drawImage(frame, left, top, size, size, null);
+        g.drawImage(slotFrameFor(index), left, top, size, size, null);
     }
 
-    private boolean holdsSelectedTile(int index) {
-        return slots[index] != null && slots[index].isSelected();
+    /**
+     * @return the frame slot {@code index} is drawn with: red while the tile in it is being
+     *         refused, yellow while it is the picked one, plain otherwise
+     * @note Refusal wins over selection, the two being the same tile: only the picked tile can be
+     *       turned down, and the refusal is the newer thing to say about it.
+     */
+    private BufferedImage slotFrameFor(int index) {
+        HandTileEntity tileEntity = slots[index];
+        if (tileEntity == null) return slotFrame;
+
+        if (tileEntity.isRejecting()) return rejectedSlotFrame;
+
+        return tileEntity.isSelected() ? selectedSlotFrame : slotFrame;
     }
 
     private void syncSlots(List<Tile> hand) {

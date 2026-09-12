@@ -39,11 +39,6 @@ public class RecolorUtil {
     /**
      * Multiplies every pixel of {@code source} with {@code color}, so the sprite's bright parts
      * take on the color while its dark parts stay dark.
-     *
-     * @note Unlike {@link #recolor}, which floods the whole sprite with one flat color, this keeps
-     *       the brush texture of a sprite readable. Alpha is left untouched.
-     * @implNote Done pixel by pixel because Java2D only offers the Porter-Duff composites, and
-     *           multiply is not one of them. Worth caching the result rather than tinting per frame.
      */
     public static BufferedImage tint(BufferedImage source, Color color) {
         BufferedImage texture = new BufferedImage(source.getWidth(), source.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);

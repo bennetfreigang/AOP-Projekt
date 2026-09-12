@@ -5,8 +5,13 @@ import quirkle.game.gameplay.tiles.TileEntity;
 
 import java.awt.*;
 
+/**
+ * A tile on the rack.
+ *
+ * @note Draws no marking of its own: being picked and being refused both show on the frame behind
+ *       it, which {@link TileRack} tints. All this adds is the shake of a refused placement.
+ */
 public class HandTileEntity extends TileEntity {
-    private static final Color REJECTION_COLOR = new Color(229, 57, 53);
 
     private static final double REJECTION_DURATION = 0.35;
     private static final double SHAKE_FREQUENCY = 55.0;
@@ -44,13 +49,6 @@ public class HandTileEntity extends TileEntity {
         x += getShakeOffset();
         super.render(g);
         x = restingX;
-    }
-
-    @Override
-    public void onRender(Graphics2D g) {
-        // The tinted frame behind the tile is what marks a selection, so only a rejected
-        // placement still draws an outline of its own.
-        if (isRejecting()) drawOutline(g, REJECTION_COLOR);
     }
 
     private int getShakeOffset() {

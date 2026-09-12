@@ -9,7 +9,6 @@ import quirkle.game.startmenu.entities.*;
 import quirkle.game.credits.scenes.CreditsScene;
 import quirkle.game.util.PrlxEntity;
 import quirkle.game.util.RectangularButton;
-import quirkle.game.util.ReloadDialogBox;
 
 import java.awt.event.KeyEvent;
 import java.util.List;

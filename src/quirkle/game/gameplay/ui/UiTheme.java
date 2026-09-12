@@ -39,6 +39,9 @@ public final class UiTheme {
     /** Tints the frame behind the picked rack tile */
     public static final Color SELECTION = new Color(255, 193, 7);
 
+    /** Tints that frame instead while the placement it was picked for is being refused */
+    public static final Color REJECTION = new Color(229, 57, 53);
+
     public static final Color GRID_LINE = new Color(255, 255, 255, 34);
     public static final Color GRID_MARKER = new Color(255, 255, 255, 60);
 
