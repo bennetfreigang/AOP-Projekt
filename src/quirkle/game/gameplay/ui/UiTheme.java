@@ -48,11 +48,7 @@ public final class UiTheme {
     public static final Color PLACEHOLDER_FILL = new Color(255, 255, 255, 22);
     public static final Color PLACEHOLDER_BORDER = new Color(255, 255, 255, 60);
 
-    // Nine-slice frame assets
-
-    public static final int CONTAINER_SOURCE_INSET = 130;
-
-    public static final int PANEL_BORDER = 14;
+    // Frame sprites
 
     public static final String SPRITE_GOLDEN_FRAME = "gameplay/ui/goldenframe";
     public static final String SPRITE_PLAYER_CARD = "gameplay/ui/player";
