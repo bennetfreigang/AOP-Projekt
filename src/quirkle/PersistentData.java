@@ -1,9 +1,9 @@
 package quirkle;
 
 public class PersistentData {
-    public static boolean debugMode = true;
+    public static boolean debugMode = false;
 
     public static String lang = "en";
 
-    public static final String[] playerNames = {"Player1", "Player2", "Player3", "Player4", "Bennet", "Jarosch", "Alex", "Kris"};
+    public static final String[] playerNames = {"Sven", "Jörg", "Helene", "Sibylle", "Alisa", "Hermine", "Enie", "Bennet", "Jarosch", "Alex", "Kris", "Rainer Winkler"};
 }
