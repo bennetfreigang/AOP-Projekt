@@ -11,6 +11,7 @@ import quirkle.game.gameplay.hand.*;
 import quirkle.game.gameplay.player.Player;
 import quirkle.game.gameplay.tiles.*;
 import quirkle.game.gameplay.ui.*;
+import quirkle.game.gameplay.ui.TurnScorePopup;
 import quirkle.game.quickmenu.scenes.QuickMenuScene;
 
 import java.awt.*;
