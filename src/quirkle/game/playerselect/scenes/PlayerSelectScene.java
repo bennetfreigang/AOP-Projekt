@@ -1,18 +1,17 @@
 package quirkle.game.playerselect.scenes;
 
 import quirkle.PersistentData;
-import quirkle.engine.AssetManager;
-import quirkle.engine.Entity;
-import quirkle.engine.Scene;
-import quirkle.engine.SceneManager;
+import quirkle.engine.*;
 import quirkle.game.gameplay.GamePlayScene;
 import quirkle.game.gameplay.player.Player;
 import quirkle.game.playerselect.entities.Arrow;
+import quirkle.game.quickmenu.scenes.QuickMenuScene;
 import quirkle.game.util.RectangularButton;
 import quirkle.game.util.SimpleSpriteEntity;
 import quirkle.game.util.SimpleTextEntity;
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -86,6 +85,8 @@ public class PlayerSelectScene extends Scene {
         if (playButton.isClicked()) {
             SceneManager.setScene(new GamePlayScene(drawRandomPlayers(playerCount)));
         }
+
+        if (InputManager.isKeyPressed(KeyEvent.VK_ESCAPE)) SceneManager.setTempScene(new QuickMenuScene(), true, false);
     }
 
     private static List<Player> drawRandomPlayers(int count) {

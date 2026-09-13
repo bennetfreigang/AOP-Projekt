@@ -5,5 +5,5 @@ public class PersistentData {
 
     public static String lang = "en";
 
-    public static final String[] playerNames = {"Sven", "Jörg", "Helene", "Sibylle", "Alisa", "Hermine", "Enie", "Bennet", "Jarosch", "Alex", "Kris", "Rainer Winkler"};
+    public static final String[] playerNames = {"Sven", "Jörg", "Helene", "Sibylle", "Alisa", "Hermine", "Enie", "Bennet", "Jarosch", "Alex", "Kris", "Rainer Winkler", "Milosch", "Luisa"};
 }

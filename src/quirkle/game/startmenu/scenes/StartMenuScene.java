@@ -25,7 +25,6 @@ public class StartMenuScene extends Scene {
 
     @Override
     public void onCreate() {
-
         PrlxEntity.PrlxLayer prlxLayer0 = new PrlxEntity.PrlxLayer("startmenu/background/0", 0.07);
         PrlxEntity.PrlxLayer prlxLayer1 = new PrlxEntity.PrlxLayer("startmenu/background/1", 0.05);
         PrlxEntity.PrlxLayer prlxLayer2 = new PrlxEntity.PrlxLayer("startmenu/background/2", 0.03);
@@ -56,10 +55,9 @@ public class StartMenuScene extends Scene {
         prlxBackground.tarX = InputManager.getMouseX();
         prlxBackground.tarY = InputManager.getMouseY();
 
-        if (playButton.isClicked()) SceneManager.setScene(new GamePlayScene(List.of(new Player("Nuttöööö"), new Player("Ansgar"))));
+        if (playButton.isClicked()) SceneManager.setScene(new PlayerSelectScene());
         if (settingsButton.isClicked()) SceneManager.setTempScene(new SettingsScene(), false, true);
         if (creditsButton.isClicked()) SceneManager.setTempScene(new CreditsScene(), false, true);
-        if (quitButton.isClicked()) SceneManager.setScene(new PlayerSelectScene());
-        //if (quitButton.isClicked()) System.exit(0);
+        if (quitButton.isClicked()) System.exit(0);
     }
 }
