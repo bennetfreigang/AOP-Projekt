@@ -41,7 +41,7 @@ tutorial_cardHotbar_title == Your Tiles
 tutorial_cardHotbar_content == These are the tiles in your hand.\Click a tile to select it,\click it again to unselect it
 
 tutorial_playground_title == Board
-tutorial_playground_content == Click a cell to place your selected tile.\Click a tile you placed this turn to take it back.\Hold right click to move the board\and scroll to zoom.\Press [ ENTER ] to end your turn
+tutorial_playground_content == This is the board where you place your tiles
 
 tutorial_rules_title == How to play
 tutorial_rules_content == Placing tiles\Place one or more tiles in a single row or column, without gaps.\Your tiles must touch a tile that is already on the board.\All tiles in a line share one color or one symbol,\and the same tile can't be in a line twice.\\Points\Every line you build or extend gives 1 point per tile in it.\A tile can count for its row and its column.\A line of 6 tiles is a Qwirkle and gives 6 extra points!\\Game end\The game ends when the bag is empty and a player has no tiles left.\The player with the most points wins.
