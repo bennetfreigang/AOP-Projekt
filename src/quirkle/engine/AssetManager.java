@@ -138,14 +138,14 @@ public class AssetManager {
         return lang != null ? lang.languageName : "";
     }
 
-    //----------[ SOUND ]------------------------------------------------------------------------------------------------------------------------------------
+    //----------[ SOUND ]------------------------( credit reference https://stackoverflow.com/questions/26305/how-can-i-play-sound-in-java )--------------
 
     private static final Map<String, byte[]> soundCache = new HashMap<>();
     private static void fallbackSound(String identifier) {
         EngineConfig.message("Failed to play sound: " + identifier,  AssetManager.class.getSimpleName(), EngineConfig.messageType.ERROR);
     }
 
-    private static void playRawBytes(byte[] soundData, double volume) { //big reference https://stackoverflow.com/questions/26305/how-can-i-play-sound-in-java
+    private static void playRawBytes(byte[] soundData, double volume) {
         if (volume <= 0.0) return;
         try {
             ByteArrayInputStream bais = new ByteArrayInputStream(soundData);

@@ -16,7 +16,13 @@ volume == Volume
 switch == Switch
 proceed == Proceed
 cancel == Cancel
+player == Player
 reloadrequest == The game will need to\reload to apply this setting\Gamestates will be lost
+
+--- PLAYERSELECT -----------------------------------------
+
+playerselect_title == TITLE PLACEHOLDER
+playerselect_content == content placeholder
 
 --- GAMEPLAY ---------------------------------------------
 

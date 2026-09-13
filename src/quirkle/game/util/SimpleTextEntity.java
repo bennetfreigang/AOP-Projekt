@@ -5,7 +5,7 @@ import quirkle.engine.Entity;
 import java.awt.*;
 
 public class SimpleTextEntity extends Entity {
-    String message;
+    public String message;
     OriginPresets textOrigin;
     float fontSize;
     Color textColor;
@@ -35,4 +35,4 @@ public class SimpleTextEntity extends Entity {
     public void setMessage(String message) {
         this.message = message;
     }
-}
+}
