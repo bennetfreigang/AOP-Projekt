@@ -21,8 +21,8 @@ reloadrequest == The game will need to\reload to apply this setting\Gamestates w
 
 --- PLAYERSELECT -----------------------------------------
 
-playerselect_title == TITLE PLACEHOLDER
-playerselect_content == content placeholder
+playerselect_title == How many players?
+playerselect_content == Qwirkle is played by 2 to 4 players.\Use the arrows to choose\how many of you are playing.\\Every player gets a random name.\Press Play when you're ready!
 
 --- GAMEPLAY ---------------------------------------------
 
