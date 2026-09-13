@@ -10,7 +10,7 @@ public class CreditsScene extends Scene {
     private PrlxEntity prlxBackground;
     private CreditTextManager creditManager;
 
-    public static final int CREDIT_ENTRY_COUNT = 6;
+    public static final int CREDIT_ENTRY_COUNT = 7;
 
     @Override
     public void onCreate() {
