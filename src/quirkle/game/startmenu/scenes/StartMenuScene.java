@@ -5,6 +5,7 @@ import quirkle.engine.*;
 import quirkle.game.gameplay.GamePlayScene;
 import quirkle.game.gameplay.player.Player;
 import quirkle.game.quickmenu.scenes.QuickMenuScene;
+import quirkle.game.settings.scenes.SettingsScene;
 import quirkle.game.startmenu.entities.*;
 import quirkle.game.credits.scenes.CreditsScene;
 import quirkle.game.util.PrlxEntity;
@@ -56,10 +57,8 @@ public class StartMenuScene extends Scene {
         prlxBackground.tarY = InputManager.getMouseY();
 
         if (playButton.isClicked()) SceneManager.setScene(new GamePlayScene(List.of(new Player("Nuttöööö"), new Player("Ansgar"))));
-        if (settingsButton.isClicked()) SceneManager.setTempScene(new QuickMenuScene(), true, true); //dumy
-        if (creditsButton.isClicked()) SceneManager.setTempScene(new CreditsScene(), false, true); //dumy
+        if (settingsButton.isClicked()) SceneManager.setTempScene(new SettingsScene(), false, true);
+        if (creditsButton.isClicked()) SceneManager.setTempScene(new CreditsScene(), false, true);
         if (quitButton.isClicked()) System.exit(0);
-
-        if (InputManager.isKeyPressed(KeyEvent.VK_ESCAPE)) SceneManager.setTempScene(new QuickMenuScene(), true, true);
     }
 }

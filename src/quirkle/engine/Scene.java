@@ -8,15 +8,12 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Scene {
     protected final List<Entity> sceneEntities = new CopyOnWriteArrayList<>();
+    public boolean created = false;
 
     public int getWidth() { return EngineConfig.WINDOW_WIDTH; }
     public int getHeight() { return EngineConfig.WINDOW_HEIGHT; }
     public int getCenterX() { return (int) (getWidth() / 2.0); }
     public int getCenterY() { return (int) (getHeight() / 2.0); }
-
-    public Scene() {
-        onCreate();
-    }
 
     /**
      * Called automatically during Scene creation
@@ -66,6 +63,16 @@ public class Scene {
         for (Entity e : entities) {
             e.destroy();
             sceneEntities.remove(e);
+        }
+    }
+
+    public void create() {
+        if (created) return;
+        created = true;
+        try {
+            onCreate();
+        } catch (Throwable t) {
+            EngineConfig.message("Throwable Error in onCreate() of " + getClass().getSimpleName() + ": " + t.getMessage(), getClass().getSimpleName(), EngineConfig.messageType.ERROR);
         }
     }
 

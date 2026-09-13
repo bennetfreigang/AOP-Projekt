@@ -96,6 +96,7 @@ public class AssetManager {
     //----------[ LANG ]------------------------------------------------------------------------------------------------------------------------------------
 
     private static LangPackage lang = null;
+    private static String langIdentifier = null;
 
     public static void setLang(String identifier) {
         if (identifier == null || identifier.isEmpty()) {
@@ -115,6 +116,7 @@ public class AssetManager {
 
             try (Scanner langReader = new Scanner(in)) {
                 lang = new LangPackage(langReader);
+                langIdentifier = identifier;
             }
         } catch (IOException e) {
             EngineConfig.message("failed to process lang file at " + path, AssetManager.class.getSimpleName(), EngineConfig.messageType.ERROR);
@@ -124,6 +126,16 @@ public class AssetManager {
     public static String getMessage(String identifier) {
         if (lang.elements.containsKey(identifier)) return lang.elements.get(identifier);
         else return "CURRENT LANG DOESNT CONTAIN KEY: " + identifier;
+    }
+
+    /** @return the identifier last passed to {@link #setLang(String)} (e.g. "en", "de") */
+    public static String getLangIdentifier() {
+        return langIdentifier;
+    }
+
+    /** @return the display name declared on the first line of the currently loaded .lang file (e.g. "Deutsch") */
+    public static String getLangName() {
+        return lang != null ? lang.languageName : "";
     }
 
     //----------[ SOUND ]------------------------------------------------------------------------------------------------------------------------------------
@@ -175,4 +187,4 @@ public class AssetManager {
             fallbackSound(identifier);
         }
     }
-}
+}

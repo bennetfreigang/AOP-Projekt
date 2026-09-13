@@ -1,7 +1,6 @@
-package quirkle.game.util;
+package quirkle.game.debug;
 
 import quirkle.engine.Entity;
-import quirkle.engine.Scene;
 import quirkle.engine.SceneManager;
 
 public class DebugIndicator extends Entity {

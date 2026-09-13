@@ -22,8 +22,7 @@ public class TurnIndicator extends Entity {
     private record Slot(double x, double y, double fontSize, double alpha) {
 
         static Slot between(Slot from, Slot to, double progress) {
-            return new Slot(at(from.x, to.x, progress), at(from.y, to.y, progress),
-                    at(from.fontSize, to.fontSize, progress), at(from.alpha, to.alpha, progress));
+            return new Slot(at(from.x, to.x, progress), at(from.y, to.y, progress), at(from.fontSize, to.fontSize, progress), at(from.alpha, to.alpha, progress));
         }
 
         private static double at(double from, double to, double progress) {

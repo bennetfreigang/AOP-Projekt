@@ -6,10 +6,17 @@ play == Play
 settings == Settings
 credits == Credits
 quit == Quit
+apply == Apply
 return == Return
 options == Options
 tutorial == Tutorial
 mainmenu == Main menu
+language == Language
+volume == Volume
+switch == Switch
+proceed == Proceed
+cancel == Cancel
+reloadrequest == The game will need to\reload to apply this setting\Gamestates will be lost
 
 --- GAMEPLAY ---------------------------------------------
 

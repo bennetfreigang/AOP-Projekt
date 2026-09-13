@@ -1,18 +1,24 @@
 Deutsch
 
---- STARTMENU --------------------------------------------
+--- MENÜS ------------------------------------------------
 
-title == QWIRKEL
-play == Starten
+play == Spielen
 settings == Einstellungen
-credits == Abspann
+credits == Credits
 quit == Beenden
+apply == Speichern
 return == Zurück
 options == Optionen
-tutorial == Erklärung
+tutorial == Tutorial
 mainmenu == Hauptmenü
+language == Sprache
+volume == Lautstärke
+switch == Wechsel
+proceed == Weiter
+cancel == Abbrechen
+reloadrequest == Das Spiel muss neu geladen werden,\um diese Einstellung zu übernehmen.\Spielstände gehen dabei verloren
 
---- GAMEPLAY ---------------------------------------------
+--- SPIELABLAUF -------------------------------------------
 
 points == PUNKTE
 last_round == LETZTE RUNDE
@@ -20,11 +26,34 @@ points_last_round == PUNKTE LETZTE RUNDE
 in_bag == IM BEUTEL
 game_settings == EINSTELLUNGEN
 turn == Zug
-turn_place_tile == Stein legen
+turn_place_tile == Lege einen Stein
 turn_tile_placed == Stein gelegt
 turn_tiles_placed == Steine gelegt
 
---- NICKNAMES --------------------------------------------
+--- TUTORIAL ---------------------------------------------
+
+tutorial_intro_title == Tutorial
+tutorial_intro_content == Willkommen bei Qwirkle!\Dieses Tutorial zeigt dir den Spielbildschirm\und erklärt, wie man spielt.\\Du kannst das Menü jederzeit öffnen,\indem du [ ESC ] drückst.\\Drücke [ ENTER ], um fortzufahren
+
+tutorial_playerPoints_title == Punkte
+tutorial_playerPoints_content == Zeigt die Punkte des aktuellen Spielers
+
+tutorial_bagIndicator_title == Stein-Beutel
+tutorial_bagIndicator_content == Zeigt, wie viele Steine\noch im Beutel sind.\Nach deinem Zug wird deine Hand\von hier aufgefüllt
+
+tutorial_nameIndicator_title == Zugreihenfolge
+tutorial_nameIndicator_content == Der große Name ist der Spieler,\der gerade an der Reihe ist.\Die Namen dahinter folgen als Nächstes
+
+tutorial_cardHotbar_title == Deine Steine
+tutorial_cardHotbar_content == Das sind die Steine in deiner Hand.\Klicke einen Stein an, um ihn auszuwählen,\klicke erneut, um ihn abzuwählen
+
+tutorial_playground_title == Spielfeld
+tutorial_playground_content == Hier legst du deine Steine ab
+
+tutorial_rules_title == Spielanleitung
+tutorial_rules_content == Steine legen\Lege einen oder mehrere Steine in eine einzelne Reihe oder Spalte, ohne Lücken.\Deine Steine müssen einen bereits liegenden Stein berühren.\Alle Steine in einer Linie teilen sich eine Farbe oder ein Symbol,\und derselbe Stein darf nicht zweimal in einer Linie vorkommen.\\Punkte\Jede Linie, die du baust oder erweiterst, gibt 1 Punkt pro Stein darin.\Ein Stein kann sowohl für seine Reihe als auch für seine Spalte zählen.\Eine Linie aus 6 Steinen ist ein Qwirkle und gibt 6 Extrapunkte!\\Spielende\Das Spiel endet, wenn der Beutel leer ist und ein Spieler keine Steine mehr hat.\Der Spieler mit den meisten Punkten gewinnt.
+
+--- SPITZNAMEN --------------------------------------------
 
 nickname0 == Bennet
 nickname1 == Alex
@@ -37,19 +66,28 @@ nickname7 == Kris
 nickname8 == Kris
 nickname9 == Kris
 
---- CREDITS ----------------------------------------------
+--- CREDITS ------------------------------------------------
 
 creditEntry_title0 == Programmierung
-creditEntry_content0 == Bennet\Alex\Jarosch
+creditEntry_content0 == Bennet Freigang\Alex Giffy\Jarosch Hanke
 
-creditEntry_title1 == Game Konzept & Design
-creditEntry_content1 == Bennet\Alex\Jarosch
+creditEntry_title1 == Spielkonzept & Design
+creditEntry_content1 == Bennet Freigang\Alex Giffy\Jarosch Hanke
 
-creditEntry_title2 == Grafik
-creditEntry_content2 == Bennet\Alex\Jarosch
+creditEntry_title2 == Assets & Grafiken
+creditEntry_content2 == Bennet Freigang\Alex Giffy\Jarosch Hanke
 
-creditEntry_title3 == Beta Tester
-creditEntry_content3 == Was ist denn mit Carsten los
+creditEntry_title3 == Spielregeln & Punktevergabe
+creditEntry_content3 == Bennet Freigang
 
 creditEntry_title4 == Besonderer Dank
-creditEntry_content4 == Danke fürs spielen!
+creditEntry_content4 == Danke fürs Spielen!
+
+creditEntry_title5 == Sounds
+creditEntry_content5 == somesound1\somesound2\somesound3
+
+creditEntry_title6 == Schriftarten
+creditEntry_content6 == Higher Jump: https://www.1001fonts.com/higher-jump-font.html\Edosz: https://www.1001fonts.com/edo-sz-font.html\PolyRegular: https://www.1001fonts.com/poly-font.html\ARIAL
+
+creditEntry_title7 == Bilder
+creditEntry_content7 == https://www.vecteezy.com/vector-art/22886555-vector-hand-drawn-square-frame-set-black-color-frame-collection-vector-black-frame-collection\https://www.magnific.com/free-vector/paint-frames-collection_1168917.htm#fromView=keyword&page=2&position=0&uuid=17cae85a-1a76-47b2-90a1-674855b64f9d&track=ais_hybrid&query=Brush+square\https://www.magnific.com/free-vector/black-number-collection-chalk-style_2240667.htm#fromView=keyword&page=1&position=3&uuid=241ec825-9bcc-4f79-9117-ab427420bfba&track=ais_hybrid&query=Brush+number\https://www.magnific.com/free-vector/hand-draw-gray-watercolor-strock-design_21762395.htm#fromView=search&page=1&position=6&uuid=0dc66507-c15c-4645-b277-0ccf2f88b9e5&track=ais_hybrid&query=Abstract+gray+brush+strokes+background\https://www.magnific.com/free-vector/elegant-colorful-watercolor-brush-stroke-modern-background_393778952.htm#fromView=search&page=4&position=7&uuid=9216eedf-77dd-4eb7-a212-907e490c2e08&track=ais_hybrid&query=abstract+brush+strokes

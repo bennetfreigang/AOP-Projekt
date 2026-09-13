@@ -4,6 +4,7 @@ import quirkle.PersistentData;
 import quirkle.engine.*;
 
 import quirkle.game.credits.scenes.CreditsScene;
+import quirkle.game.debug.DebugIndicator;
 import quirkle.game.debug.scenes.DebugModeScene;
 import quirkle.game.settings.scenes.SettingsScene;
 import quirkle.game.startmenu.scenes.StartMenuScene;
@@ -63,6 +64,7 @@ public class QuickMenuScene extends Scene {
         if (debugModeScene != null) return;
 
         debugModeScene = new DebugModeScene();
+        debugModeScene.create(); // not routed through SceneManager, so we have to trigger onCreate() ourselves
         debugModeScene.setOnClose(this::closeDebugMode);
     }
 

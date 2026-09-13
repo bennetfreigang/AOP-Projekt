@@ -20,8 +20,8 @@ public class TutorialScene extends Scene {
                 new TutorialIntro(AssetManager.getMessage("tutorial_intro_title"), AssetManager.getMessage("tutorial_intro_content")),
                 new TutorialEntry(TutorialEntry.FocusType.square_big, 1, -1, AssetManager.getMessage("tutorial_playerPoints_title"), AssetManager.getMessage("tutorial_playerPoints_content"), 220, 840, 500, 500),
                 new TutorialEntry(TutorialEntry.FocusType.square_big, -1, -1, AssetManager.getMessage("tutorial_bagIndicator_title"), AssetManager.getMessage("tutorial_bagIndicator_content"), 1700, 840, 220, 840),
-                new TutorialEntry(TutorialEntry.FocusType.rectangle_small, 1, 1, AssetManager.getMessage("tutorial_nameIndicator_title"), AssetManager.getMessage("tutorial_nameIndicator_content"), 450, 85, 1700, 840),
-                new TutorialEntry(TutorialEntry.FocusType.rectangle_big, 1, -1, AssetManager.getMessage("tutorial_cardHotbar_title"), AssetManager.getMessage("tutorial_cardHotbar_content"), 945, 924, 450, 85),
+                new TutorialEntry(TutorialEntry.FocusType.rectangle_small, 1, 1, AssetManager.getMessage("tutorial_nameIndicator_title"), AssetManager.getMessage("tutorial_nameIndicator_content"), 450, 80, 1700, 840),
+                new TutorialEntry(TutorialEntry.FocusType.rectangle_big, 1, -1, AssetManager.getMessage("tutorial_cardHotbar_title"), AssetManager.getMessage("tutorial_cardHotbar_content"), 945, 924, 450, 80),
                 new TutorialEntry(TutorialEntry.FocusType.rectangle_large, 1, -1, AssetManager.getMessage("tutorial_playground_title"), AssetManager.getMessage("tutorial_playground_content"), SceneManager.getCurrentScene().getCenterX(), SceneManager.getCurrentScene().getCenterY(), 500, 500)
         );
 

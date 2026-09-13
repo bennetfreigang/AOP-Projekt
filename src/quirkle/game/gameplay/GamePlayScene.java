@@ -60,8 +60,7 @@ public class GamePlayScene extends Scene {
         this.tileBagCounter = new TileBagCounter(game.getTileBag());
         this.turnScorePopup = new TurnScorePopup(viewport);
 
-        addEntities(boardView, boardFrame, turnIndicator, tileRack, playerCard, tileBagCounter,
-                turnScorePopup);
+        addEntities(boardView, boardFrame, turnIndicator, tileRack, playerCard, tileBagCounter, turnScorePopup);
 
         DebugMode.attach(this.game);
     }

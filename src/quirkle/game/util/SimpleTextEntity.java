@@ -30,4 +30,9 @@ public class SimpleTextEntity extends Entity {
     public void onRender(Graphics2D g) {
         drawText(message, fontSize, textColor, fontIdentifier, x, y, textRotation, textOrigin, g);
     }
-}
+
+    /** Updates the displayed text without recreating the entity. */
+    public void setMessage(String message) {
+        this.message = message;
+    }
+}

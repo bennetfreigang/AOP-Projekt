@@ -12,6 +12,7 @@ public class SceneManager {
         if (currentScene != null) currentScene.destroy();
 
         currentScene = newScene;
+        currentScene.create();
 
         if (storedScene != null) {
             storedScene.destroy();
@@ -42,6 +43,8 @@ public class SceneManager {
             storedScene = currentScene;
             currentScene = tempScene;
         }
+
+        currentScene.create();
 
         renderStoredScene = _renderStoredScene;
         pauseStoredScene = _pauseStoredScene;
