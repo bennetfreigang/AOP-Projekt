@@ -49,10 +49,13 @@ public class TurnIndicator extends Entity {
         this.renderOrder = UiTheme.LAYER_HUD;
 
         this.y = UiTheme.TURN_TOP;
+    }
 
+    @Override
+    public void onCreate() {
         // Read straight away rather than waiting for the first tick: the window can paint before
         // the game loop has run a single frame.
-        this.shownOrder = game.getTurnOrder();
+        shownOrder = game.getTurnOrder();
     }
 
     @Override

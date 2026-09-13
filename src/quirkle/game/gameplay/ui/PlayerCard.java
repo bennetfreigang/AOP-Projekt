@@ -14,7 +14,10 @@ public class PlayerCard extends PanelEntity {
 
     public PlayerCard(Game game) {
         this.game = game;
+    }
 
+    @Override
+    public void onCreate() {
         setSprite(UiTheme.SPRITE_PLAYER_CARD);
         setBounds(UiTheme.CARD_LEFT, UiTheme.cardTop(), UiTheme.CARD_WIDTH, UiTheme.CARD_HEIGHT, OriginPresets.TOP_LEFT);
     }

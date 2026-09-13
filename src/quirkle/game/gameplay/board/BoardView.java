@@ -16,7 +16,7 @@ import java.util.Map;
 public class BoardView extends Entity {
 
     private final BoardCamera camera;
-    private final BoardGrid grid;
+    private BoardGrid grid;
 
     private final Rectangle viewport;
 
@@ -28,12 +28,15 @@ public class BoardView extends Entity {
         this.camera = camera;
         this.viewport = viewport;
         this.renderOrder = UiTheme.LAYER_GRID;
+    }
 
+    @Override
+    public void onCreate() {
         // Board space covers the whole window; the frame lying over it is what leaves only the
         // opening visible. The viewport stays the frame's opening, since a click outside it is
         // not a move even though the cell under it is drawn.
-        this.grid = new BoardGrid(camera, windowBounds());
-        this.grid.create();
+        grid = new BoardGrid(camera, windowBounds());
+        grid.create();
     }
 
     private static Rectangle windowBounds() {

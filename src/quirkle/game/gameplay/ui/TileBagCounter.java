@@ -13,6 +13,10 @@ public class TileBagCounter extends PanelEntity {
 
     public TileBagCounter(TileBag tileBag) {
         this.tileBag = tileBag;
+    }
+
+    @Override
+    public void onCreate() {
         setBounds(UiTheme.bagCenterX(), UiTheme.bagCenterY(),
                 UiTheme.BAG_SIZE, UiTheme.BAG_SIZE, OriginPresets.CENTER);
     }

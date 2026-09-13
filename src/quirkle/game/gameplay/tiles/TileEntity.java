@@ -18,6 +18,10 @@ public abstract class TileEntity extends Entity {
     protected TileEntity(Tile tile) {
         this.tile = tile;
         this.origin = OriginPresets.CENTER;
+    }
+
+    @Override
+    public void onCreate() {
         setSprite(buildSpritePath(tile));
     }
 

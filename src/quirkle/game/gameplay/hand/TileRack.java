@@ -18,10 +18,11 @@ public class TileRack extends PanelEntity {
 
     private final HandTileEntity[] slots = new HandTileEntity[Player.HAND_SIZE];
 
-    private final BufferedImage slotFrame;
-    private final BufferedImage selectedSlotFrame;
-    private final BufferedImage rejectedSlotFrame;
+    private BufferedImage slotFrame;
+    private BufferedImage selectedSlotFrame;
+    private BufferedImage rejectedSlotFrame;
 
+    private final int restingCenterX;
     private final int restingCenterY;
 
     private final Handover handover;
@@ -30,15 +31,19 @@ public class TileRack extends PanelEntity {
     private Tile selectedTile;
 
     public TileRack(int centerX, int centerY, Handover handover) {
+        this.restingCenterX = centerX;
         this.restingCenterY = centerY;
         this.handover = handover;
+    }
 
+    @Override
+    public void onCreate() {
         // Tinted once here rather than per frame; a slot only swaps which of the three it draws.
-        this.slotFrame = AssetManager.getTexture(UiTheme.SPRITE_SLOT_FRAME);
-        this.selectedSlotFrame = RecolorUtil.tint(slotFrame, UiTheme.SELECTION);
-        this.rejectedSlotFrame = RecolorUtil.tint(slotFrame, UiTheme.REJECTION);
+        slotFrame = AssetManager.getTexture(UiTheme.SPRITE_SLOT_FRAME);
+        selectedSlotFrame = RecolorUtil.tint(slotFrame, UiTheme.SELECTION);
+        rejectedSlotFrame = RecolorUtil.tint(slotFrame, UiTheme.REJECTION);
 
-        setBounds(centerX, centerY, rackWidth(), UiTheme.RACK_FRAME_SIZE, OriginPresets.CENTER);
+        setBounds(restingCenterX, restingCenterY, rackWidth(), UiTheme.RACK_FRAME_SIZE, OriginPresets.CENTER);
     }
 
     public void showPlayer(Player currentPlayer) {
@@ -185,6 +190,7 @@ public class TileRack extends PanelEntity {
             if (freeSlot < 0) break;
 
             slots[freeSlot] = new HandTileEntity(tile);
+            slots[freeSlot].create();
         }
     }
 

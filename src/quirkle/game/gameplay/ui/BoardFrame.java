@@ -10,11 +10,15 @@ import java.awt.image.BufferedImage;
 
 public class BoardFrame extends Entity {
 
-    private final BufferedImage scaledFrame;
+    private BufferedImage scaledFrame;
 
     public BoardFrame() {
         this.renderOrder = UiTheme.LAYER_FRAME;
-        this.scaledFrame = scaleToWindow(AssetManager.getTexture(UiTheme.FRAME_BOARD));
+    }
+
+    @Override
+    public void onCreate() {
+        scaledFrame = scaleToWindow(AssetManager.getTexture(UiTheme.FRAME_BOARD));
     }
 
     @Override
