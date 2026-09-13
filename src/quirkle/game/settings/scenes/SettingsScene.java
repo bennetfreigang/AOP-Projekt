@@ -29,7 +29,7 @@ public class SettingsScene extends Scene {
     @Override
     public void onCreate() {
         originalLangIdentifier = AssetManager.getLangIdentifier();
-        
+
         returnButton = new RectangularButton(AssetManager.getMessage("return"));
         applyButton = new RectangularButton(AssetManager.getMessage("apply"));
 

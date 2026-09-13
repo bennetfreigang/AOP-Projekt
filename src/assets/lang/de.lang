@@ -1,6 +1,6 @@
 Deutsch
 
---- MENÜS ------------------------------------------------
+--- MENUS ------------------------------------------------
 
 play == Spielen
 settings == Einstellungen
@@ -18,7 +18,7 @@ proceed == Weiter
 cancel == Abbrechen
 reloadrequest == Das Spiel muss neu geladen werden,\um diese Einstellung zu übernehmen.\Spielstände gehen dabei verloren
 
---- SPIELABLAUF -------------------------------------------
+--- GAMEPLAY -------------------------------------------
 
 points == PUNKTE
 last_round == LETZTE RUNDE
@@ -52,19 +52,6 @@ tutorial_playground_content == Hier legst du deine Steine ab
 
 tutorial_rules_title == Spielanleitung
 tutorial_rules_content == Steine legen\Lege einen oder mehrere Steine in eine einzelne Reihe oder Spalte, ohne Lücken.\Deine Steine müssen einen bereits liegenden Stein berühren.\Alle Steine in einer Linie teilen sich eine Farbe oder ein Symbol,\und derselbe Stein darf nicht zweimal in einer Linie vorkommen.\\Punkte\Jede Linie, die du baust oder erweiterst, gibt 1 Punkt pro Stein darin.\Ein Stein kann sowohl für seine Reihe als auch für seine Spalte zählen.\Eine Linie aus 6 Steinen ist ein Qwirkle und gibt 6 Extrapunkte!\\Spielende\Das Spiel endet, wenn der Beutel leer ist und ein Spieler keine Steine mehr hat.\Der Spieler mit den meisten Punkten gewinnt.
-
---- SPITZNAMEN --------------------------------------------
-
-nickname0 == Bennet
-nickname1 == Alex
-nickname2 == Jarosch
-nickname3 == Kris
-nickname4 == Kris
-nickname5 == Kris
-nickname6 == Kris
-nickname7 == Kris
-nickname8 == Kris
-nickname9 == Kris
 
 --- CREDITS ------------------------------------------------
 
