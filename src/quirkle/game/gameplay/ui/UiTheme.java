@@ -35,10 +35,10 @@ public final class UiTheme {
     public static final Color TEXT_DIMMED = new Color(245, 245, 245, 120);
     public static final Color GOLD = new Color(198, 154, 58);
 
-    /** Tints the frame behind the picked rack tile */
+    /** frame color of the selected tile */
     public static final Color SELECTION = new Color(255, 193, 7);
 
-    /** Tints that frame instead while the placement it was picked for is being refused */
+    /** frame color if placing the tile failed */
     public static final Color REJECTION = new Color(229, 57, 53);
 
     public static final Color GRID_LINE = new Color(255, 255, 255, 34);
@@ -82,27 +82,24 @@ public final class UiTheme {
     public static final int TURN_TOP = 44;
     public static final int TURN_MARGIN_X = 170;
 
-    /** Gap behind the current player's name, before the ones still to come */
+    /** gap after the name of the current player */
     public static final int TURN_CURRENT_GAP = 52;
     public static final int TURN_NAME_GAP = 30;
 
     /**
-     * How long the row takes to slide one place along on a turn change.
-     *
-     * @note Kept equal to the rack's two {@link #HANDOVER_PHASE_SECONDS} phases, so the name row
-     *       and the rack read as one event. Spelled out rather than derived: that constant is
-     *       declared further down, and a forward reference is not allowed here.
+     * duration of the turn order animation
+     * @note same as 2 * HANDOVER_PHASE_SECONDS so it matches the rack animation
      */
     public static final double TURN_SHUFFLE_SECONDS = 0.4;
 
-    /** How far the finished player's name drifts past its slot on the way out */
+    /** how far the name moves left when it leaves */
     public static final int TURN_LEAVE_SHIFT = 110;
 
-    // Layout: the points a finished turn scored, flashed over the middle of the board
+    // Layout: score popup
 
     public static final double SCORE_POPUP_SECONDS = 1.1;
 
-    /** How far the number drifts up over the course of the flash */
+    /** how far the popup moves up */
     public static final int SCORE_POPUP_RISE = 70;
 
     // Layout: the board itself
@@ -111,17 +108,17 @@ public final class UiTheme {
     // Layout: tiles, both on the board and in the rack
     public static final double TILE_PADDING_RATIO = 0.09;
 
-    /** How solid the selected tile looks while it is only a preview on the hovered cell */
+    /** opacity of the placement preview */
     public static final float PLACEMENT_PREVIEW_OPACITY = 0.45f;
 
     // Layout: the active player's card in the bottom left corner
 
     public static final int CARD_LEFT = 12;
 
-    /** Negative: the sprite's transparent lower edge may hang off screen, the heart itself does not */
+    /** negative because the sprite has empty space at the bottom */
     public static final int CARD_BOTTOM_MARGIN = -27;
 
-    /** Keeps the 321:461 aspect of player.png, so the heart is not squashed */
+    /** same aspect ratio as player.png */
     public static final int CARD_WIDTH = 329;
     public static final int CARD_HEIGHT = 472;
 
@@ -131,7 +128,7 @@ public final class UiTheme {
 
     // Layout: tile bag counter, bottom right
 
-    /** The size the diamond is drawn at, whatever the source sprite measures */
+    /** drawn size of the diamond */
     public static final int BAG_SIZE = 340;
 
     public static final int BAG_MARGIN_X = 175;
@@ -150,18 +147,13 @@ public final class UiTheme {
     public static final int RACK_TILE_SIZE = 120;
     public static final int RACK_TILE_SPACING = 165;
 
-    /** Size of the frame drawn behind a single rack tile; one of these per slot */
+    /** size of the frame behind one rack tile */
     public static final int RACK_FRAME_SIZE = 165;
 
-    /**
-     * How far the row's center sits below the board opening's bottom edge.
-     *
-     * @note Less than half a frame, so the row straddles that edge and the frame's rope runs
-     *       behind the slots rather than above them.
-     */
+    /** distance from the bottom of the board opening to the middle of the rack */
     private static final int RACK_CENTER_BELOW_OPENING = 59;
 
-    /** @return the vertical center the row of slots hangs at */
+    /** @return y center of the rack */
     public static int rackCenterY() {
         Rectangle opening = boardViewport();
         return opening.y + opening.height + RACK_CENTER_BELOW_OPENING;

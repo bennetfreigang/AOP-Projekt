@@ -38,7 +38,7 @@ public class TileRack extends PanelEntity {
 
     @Override
     public void onCreate() {
-        // Tinted once here rather than per frame; a slot only swaps which of the three it draws.
+        // tint once here instead of every frame
         slotFrame = AssetManager.getTexture(UiTheme.SPRITE_SLOT_FRAME);
         selectedSlotFrame = RecolorUtil.tint(slotFrame, UiTheme.SELECTION);
         rejectedSlotFrame = RecolorUtil.tint(slotFrame, UiTheme.REJECTION);
@@ -53,15 +53,14 @@ public class TileRack extends PanelEntity {
         }
 
         if (handover.isRunning()) {
-            // Off screen at the turn between the halves, and therefore the one moment the
-            // exchange cannot be seen. Until then the row keeps the finishing player's tiles.
+            // switch the tiles while the rack is off screen
             if (handover.getPhase() == Handover.Phase.ARRIVING && player != currentPlayer) {
                 takeOver(currentPlayer);
             }
             return;
         }
 
-        // Safety net for a turn that passed without the animation running at all.
+        // in case the turn changed without the animation
         if (player != currentPlayer) takeOver(currentPlayer);
 
         syncSlots(currentPlayer.getHand());
@@ -88,7 +87,7 @@ public class TileRack extends PanelEntity {
     }
 
     public boolean handleInput() {
-        // A row in transit belongs to nobody yet; let the click through rather than swallow it.
+        // ignore clicks while the rack is moving
         if (isChangingHands()) return false;
         if (!InputManager.isMouseClicked()) return false;
 
@@ -145,7 +144,7 @@ public class TileRack extends PanelEntity {
 
     @Override
     public void onRender(Graphics2D g) {
-        // Every slot gets its own frame, so the row keeps its shape as the hand empties out.
+        // every slot gets a frame, also the empty ones
         for (int i = 0; i < slots.length; i++) {
             drawSlotFrame(g, i);
         }
@@ -163,12 +162,7 @@ public class TileRack extends PanelEntity {
         g.drawImage(slotFrameFor(index), left, top, size, size, null);
     }
 
-    /**
-     * @return the frame slot {@code index} is drawn with: red while the tile in it is being
-     *         refused, yellow while it is the picked one, plain otherwise
-     * @note Refusal wins over selection, the two being the same tile: only the picked tile can be
-     *       turned down, and the refusal is the newer thing to say about it.
-     */
+    /** @return red frame if the placement failed, yellow if selected, otherwise the normal one */
     private BufferedImage slotFrameFor(int index) {
         HandTileEntity tileEntity = slots[index];
         if (tileEntity == null) return slotFrame;
@@ -240,7 +234,7 @@ public class TileRack extends PanelEntity {
         return (int) y;
     }
 
-    /** @return the width the row of slot frames covers, which is also the rack's hover area */
+    /** @return width of all slot frames (also used as hover area) */
     private static int rackWidth() {
         return (Player.HAND_SIZE - 1) * UiTheme.RACK_TILE_SPACING + UiTheme.RACK_FRAME_SIZE;
     }

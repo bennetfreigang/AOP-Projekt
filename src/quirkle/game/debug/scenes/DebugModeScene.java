@@ -13,13 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The debug panel: one button per {@link DebugAction}, grouped under a heading per
- * {@link DebugAction.Group}, plus a button back to the game.
- *
- * @note Driven directly by {@link quirkle.game.gameplay.GamePlayScene} - {@code update()} and
- *       {@code render()} by hand, {@code destroy()} on close - rather than through
- *       {@link quirkle.engine.SceneManager#setTempScene}: the board underneath has to stay put and
- *       visible, and the gameplay scene keeps hold of when the panel closes again.
+ * Debug menu with one button per {@link DebugAction}, sorted by group.
+ * Opened from the quick menu.
  */
 public class DebugModeScene extends Scene {
 
@@ -34,12 +29,8 @@ public class DebugModeScene extends Scene {
     private SideButton backButton;
 
     /**
-     * Builds the panel: the title, a heading and buttons per group, and the back button.
-     *
-     * @note {@code buttons} is filled here rather than at its declaration, since {@link Scene}'s
-     *       constructor calls {@code onCreate()} before a subclass's field initializers run.
-     * @note {@link #setOnClose} exists for the same reason: a constructor parameter would not reach
-     *       its field until after {@code super()}, and therefore after {@code onCreate()}.
+     * @note buttons is created here and not at the field, because Scene calls onCreate() before the field initializers run.
+     *       Same reason why the close action is set later with {@link #setOnClose}.
      */
     @Override
     public void onCreate() {
@@ -68,15 +59,14 @@ public class DebugModeScene extends Scene {
         buttons.add(backButton);
     }
 
-    /** @param onClose what closing the panel does; wired in by whoever opens this scene. */
+    /** sets what happens when "Back to game" is clicked */
     public void setOnClose(Runnable onClose) {
         backButton.setAction(onClose);
     }
 
     /**
-     * Adds one action's button at {@code rowTop}, disabled while no game is attached.
-     *
-     * @return how far the row cursor advances past this button
+     * Adds the button of one action. It is disabled if no game is running.
+     * @return how far y has to move down for the next button
      */
     private int placeActionButton(DebugAction action, int centerX, int rowTop) {
         SideButton button = new SideButton(action.getLabel(), action::run);
@@ -96,14 +86,14 @@ public class DebugModeScene extends Scene {
         }
     }
 
-    /** @note Dims the gameplay scene showing through underneath, so the panel's own text reads. */
+    /** darkens the scene behind the menu */
     @Override
     public void onRender(Graphics2D g) {
         g.setColor(new Color(0, 0, 0, 180));
         g.fillRect(0, 0, getWidth(), getHeight());
     }
 
-    /** A heading centered on ({@code centerX}, {@code centerY}); the title or one group's label. */
+    /** centered text for the title and the group headings */
     private static final class SectionHeading extends Entity {
         private final String text;
         private final float fontSize;

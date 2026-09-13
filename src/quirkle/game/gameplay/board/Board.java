@@ -155,7 +155,7 @@ public class Board {
 
     /**
      * @return whether the tiles staged so far could be committed as they stand
-     * @note Nothing staged counts as legal: an empty turn is not a broken one.
+     * @note also true if nothing is placed
      */
     public boolean isPendingPlacementLegal() {
         return checkPendingPlacement().isLegal();

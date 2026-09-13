@@ -6,15 +6,10 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
-/**
- * The points a turn scored, flashed over the middle of the board right after the turn is ended.
- *
- * @note Lives in screen space and keeps its own clock, so it neither follows the board camera nor
- *       depends on the handover animation.
- */
+/** Shows the points of a turn in the middle of the board for a short time */
 public class TurnScorePopup extends Entity {
 
-    /** Share of the flash spent at full strength, before the fade out takes the rest */
+    /** part of the animation where the text is fully visible before fading out */
     private static final double HOLD_UNTIL = 0.5;
 
     private final int centerX;
@@ -30,11 +25,7 @@ public class TurnScorePopup extends Entity {
         this.renderOrder = UiTheme.LAYER_HUD;
     }
 
-    /**
-     * Starts the flash over, showing {@code points}.
-     *
-     * @note A turn that scored nothing gets no popup at all; a "+0" would say less than silence.
-     */
+    /** starts the popup, nothing is shown for 0 points */
     public void show(int points) {
         if (points <= 0) return;
 
@@ -57,7 +48,7 @@ public class TurnScorePopup extends Entity {
                 centerX, centerY - rise(progress), 0.0, OriginPresets.CENTER, g);
     }
 
-    /** Lifts the number off the board, fast at first and then settling. */
+    /** moves the number up, fast at first and then slower */
     private static double rise(double progress) {
         double remainingRise = 1.0 - progress;
         return UiTheme.SCORE_POPUP_RISE * (1.0 - remainingRise * remainingRise);

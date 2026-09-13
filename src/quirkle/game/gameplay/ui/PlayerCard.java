@@ -8,7 +8,7 @@ public class PlayerCard extends PanelEntity {
 
     private final Game game;
 
-    // Nudges off the sprite box's centre onto the heart's visual centre, which sits higher.
+    // offset so the number is in the middle of the heart
     private static final int COUNT_OFFSET_X = 20;
     private static final int COUNT_OFFSET_Y = 5;
 
@@ -22,10 +22,6 @@ public class PlayerCard extends PanelEntity {
         setBounds(UiTheme.CARD_LEFT, UiTheme.cardTop(), UiTheme.CARD_WIDTH, UiTheme.CARD_HEIGHT, OriginPresets.TOP_LEFT);
     }
 
-    /**
-     * @note Sits still through a turn change, like the tile bag counter: the card does not travel
-     *       with the handover, so the score simply reads the player whose turn it now is.
-     */
     @Override
     public void onRender(Graphics2D g) {
         drawText(String.valueOf(game.getCurrentPlayer().getScore()), UiTheme.FONT_SIZE_CARD_SCORE, UiTheme.TEXT,

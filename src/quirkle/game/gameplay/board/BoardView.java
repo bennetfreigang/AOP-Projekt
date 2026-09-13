@@ -32,9 +32,8 @@ public class BoardView extends Entity {
 
     @Override
     public void onCreate() {
-        // Board space covers the whole window; the frame lying over it is what leaves only the
-        // opening visible. The viewport stays the frame's opening, since a click outside it is
-        // not a move even though the cell under it is drawn.
+        // the grid covers the whole window, the frame on top hides the rest.
+        // viewport is still only the opening because clicks outside of it are ignored
         grid = new BoardGrid(camera, windowBounds());
         grid.create();
     }
@@ -47,20 +46,14 @@ public class BoardView extends Entity {
         return viewport.contains(screenX, screenY);
     }
 
-    /**
-     * Shows {@code tile} on {@code position} as a translucent ghost, so the player can see where a
-     * click would put it. A {@code null} tile clears the preview.
-     *
-     * @note A real {@link BoardTileEntity} rather than a sprite drawn by hand, so the ghost is
-     *       sized and padded exactly like the tile it stands in for.
-     */
+    /** Shows a transparent preview of the tile on the position. null removes the preview */
     public void setPlacementPreview(Tile tile, Position position) {
         if (tile == null || position == null) {
             previewTile = null;
             return;
         }
 
-        // The pointer rests inside one cell for many frames; only a real move rebuilds the ghost.
+        // only create a new preview if the tile or position changed
         if (previewTile != null && previewTile.getTile() == tile
                 && previewTile.getPosition().equals(position)) {
             return;
@@ -86,14 +79,13 @@ public class BoardView extends Entity {
             tileEntity.update(dt);
         }
 
-        // Keeps the ghost on its cell while the board is panned and zoomed under it.
+        // keep the preview on its cell when the camera moves
         if (previewTile != null) layoutTile(previewTile, camera.getTileSize());
     }
 
     @Override
     public void onRender(Graphics2D g) {
-        // No clip: the board is drawn across the window and the frame masks it, so the opening's
-        // ragged brush edge cuts it instead of a straight rectangle.
+        // no clipping, the frame is drawn on top and hides the rest
         grid.render(g);
 
         for (BoardTileEntity tileEntity : tileEntities.values()) {

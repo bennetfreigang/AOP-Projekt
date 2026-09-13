@@ -72,10 +72,7 @@ public class Game {
         return turnNumber;
     }
 
-    /**
-     * @return whether the game has run out: the bag is empty and somebody has played their last
-     *         tile, so no hand can be filled back up anymore
-     */
+    /** @return true if the bag is empty and a player has no tiles left */
     public boolean isOver() {
         if (tileBag.getSize() > 0) return false;
 
@@ -83,9 +80,8 @@ public class Game {
     }
 
     /**
-     * @return the player holding the most points
-     * @note A tie falls to whoever sits earlier in the player list: the end screen has to name
-     *       somebody, and the rules do not settle a draw.
+     * @return the player with the highest score
+     * @note on a draw the player who comes first in the list wins
      */
     public Player getWinner() {
         return players.stream().max(Comparator.comparingInt(Player::getScore)).orElseThrow();

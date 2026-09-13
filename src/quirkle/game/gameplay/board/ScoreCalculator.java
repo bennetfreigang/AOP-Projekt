@@ -28,7 +28,7 @@ class ScoreCalculator {
         List<Integer> formedLineLengths = findFormedLineLengths(allTiles, pendingTiles);
 
         if (formedLineLengths.isEmpty()) {
-            // First move of the game: a lone tile with no neighbors in either direction still scores.
+            // first move with only one tile
             return pendingTiles.size();
         }
         return sumWithQwirkleBonus(formedLineLengths);

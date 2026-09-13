@@ -23,8 +23,7 @@ public class TileBagCounter extends PanelEntity {
 
     @Override
     public void onRender(Graphics2D g) {
-        // Scaled off the sprite's own width: drawSprite multiplies the source size, so a hardcoded
-        // divisor silently changes the diamond's size whenever the asset is swapped.
+        // scale depends on the sprite width, so the size stays right if the asset changes
         double scale = UiTheme.BAG_SIZE / (double) AssetManager.getTexture(UiTheme.SPRITE_GOLDEN_FRAME).getWidth();
 
         drawSprite(UiTheme.SPRITE_GOLDEN_FRAME, scale, x, y, 0.0, OriginPresets.CENTER, g);

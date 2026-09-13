@@ -7,9 +7,7 @@ import java.awt.*;
 
 /**
  * A tile on the rack.
- *
- * @note Draws no marking of its own: being picked and being refused both show on the frame behind
- *       it, which {@link TileRack} tints. All this adds is the shake of a refused placement.
+ * @note selection is shown by the frame in {@link TileRack}, this class only adds the shake animation
  */
 public class HandTileEntity extends TileEntity {
 

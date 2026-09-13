@@ -16,10 +16,7 @@ import java.awt.Graphics2D;
 import java.util.Comparator;
 import java.util.List;
 
-/**
- * The screen shown once the game has run out: the winner on a brush stroke, the rest of the field
- * beneath them, and the way back to the menu.
- */
+/** End screen with the winner, the other players and a button back to the menu */
 public class EndGameScene extends Scene {
 
     private static final String BACKGROUND = "gameplay/ui/vignette";
@@ -33,11 +30,8 @@ public class EndGameScene extends Scene {
     private static final Color LIST_COLOR = new Color(245, 245, 245, 170);
 
     /**
-     * Painted under the vignette, which carries no color of its own.
-     *
-     * @note vignette.png is pure black at varying alpha - a mask, not a picture. Over nothing it
-     *       would be a black screen; over this it darkens towards the edges and leaves the middle,
-     *       where the brush sits, the lightest part of the screen.
+     * background color behind the vignette
+     * @note vignette.png is only black with transparency, without this the screen would just be black
      */
     private static final Color BACKDROP = new Color(88, 88, 92);
 
@@ -45,19 +39,19 @@ public class EndGameScene extends Scene {
     private static final float WINNER_SCORE_FONT_SIZE = 62f;
     private static final float LIST_FONT_SIZE = 40f;
 
-    /** Drawn width of the brush; its height follows from the sprite's own proportions */
+    /** width of the brush, the height is scaled with it */
     private static final int BRUSH_WIDTH = 1120;
 
     private static final int BRUSH_CENTER_Y = 400;
 
-    /** The name sits a little above the brush's middle, the score below it */
+    /** name a bit above the middle of the brush, score below */
     private static final int NAME_RISE = 34;
     private static final int SCORE_DROP = 150;
 
     private static final int LIST_TOP = 700;
     private static final int LIST_LINE_HEIGHT = 62;
 
-    /** Half the space kept between a listed name and its score, either side of the centre */
+    /** gap between name and score (on each side of the center) */
     private static final int LIST_COLUMN_GAP = 30;
 
     private static final int BUTTON_GAP = 120;
@@ -65,7 +59,6 @@ public class EndGameScene extends Scene {
     private final RectangularButton returnButton;
 
     public EndGameScene(Game game) {
-        // Asked rather than worked out here, so the rule for a draw lives in one place only.
         Player winner = game.getWinner();
 
         addEntities(new SimpleSpriteEntity(BACKGROUND, Entity.OriginPresets.TOP_LEFT));
@@ -96,7 +89,7 @@ public class EndGameScene extends Scene {
     private void addBrush() {
         SimpleSpriteEntity brush = new SimpleSpriteEntity(BRUSH, Entity.OriginPresets.CENTER);
 
-        // Scaled off its own width so the stroke keeps its proportions whatever the sprite measures.
+        // scale so the brush is BRUSH_WIDTH wide
         brush.scale = BRUSH_WIDTH / (double) AssetManager.getTexture(BRUSH).getWidth();
         brush.x = getCenterX();
         brush.y = BRUSH_CENTER_Y;

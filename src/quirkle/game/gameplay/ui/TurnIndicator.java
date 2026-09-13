@@ -13,16 +13,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The turn order along the top edge: whoever is to move in full size, the rest lined up behind
- * them, faded back.
- *
- * @note On a turn change the row slides one place to the left: the finished player shrinks and
- *       fades out past the left edge while reappearing at the tail, and everybody else moves up
- *       one slot, so the next player takes over the leading slot's size and weight.
+ * Shows the turn order at the top. The current player is big, the others are smaller behind.
+ * @note when the turn changes all names slide one slot to the left and the finished player moves to the end
  */
 public class TurnIndicator extends Entity {
 
-    /** Where one name sits: its corner, the size it is drawn at, and how solid it looks */
+    /** position, font size and alpha of one name */
     private record Slot(double x, double y, double fontSize, double alpha) {
 
         static Slot between(Slot from, Slot to, double progress) {
@@ -37,7 +33,7 @@ public class TurnIndicator extends Entity {
 
     private final Game game;
 
-    /** The order on screen; during a shuffle it is where the row is heading */
+    /** the order that is shown (while animating it's the new order) */
     private List<Player> shownOrder;
 
     private List<Player> previousOrder = List.of();
@@ -53,8 +49,7 @@ public class TurnIndicator extends Entity {
 
     @Override
     public void onCreate() {
-        // Read straight away rather than waiting for the first tick: the window can paint before
-        // the game loop has run a single frame.
+        // set here already, the first render can happen before the first tick
         shownOrder = game.getTurnOrder();
     }
 
@@ -86,9 +81,7 @@ public class TurnIndicator extends Entity {
         double progress = shuffleProgress();
         Player finished = finishedPlayer();
 
-        // The old row with the finished player appended: that extra slot is where their name comes
-        // in from, just behind the row, so it moves up with everybody else rather than waiting at
-        // its destination while the name ahead of it is still on its way.
+        // old row + the finished player at the end, so their name comes in from behind the row
         List<Slot> previous = layout(g, rowToSlideFrom(finished));
 
         for (int i = 0; i < shownOrder.size(); i++) {
@@ -98,13 +91,13 @@ public class TurnIndicator extends Entity {
                     ? previous.size() - 1
                     : previousOrder.indexOf(player);
 
-            // Nobody on the row before: no slot to travel from, so it just fades in where it now belongs.
+            // wasn't in the row before -> just fade in
             if (previousSlot < 0) {
                 draw(g, player, target.get(i), progress);
                 continue;
             }
 
-            // Fades in only if it is arriving; the ones already on the row stay solid as they move.
+            // only the player coming in at the end fades in
             double fade = player == finished ? progress : 1.0;
             draw(g, player, Slot.between(previous.get(previousSlot), target.get(i), progress), fade);
         }
@@ -112,18 +105,11 @@ public class TurnIndicator extends Entity {
         if (finished != null) drawFinished(g, finished, previous, progress);
     }
 
-    /**
-     * Slides the finished player's name out to the left, shrinking to the trailing size and fading
-     * as it goes.
-     *
-     * @note Drawn on top of its own arriving copy at the tail; the two never overlap on screen,
-     *       being a row apart.
-     */
+    /** moves the name of the finished player out to the left, it gets smaller and fades out */
     private void drawFinished(Graphics2D g, Player finished, List<Slot> previous, double progress) {
         Slot from = previous.get(0);
 
-        // Slot 1 of the old row is already a trailing name on the same baseline, so its size and
-        // vertical position are exactly what the leaving name shrinks into.
+        // slot 1 already has the small size and the y position we need
         Slot trailing = previous.get(1);
         Slot out = new Slot(from.x() - UiTheme.TURN_LEAVE_SHIFT, trailing.y(),
                 trailing.fontSize(), from.alpha());
@@ -131,10 +117,7 @@ public class TurnIndicator extends Entity {
         draw(g, finished, Slot.between(from, out, progress), 1.0 - progress);
     }
 
-    /**
-     * @return the row the shuffle starts from: {@link #previousOrder}, with the finished player
-     *         appended once more as the slot their name slides in from
-     */
+    /** @return previousOrder with the finished player added at the end again */
     private List<Player> rowToSlideFrom(Player finished) {
         if (finished == null) return previousOrder;
 
@@ -144,8 +127,7 @@ public class TurnIndicator extends Entity {
     }
 
     /**
-     * @return the player whose turn just ended, or {@code null} if the row did not simply rotate by
-     *         one - the debug mode can reorder the players outright, and then nothing is leaving
+     * @return the player whose turn just ended, or null if the order did not just move by one (can happen in debug mode)
      */
     private Player finishedPlayer() {
         if (previousOrder.size() < 2) return null;
@@ -154,16 +136,13 @@ public class TurnIndicator extends Entity {
         return shownOrder.get(shownOrder.size() - 1) == finished ? finished : null;
     }
 
-    /** @return the eased 0..1 course of the shuffle */
+    /** @return animation progress from 0 to 1 (smoothstep) */
     private double shuffleProgress() {
         double linear = 1.0 - shuffleRemaining / UiTheme.TURN_SHUFFLE_SECONDS;
         return linear * linear * (3.0 - 2.0 * linear);
     }
 
-    /**
-     * @return where each name of {@code order} sits, the leading one in full size and the rest
-     *         lined up behind it
-     */
+    /** @return the slot of every name, the first one big and the rest small */
     private List<Slot> layout(Graphics2D g, List<Player> order) {
         List<Slot> slots = new ArrayList<>(order.size());
 
@@ -174,7 +153,7 @@ public class TurnIndicator extends Entity {
             boolean isLeading = i == 0;
             float fontSize = isLeading ? UiTheme.FONT_SIZE_TURN_CURRENT : UiTheme.FONT_SIZE_TURN_NEXT;
 
-            // Every name hangs off the leading name's baseline, whatever size it is drawn at.
+            // all names use the baseline of the first name
             double top = baseline - metrics(g, fontSize).getAscent();
             double alpha = isLeading ? UiTheme.TEXT.getAlpha() : UiTheme.TEXT_DIMMED.getAlpha();
 
@@ -187,11 +166,7 @@ public class TurnIndicator extends Entity {
         return slots;
     }
 
-    /**
-     * @param fade scales the slot's own alpha, for a name on its way in or out
-     * @implNote Only the alpha is interpolated, not the color: {@link UiTheme#TEXT} and
-     *           {@link UiTheme#TEXT_DIMMED} are the same white and differ in nothing else.
-     */
+    /** @param fade gets multiplied with the alpha of the slot */
     private void draw(Graphics2D g, Player player, Slot slot, double fade) {
         int alpha = (int) Math.round(Math.clamp(slot.alpha() * fade, 0.0, 255.0));
         Color color = new Color(UiTheme.TEXT.getRed(), UiTheme.TEXT.getGreen(), UiTheme.TEXT.getBlue(), alpha);

@@ -46,7 +46,7 @@ public class GamePlayScene extends Scene {
     private final TurnScorePopup turnScorePopup;
 
     public GamePlayScene(List<Player> players) {
-        // The frame's opening, not the window, is what the board has to fit into.
+        // the board is only visible inside the frame
         Rectangle viewport = UiTheme.boardViewport();
 
         this.game = new Game(new Board(), new TileBag(), players);
@@ -79,8 +79,7 @@ public class GamePlayScene extends Scene {
 
     @Override
     public void onTick(double dt) {
-        // Ahead of everything else: the HUD elements read this clock during their own ticks, and
-        // they have to see the same frame of it.
+        // has to run first, the HUD uses it in its own tick
         handover.advance(dt);
         startHandoverIfTurnPassed();
 
@@ -106,17 +105,11 @@ public class GamePlayScene extends Scene {
         boolean isFirstFrame = presentedPlayer == null;
         presentedPlayer = currentPlayer;
 
-        // Nothing to hand over from at the start of the game; the HUD is simply there.
+        // no animation at the start of the game
         if (!isFirstFrame) handover.start();
     }
 
-    /**
-     * Ghosts the selected tile onto the cell under the pointer, so the player sees where a click
-     * would land.
-     *
-     * @note Nothing is shown on a cell that already holds a tile, committed or staged this turn:
-     *       a click there is a take-back or a rejected move, never a placement.
-     */
+    /** Shows the selected tile on the hovered cell. Nothing is shown if the cell is already taken */
     private void updatePlacementPreview() {
         Tile selectedTile = tileRack.getSelectedTile();
 
@@ -144,13 +137,12 @@ public class GamePlayScene extends Scene {
         if (tileRack.handleInput()) return; // the rack got the click, don't also place a tile
 
         if (!InputManager.isMouseClicked()) return;
-        // A click on the frame's border points at a cell the player cannot see; it is not a move.
+        // ignore clicks on the frame
         if (!boardView.contains(InputManager.getMouseX(), InputManager.getMouseY())) return;
 
         Position position = camera.screenToBoard(InputManager.getMouseX(), InputManager.getMouseY());
 
-        // A click on a tile staged this turn takes it back, whether or not a rack tile is selected;
-        // placing onto an occupied cell would be rejected anyway.
+        // clicking a tile placed this turn takes it back
         if (game.getBoard().getPendingTiles().containsKey(position)) {
             game.takeBackTile(position);
             return;
