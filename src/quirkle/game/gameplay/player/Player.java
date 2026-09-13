@@ -43,10 +43,6 @@ public class Player {
         this.lastRoundScore = lastRoundScore;
     }
 
-    public void resetScore() {
-        setScore(0);
-    }
-
     public List<Tile> getHand() {
         return Collections.unmodifiableList(hand);
     }
@@ -103,17 +99,6 @@ public class Player {
                     "No rack slot " + slotIndex + "; " + name + " holds " + hand.size() + " tiles.");
         }
         return hand.set(slotIndex, tile);
-    }
-
-    /**
-     * Takes every tile off the rack.
-     *
-     * @return the tiles that were on it, in rack order
-     */
-    public List<Tile> clearHand() {
-        List<Tile> removed = new ArrayList<>(hand);
-        hand.clear();
-        return removed;
     }
 
     private void setScore(int score) {

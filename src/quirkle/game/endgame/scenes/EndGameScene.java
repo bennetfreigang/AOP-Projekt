@@ -5,9 +5,7 @@ import quirkle.engine.Entity;
 import quirkle.engine.Scene;
 import quirkle.engine.SceneManager;
 import quirkle.game.gameplay.Game;
-import quirkle.game.gameplay.board.Board;
 import quirkle.game.gameplay.player.Player;
-import quirkle.game.gameplay.tiles.TileBag;
 import quirkle.game.startmenu.scenes.StartMenuScene;
 import quirkle.game.util.RectangularButton;
 import quirkle.game.util.SimpleSpriteEntity;
@@ -65,26 +63,6 @@ public class EndGameScene extends Scene {
     private static final int BUTTON_GAP = 120;
 
     private final RectangularButton returnButton;
-
-// --- DEBUG ---
-//    public EndGameScene() {
-//        this(debugGame());
-//    }
-//
-//    /** @return a game that looks finished: players with scores on it, nothing on the board */
-//    private static Game debugGame() {
-//        return new Game(new Board(), new TileBag(), List.of(
-//                scored("Bennet", 141),
-//                scored("Alex", 137),
-//                scored("Jarosch", 112),
-//                scored("Kris", 98)));
-//    }
-//
-//    private static Player scored(String name, int score) {
-//        Player player = new Player(name);
-//        player.increaseScore(score);
-//        return player;
-//    }
 
     public EndGameScene(Game game) {
         // Asked rather than worked out here, so the rule for a draw lives in one place only.

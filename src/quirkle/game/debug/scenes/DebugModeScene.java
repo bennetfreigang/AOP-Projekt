@@ -62,7 +62,7 @@ public class DebugModeScene extends Scene {
             y += GROUP_GAP;
         }
 
-        backButton = new SideButton("Back to game", null, null);
+        backButton = new SideButton("Back to game", null);
         backButton.place(centerX + UiTheme.SIDE_BUTTON_WIDTH / 2, y + UiTheme.SIDE_BUTTON_HEIGHT / 2);
         addEntities(backButton);
         buttons.add(backButton);
@@ -79,7 +79,7 @@ public class DebugModeScene extends Scene {
      * @return how far the row cursor advances past this button
      */
     private int placeActionButton(DebugAction action, int centerX, int rowTop) {
-        SideButton button = new SideButton(action.getLabel(), null, action::run);
+        SideButton button = new SideButton(action.getLabel(), action::run);
         button.setEnabled(DebugMode.hasGame());
         button.place(centerX + UiTheme.SIDE_BUTTON_WIDTH / 2, rowTop + UiTheme.SIDE_BUTTON_HEIGHT / 2);
 

@@ -21,10 +21,6 @@ public class BoardCamera {
         this.baseTileSize = baseTileSize;
     }
 
-    public double getZoom() {
-        return zoom;
-    }
-
     public void zoomBy(double delta) {
         zoom = Math.clamp(zoom + delta, MIN_ZOOM, MAX_ZOOM);
     }

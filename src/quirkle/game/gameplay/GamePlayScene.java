@@ -1,5 +1,6 @@
 package quirkle.game.gameplay;
 
+import quirkle.engine.EngineConfig;
 import quirkle.engine.InputManager;
 import quirkle.engine.Scene;
 import quirkle.engine.SceneManager;
@@ -164,7 +165,7 @@ public class GamePlayScene extends Scene {
         } catch (IllegalStateException e) {
             // Feld belegt oder Platzierung verstößt gegen die Qwirkle-Regeln -> Klick wird ignoriert
             tileRack.rejectSelection();
-            System.out.println(e.getMessage());
+            EngineConfig.message(e.getMessage(), getClass().getSimpleName(), EngineConfig.messageType.INFO);
         }
     }
 
@@ -199,16 +200,14 @@ public class GamePlayScene extends Scene {
 
     private void endTurn() {
         try {
-            Player player = game.getCurrentPlayer();
             int points = game.endTurn();
             tileRack.clearSelection();
             turnScorePopup.show(points);
-            System.out.println(player.getName() + " erhält " + points + " Punkte.");
 
             if (game.isOver()) SceneManager.setScene(new EndGameScene(game));
         } catch (IllegalStateException e) {
             // Zug ist noch nicht abschließbar (z.B. kein Stein gelegt) -> Eingabe wird ignoriert
-            System.out.println(e.getMessage());
+            EngineConfig.message(e.getMessage(), getClass().getSimpleName(), EngineConfig.messageType.INFO);
         }
     }
 }

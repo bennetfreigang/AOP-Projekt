@@ -24,8 +24,6 @@ public class BoardTileEntity extends TileEntity {
 
     public Position getPosition() { return position; }
 
-    public boolean isPending() { return pending; }
-
     public void setPending(boolean pending) {
         if (this.pending != pending) pendingTime = 0.0;
         this.pending = pending;

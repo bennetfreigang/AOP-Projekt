@@ -51,11 +51,6 @@ public enum DebugAction {
         this.action = action;
     }
 
-    /** @return the panel section this action belongs to. */
-    public Group getGroup() {
-        return group;
-    }
-
     /** @return the button's caption. */
     public String getLabel() {
         return label;

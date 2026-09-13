@@ -24,14 +24,6 @@ public abstract class PanelEntity extends Entity {
         return (int) (y - origin.y * getScaledHeight());
     }
 
-    public int getRight() {
-        return getLeft() + getWidth();
-    }
-
-    public int getBottom() {
-        return getTop() + getHeight();
-    }
-
     public int getWidth() {
         return (int) getScaledWidth();
     }

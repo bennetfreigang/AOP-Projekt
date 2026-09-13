@@ -43,12 +43,6 @@ public class Handover {
         return getPhase() == Phase.LEAVING ? easeIn(linear) : easeOut(linear);
     }
 
-    public double getTotalProgress() {
-        if (!running) return 1.0;
-
-        return smoothStep(clamp01(elapsed / (2.0 * UiTheme.HANDOVER_PHASE_SECONDS)));
-    }
-
     public static double at(double from, double to, double progress) {
         return from + (to - from) * progress;
     }
@@ -60,10 +54,6 @@ public class Handover {
     private static double easeOut(double t) {
         double remaining = 1.0 - t;
         return 1.0 - remaining * remaining;
-    }
-
-    private static double smoothStep(double t) {
-        return t * t * (3.0 - 2.0 * t);
     }
 
     private static double clamp01(double value) {

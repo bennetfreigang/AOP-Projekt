@@ -13,7 +13,6 @@ public final class UiTheme {
     // Render layers, applied to Entity#renderOrder
 
     public static final int LAYER_GRID = -100;
-    public static final int LAYER_TILE = 0;
     public static final int LAYER_FRAME = 50;
     public static final int LAYER_HUD = 100;
 
@@ -178,7 +177,6 @@ public final class UiTheme {
 
     public static final int SIDE_BUTTON_WIDTH = 270;
     public static final int SIDE_BUTTON_HEIGHT = 90;
-    public static final int GLYPH_SIZE = 44;
 
     public static String text(String key) {
         return AssetManager.getMessage(key);

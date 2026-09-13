@@ -19,10 +19,6 @@ class PlacementValidator {
      * Checks {@code pendingTiles} against every placement rule
      * @return {@link PlacementResult#LEGAL}, or the first rule that rejects them
      */
-    static boolean isTilePlacementPossible(Map<Position, Tile> placedTiles, Map<Position, Tile> pendingTiles, Position position, Tile tile) {
-        return checkTilePlacement(placedTiles, pendingTiles, position, tile).isLegal();
-    }
-
     static PlacementResult checkPendingTilePlacement(Map<Position, Tile> placedTiles, Map<Position, Tile> pendingTiles) {
         for (Position position : pendingTiles.keySet()) {
             if (!isPositionFree(placedTiles, position)) return PlacementResult.POSITION_OCCUPIED;
