@@ -62,22 +62,22 @@ tutorial_rules_content == Placing tiles\Place one or more tiles in a single row 
 --- CREDITS ----------------------------------------------
 
 creditEntry_title0 == Programming
-creditEntry_content0 == Bennet Freigang\Alex Giffy\Jarosch Hanke
+creditEntry_content0 == Bennet Freigang\Alexander Giffey\Jarosch Hanke
 
 creditEntry_title1 == Game Concept & Design
-creditEntry_content1 == Bennet Freigang\Alex Giffy\Jarosch Hanke
+creditEntry_content1 == Bennet Freigang\Alexander Giffey\Jarosch Hanke
 
 creditEntry_title2 == Assets & Graphics
-creditEntry_content2 == Bennet Freigang\Alex Giffy\Jarosch Hanke
+creditEntry_content2 == Bennet Freigang\Alexander Giffey\Jarosch Hanke
 
-creditEntry_title3 == Game Rules & Scoring
-creditEntry_content3 == Bennet Freigang
+creditEntry_title3 == Quality Assurance & Balancing
+creditEntry_content3 == Bennet Freigang\Alexander Giffey\Jarosch Hanke
 
 creditEntry_title4 == Special Thanks
 creditEntry_content4 == Thanks for playing!
 
 creditEntry_title5 == Sounds
-creditEntry_content5 == somesound1\somesound2\somesound3
+creditEntry_content5 == win.wav: https://pixabay.com/sound-effects/musical-brass-fanfare-with-timpani-and-winchimes-reverberated-146260/\turn_finished.wav: https://pixabay.com/sound-effects/app-interface-click-2-476372/\increase_score.wav: https://pixabay.com/sound-effects/film-special-effects-bonus-points-190035/\draw.wav: https://pixabay.com/sound-effects/film-special-effects-placing-poker-chips-522521/\placetile: https://pixabay.com/de/sound-effects/natur-the-sound-of-stones-the-impact-of-a-stone-звук-камней-удар-камня-9813/
 
 creditEntry_title6 == Fonts
 creditEntry_content6 == Higher Jump: https://www.1001fonts.com/higher-jump-font.html\Edosz: https://www.1001fonts.com/edo-sz-font.html\PolyRegular: https://www.1001fonts.com/poly-font.html\ARIAL
