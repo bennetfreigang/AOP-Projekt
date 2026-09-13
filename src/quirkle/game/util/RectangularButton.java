@@ -6,6 +6,8 @@ import java.awt.*;
 
 public class RectangularButton extends Entity {
 
+    public static final String[] BUTTONCLICK_PENTATONIC = {"btnclickpenta/B4","btnclickpenta/Cis5","btnclickpenta/E5","btnclickpenta/Fis5","btnclickpenta/Gis4"};
+
     String text;
     public double minSize = 1.0;
     double sizeModifier = minSize;
@@ -41,5 +43,10 @@ public class RectangularButton extends Entity {
     @Override
     public void onRender(Graphics2D g) {
         drawText(text, (float) (50*sizeModifier), Color.WHITE, "poly_regular", x, y-4, 0.0, OriginPresets.CENTER, g);
+    }
+
+    @Override
+    public void onDestroy() {
+        if (isHovered()) PlayRandomSound.playRand(RectangularButton.BUTTONCLICK_PENTATONIC);
     }
 }

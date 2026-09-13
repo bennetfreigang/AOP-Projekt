@@ -76,6 +76,11 @@ public class EndGameScene extends Scene {
     }
 
     @Override
+    public void onCreate() {
+        AssetManager.playSound("endgame/win", 0.2);
+    }
+
+    @Override
     public void onRender(Graphics2D g) {
         g.setColor(BACKDROP);
         g.fillRect(0, 0, getWidth(), getHeight());

@@ -1,9 +1,6 @@
 package quirkle.game.gameplay;
 
-import quirkle.engine.EngineConfig;
-import quirkle.engine.InputManager;
-import quirkle.engine.Scene;
-import quirkle.engine.SceneManager;
+import quirkle.engine.*;
 import quirkle.game.debug.DebugMode;
 import quirkle.game.endgame.scenes.EndGameScene;
 import quirkle.game.gameplay.board.*;
@@ -13,6 +10,7 @@ import quirkle.game.gameplay.tiles.*;
 import quirkle.game.gameplay.ui.*;
 import quirkle.game.gameplay.ui.TurnScorePopup;
 import quirkle.game.quickmenu.scenes.QuickMenuScene;
+import quirkle.game.util.PlayRandomSound;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -154,10 +152,12 @@ public class GamePlayScene extends Scene {
         try {
             game.placeTile(position, selectedTile);
             tileRack.clearSelection();
+            PlayRandomSound.playRand("gameplay/placetile/0","gameplay/placetile/1","gameplay/placetile/2","gameplay/placetile/3");
         } catch (IllegalStateException e) {
             // Feld belegt oder Platzierung verstößt gegen die Qwirkle-Regeln -> Klick wird ignoriert
             tileRack.rejectSelection();
             EngineConfig.message(e.getMessage(), getClass().getSimpleName(), EngineConfig.messageType.INFO);
+            AssetManager.playSound("problem", 1.0);
         }
     }
 
@@ -196,7 +196,10 @@ public class GamePlayScene extends Scene {
             tileRack.clearSelection();
             turnScorePopup.show(points);
 
-            if (game.isOver()) SceneManager.setScene(new EndGameScene(game));
+            if (game.isOver()) {
+                SceneManager.setScene(new EndGameScene(game));
+                AssetManager.playSound("ingameplay scene endturn",1.0);
+            }
         } catch (IllegalStateException e) {
             // Zug ist noch nicht abschließbar (z.B. kein Stein gelegt) -> Eingabe wird ignoriert
             EngineConfig.message(e.getMessage(), getClass().getSimpleName(), EngineConfig.messageType.INFO);

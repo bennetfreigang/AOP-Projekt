@@ -72,14 +72,24 @@ public class PlayerSelectScene extends Scene {
 
     @Override
     public void onTick(double dt) {
-        if (upArrow.isClicked() && playerCount < MAX_PLAYERS) {
-            playerCount++;
-            playerCountBoard.setMessage(String.valueOf(playerCount));
+        if (upArrow.isClicked()) {
+            if (playerCount < MAX_PLAYERS) {
+                playerCount++;
+                playerCountBoard.setMessage(String.valueOf(playerCount));
+
+                AssetManager.playSound("playerselect/increase",1.0);
+
+            }   else AssetManager.playSound("problem",1.0);
         }
 
-        if (downArrow.isClicked() && playerCount > MIN_PLAYERS) {
-            playerCount--;
-            playerCountBoard.setMessage(String.valueOf(playerCount));
+        if (downArrow.isClicked()) {
+            if (playerCount > MIN_PLAYERS) {
+                playerCount--;
+                playerCountBoard.setMessage(String.valueOf(playerCount));
+
+                AssetManager.playSound("playerselect/decrease",1.0);
+
+            }   else AssetManager.playSound("problem",1.0);
         }
 
         if (playButton.isClicked()) {

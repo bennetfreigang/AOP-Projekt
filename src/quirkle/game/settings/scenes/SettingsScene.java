@@ -7,6 +7,8 @@ import quirkle.game.settings.entities.SoundVolumeSlider;
 import quirkle.game.util.*;
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.security.Key;
 
 public class SettingsScene extends Scene {
 
@@ -74,12 +76,12 @@ public class SettingsScene extends Scene {
             languageValueLabel.setMessage(AssetManager.getLangName());
         }
 
-        if (returnButton.isClicked()) {
+        if (returnButton.isClicked() || InputManager.isKeyPressed(KeyEvent.VK_ESCAPE)) {
             AssetManager.setLang(originalLangIdentifier);
             SceneManager.stopTempScene();
         }
 
-        if (applyButton.isClicked()) {
+        if (applyButton.isClicked() || InputManager.isKeyPressed(KeyEvent.VK_ENTER)) {
             EngineConfig.VOLUME_MAIN = volumeSlider.getValue() / 100.0;
             PersistentData.lang = AssetManager.getLangIdentifier();
             SceneManager.setTempScene(new ReloadDialogBox(AssetManager.getMessage("reloadrequest")), false, true);

@@ -3,6 +3,7 @@ package quirkle.game.tutorial.scenes;
 import quirkle.engine.*;
 import quirkle.game.tutorial.entities.TutorialEntry;
 import quirkle.game.tutorial.entities.TutorialIntro;
+import quirkle.game.util.PlayRandomSound;
 import quirkle.game.util.SimpleSpriteEntity;
 
 import java.awt.event.KeyEvent;
@@ -44,7 +45,10 @@ public class TutorialScene extends Scene {
                     sceneEntities.get(i).velocity = entryVelocity;
                 }
             }
-            if (entryStepIndex == entryCount + 2) SceneManager.stopTempScene();
+            if (entryStepIndex == entryCount + 2) {
+                AssetManager.playSound("tutorial/moveto_gameplay", 1.0);
+                SceneManager.stopTempScene();
+            }   else PlayRandomSound.playRand("btnclickpenta/B4", "btnclickpenta/Cis5", "btnclickpenta/E5", "btnclickpenta/Fis5", "btnclickpenta/Gis4");
         }
     }
 }

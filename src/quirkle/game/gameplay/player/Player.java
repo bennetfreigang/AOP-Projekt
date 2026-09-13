@@ -1,5 +1,6 @@
 package quirkle.game.gameplay.player;
 
+import quirkle.engine.AssetManager;
 import quirkle.game.gameplay.tiles.Tile;
 import quirkle.game.gameplay.tiles.TileBag;
 
@@ -32,6 +33,7 @@ public class Player {
     }
 
     public void increaseScore(int points) {
+        AssetManager.playSound("gameplay/increase_score", 0.08);
         setScore(this.score + points);
     }
 
@@ -51,7 +53,9 @@ public class Player {
      * Draws from {@code tileBag} until the hand holds {@value #HAND_SIZE} tiles
      */
     public void refillHand(TileBag tileBag) {
-        hand.addAll(tileBag.drawTiles(HAND_SIZE - hand.size()));
+        int cardsToPull = HAND_SIZE - hand.size();
+        hand.addAll(tileBag.drawTiles(cardsToPull));
+        if (cardsToPull > 0) AssetManager.playSound("gameplay/draw",0.15);
     }
 
     /** @return if this exact tile instance is on the player's rack */

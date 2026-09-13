@@ -174,7 +174,7 @@ public class AssetManager {
     public static void playSound(String identifier, double volume) {
         if (identifier == null || identifier.isEmpty()) { fallbackSound(identifier); return; }
 
-        identifier = EngineConfig.ASSET_ORIGIN + EngineConfig.SOUND_SUBDIR + identifier + ".wav";
+        identifier = EngineConfig.ASSET_ORIGIN + EngineConfig.SOUND_SUBDIR + "/" + identifier + ".wav";
 
         if (soundCache.containsKey(identifier)) { playRawBytes(soundCache.get(identifier), volume); return; }
 
@@ -187,4 +187,4 @@ public class AssetManager {
             fallbackSound(identifier);
         }
     }
-}
+}
