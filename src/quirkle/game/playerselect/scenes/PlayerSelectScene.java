@@ -92,7 +92,7 @@ public class PlayerSelectScene extends Scene {
             }   else AssetManager.playSound("problem",1.0);
         }
 
-        if (playButton.isClicked()) {
+        if (playButton.isClicked() || InputManager.isKeyPressed(KeyEvent.VK_ENTER)) {
             SceneManager.setScene(new GamePlayScene(drawRandomPlayers(playerCount)));
         }
 
