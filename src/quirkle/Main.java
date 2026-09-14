@@ -1,17 +1,9 @@
 package quirkle;
 
 import quirkle.engine.*;
-import quirkle.game.endgame.scenes.EndGameScene;
-import quirkle.game.gameplay.Game;
-import quirkle.game.gameplay.GamePlayScene;
-
-import quirkle.game.gameplay.board.Board;
-import quirkle.game.gameplay.player.Player;
-import quirkle.game.gameplay.tiles.TileBag;
 import quirkle.game.startmenu.scenes.StartMenuScene;
 
 import java.awt.Color;
-import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 

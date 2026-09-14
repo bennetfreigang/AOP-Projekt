@@ -1,7 +1,6 @@
 package quirkle.game.credits.entities;
 
 import quirkle.engine.*;
-import quirkle.game.startmenu.scenes.StartMenuScene;
 
 import java.awt.Color;
 import java.awt.Graphics2D;

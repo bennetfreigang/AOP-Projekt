@@ -2,17 +2,12 @@ package quirkle.game.startmenu.scenes;
 
 import quirkle.engine.*;
 
-import quirkle.game.gameplay.GamePlayScene;
-import quirkle.game.gameplay.player.Player;
 import quirkle.game.playerselect.scenes.PlayerSelectScene;
 import quirkle.game.settings.scenes.SettingsScene;
 import quirkle.game.startmenu.entities.*;
 import quirkle.game.credits.scenes.CreditsScene;
 import quirkle.game.util.PrlxEntity;
 import quirkle.game.util.RectangularButton;
-
-import java.awt.event.KeyEvent;
-import java.util.List;
 
 public class StartMenuScene extends Scene {
 

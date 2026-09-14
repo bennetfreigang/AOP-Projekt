@@ -44,7 +44,7 @@ public class PlayerSelectScene extends Scene {
         SimpleSpriteEntity boardBackdrop = new SimpleSpriteEntity("playerselect/label_backdrop", Entity.OriginPresets.CENTER);
 
         SimpleTextEntity title = new SimpleTextEntity(AssetManager.getMessage("playerselect_title"), 50.0f, "higher_jump", Color.BLACK, Entity.OriginPresets.CENTER_LEFT);
-        SimpleTextEntity content = new SimpleTextEntity(AssetManager.getMessage("playerselect_content"), 50.0f, "poly_regular", Color.BLACK, Entity.OriginPresets.CENTER_LEFT);
+        SimpleTextEntity content = new SimpleTextEntity(AssetManager.getMessage("playerselect_content"), 50.0f, "poly_regular", Color.BLACK, Entity.OriginPresets.TOP_LEFT);
 
         playButton = new RectangularButton(AssetManager.getMessage("play"));
 
@@ -92,7 +92,7 @@ public class PlayerSelectScene extends Scene {
             }   else AssetManager.playSound("problem",1.0);
         }
 
-        if (playButton.isClicked()) {
+        if (playButton.isClicked() || InputManager.isKeyPressed(KeyEvent.VK_ENTER)) {
             SceneManager.setScene(new GamePlayScene(drawRandomPlayers(playerCount)));
         }
 
