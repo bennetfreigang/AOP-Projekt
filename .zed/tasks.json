@@ -1,7 +1,7 @@
 [
   {
     "label": "Qwirkle: Build & Run",
-    "command": "javac -d bin $(find src -name '*.java') && cp -r src/assets bin/ && java --module-path bin -m MeinSpiel/org.quirkle.Main",
+    "command": "javac -d bin $(find src test -name '*.java') && cp -r src/assets bin/ && java --module-path bin -m Qwirkle/app.Main",
     "use_new_terminal": false,
     "allow_concurrent_runs": false,
     "reveal": "always"

@@ -21,9 +21,11 @@ jobs:
       - name: compiling code
         run: |
           mkdir -p bin
-          find src -name "*.java" > sources.txt
+          find src test -name "*.java" > sources.txt
           javac -d bin @sources.txt
+      - name: running tests
+        run: java -cp bin testing.TestEngine
       - name: Main-Class Smoke-Test
         run: |
-          timeout 5 java -cp bin org.quirkle.Main --headless-test || \
+          timeout 5 java -cp bin app.Main --headless-test || \
           echo "Hinweis: Main lief entweder erfolgreich durch oder wurde nach 5s beendet (z.B. weil ein GUI-Fenster wartet)."
