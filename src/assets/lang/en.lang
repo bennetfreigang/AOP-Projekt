@@ -35,6 +35,8 @@ turn == Turn
 turn_place_tile == Place a tile
 turn_tile_placed == Tile placed
 turn_tiles_placed == Tiles placed
+hint_best_move == BEST MOVE
+hint_no_move == NO MOVE POSSIBLE
 
 --- TUTORIAL ---------------------------------------------
 

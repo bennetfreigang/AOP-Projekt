@@ -9,6 +9,7 @@ import engine.assets.AssetManager;
 import model.Game;
 import model.Player;
 import model.board.Board;
+import model.board.Move;
 import model.board.Position;
 import model.tiles.Tile;
 import model.tiles.TileBag;
@@ -41,6 +42,10 @@ public class GamePlayScene extends Scene {
     private final Handover handover = new Handover();
     private Player presentedPlayer;
 
+    // Hint
+    private boolean isHintVisible = false;
+    private int hintTurnNumber = -1;
+
     // UI
     private final BoardView boardView;
     private final BoardFrame boardFrame;
@@ -48,6 +53,7 @@ public class GamePlayScene extends Scene {
     private final PlayerCard playerCard;
     private final TileBagCounter tileBagCounter;
     private final TurnScorePopup turnScorePopup;
+    private final HintScoreDisplay hintScoreDisplay;
 
     public GamePlayScene(List<Player> players) {
         // the board is only visible inside the frame
@@ -63,8 +69,9 @@ public class GamePlayScene extends Scene {
         this.playerCard = new PlayerCard(game);
         this.tileBagCounter = new TileBagCounter(game.getTileBag());
         this.turnScorePopup = new TurnScorePopup(viewport);
+        this.hintScoreDisplay = new HintScoreDisplay();
 
-        addEntities(boardView, boardFrame, turnIndicator, tileRack, playerCard, tileBagCounter, turnScorePopup);
+        addEntities(boardView, boardFrame, turnIndicator, tileRack, playerCard, tileBagCounter, turnScorePopup, hintScoreDisplay);
 
         DebugMode.attach(this.game);
     }
@@ -97,7 +104,31 @@ public class GamePlayScene extends Scene {
 
         boardView.sync(game.getBoard());
 
+        if (InputManager.isKeyPressed(KeyEvent.VK_S)) toggleHint();
+        updateHint();
+
         if (InputManager.isKeyPressed(KeyEvent.VK_ESCAPE)) SceneManager.setTempScene(new QuickMenuScene(), true, true);
+    }
+
+    private void toggleHint() {
+        isHintVisible = !isHintVisible;
+        hintTurnNumber = -1; // search again when switched on
+    }
+
+    /** Searches the best move once per turn while the hint is on. Hidden during the handover */
+    private void updateHint() {
+        if (!isHintVisible || handover.isRunning()) {
+            boardView.setHint(null);
+            hintScoreDisplay.hide();
+            hintTurnNumber = -1;
+            return;
+        }
+        if (hintTurnNumber == game.getTurnNumber()) return;
+
+        hintTurnNumber = game.getTurnNumber();
+        Move bestMove = game.findBestMove();
+        boardView.setHint(bestMove);
+        hintScoreDisplay.show(bestMove);
     }
 
     private void startHandoverIfTurnPassed() {

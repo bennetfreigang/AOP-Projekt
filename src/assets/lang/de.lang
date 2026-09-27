@@ -35,6 +35,8 @@ turn == Zug
 turn_place_tile == Lege einen Stein
 turn_tile_placed == Stein gelegt
 turn_tiles_placed == Steine gelegt
+hint_best_move == BESTER ZUG
+hint_no_move == KEIN ZUG MÖGLICH
 
 --- TUTORIAL ---------------------------------------------
 

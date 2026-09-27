@@ -1,6 +1,8 @@
 package model;
 
+import model.board.BestMoveFinder;
 import model.board.Board;
+import model.board.Move;
 import model.board.Position;
 import model.tiles.Tile;
 import model.tiles.TileBag;
@@ -129,6 +131,12 @@ public class Game {
         for (Tile staged : board.removeAllPendingTiles()) {
             currentPlayer.addTile(staged);
         }
+    }
+
+    public Move findBestMove() {
+        List<Tile> hand = new ArrayList<>(getCurrentPlayer().getHand());
+        hand.addAll(board.getPendingTiles().values());
+        return BestMoveFinder.findBestMove(board.getPlacedTiles(), hand);
     }
 
     /**

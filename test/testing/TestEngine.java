@@ -31,7 +31,8 @@ public final class TestEngine {
         boolean allPassed = run(
                 model.board.ScoreCalculatorTest.class,
                 model.board.PlacementValidatorTest.class,
-                model.GameTest.class);
+                model.GameTest.class,
+                model.board.BestMoveFinderTest.class);
         if (!allPassed) {
             System.exit(1);
         }

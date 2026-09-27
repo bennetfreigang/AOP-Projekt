@@ -3,6 +3,7 @@ package scenes.gameplay;
 import engine.EngineConfig;
 import engine.Entity;
 import model.board.Board;
+import model.board.Move;
 import model.board.Position;
 import model.tiles.Tile;
 import ui.UiTheme;
@@ -11,7 +12,9 @@ import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 public class BoardView extends Entity {
@@ -24,6 +27,8 @@ public class BoardView extends Entity {
     private final Map<Position, BoardTileEntity> tileEntities = new LinkedHashMap<>();
 
     private BoardTileEntity previewTile;
+    private Move hint;
+    private final List<BoardTileEntity> hintTiles = new ArrayList<>();
 
     public BoardView(BoardCamera camera, Rectangle viewport) {
         this.camera = camera;
@@ -65,6 +70,26 @@ public class BoardView extends Entity {
         layoutTile(previewTile, camera.getTileSize());
     }
 
+    /** Shows the tiles of {@code move} as a transparent hint. null removes the hint */
+    public void setHint(Move move) {
+        if (move == hint) return;
+        hint = move;
+
+        for (BoardTileEntity hintTile : hintTiles) {
+            hintTile.destroy();
+        }
+        hintTiles.clear();
+
+        if (move == null) return;
+
+        for (Map.Entry<Position, Tile> entry : move.tiles().entrySet()) {
+            BoardTileEntity hintTile = new BoardTileEntity(entry.getValue(), entry.getKey());
+            hintTile.create();
+            layoutTile(hintTile, camera.getTileSize());
+            hintTiles.add(hintTile);
+        }
+    }
+
     public void sync(Board board) {
         addMissingEntities(board.getPlacedTiles());
         addMissingEntities(board.getPendingTiles());
@@ -82,6 +107,10 @@ public class BoardView extends Entity {
 
         // keep the preview on its cell when the camera moves
         if (previewTile != null) layoutTile(previewTile, camera.getTileSize());
+
+        for (BoardTileEntity hintTile : hintTiles) {
+            layoutTile(hintTile, camera.getTileSize());
+        }
     }
 
     @Override
@@ -94,6 +123,7 @@ public class BoardView extends Entity {
         }
 
         drawPlacementPreview(g);
+        drawHint(g);
     }
 
     private void drawPlacementPreview(Graphics2D g) {
@@ -106,9 +136,25 @@ public class BoardView extends Entity {
         gPreview.dispose();
     }
 
+    private void drawHint(Graphics2D g) {
+        Graphics2D gHint = (Graphics2D) g.create();
+        gHint.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,
+                UiTheme.PLACEMENT_PREVIEW_OPACITY));
+
+        for (BoardTileEntity hintTile : hintTiles) {
+            // a tile the player already put there covers the hint
+            if (tileEntities.containsKey(hintTile.getPosition())) continue;
+
+            hintTile.render(gHint);
+            hintTile.drawOutline(gHint, UiTheme.GOLD);
+        }
+        gHint.dispose();
+    }
+
     @Override
     public void onDestroy() {
         grid.destroy();
+        setHint(null);
 
         for (BoardTileEntity tileEntity : tileEntities.values()) {
             tileEntity.destroy();
